@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Upload, X, FileText, CheckCircle, AlertCircle } from 'lucide-react';
-import { uploadAPI } from '../services/api.client';
+import { unifiedUploadAPI as uploadAPI } from '../services/api.unified';
 
 interface FileUploadBackendProps {
   gameId: string;

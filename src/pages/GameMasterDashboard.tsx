@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { gmAPI, Game, Team, Session, Submission } from '../services/api.client';
+import { unifiedGmAPI as gmAPI, Game, Team, Session, Submission } from '../services/api.unified';
 import { useTranslation } from 'react-i18next';
 import { Play, Pause, Users, FileText, TrendingUp, ArrowLeft, Unlock, AlertCircle, CheckCircle, XCircle, Download, Eye, X } from 'lucide-react';
 import LanguageSelector from '../components/LanguageSelector';

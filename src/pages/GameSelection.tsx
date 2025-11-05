@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { gmAPI, teamAPI, Game } from '../services/api.client';
+import { unifiedGmAPI as gmAPI, unifiedTeamAPI as teamAPI, Game } from '../services/api.unified';
 import { useTranslation } from 'react-i18next';
 import { Plus, Users, Clock, Play, AlertCircle } from 'lucide-react';
 import LanguageSelector from '../components/LanguageSelector';

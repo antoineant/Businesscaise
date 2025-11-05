@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { teamAPI, Team, Session } from '../services/api.client';
-import websocketService from '../services/websocket.service';
+import { unifiedTeamAPI as teamAPI, unifiedWebSocketService as websocketService, Team, Session } from '../services/api.unified';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Users, TrendingUp, FileText, Trophy, AlertCircle } from 'lucide-react';
 import LanguageSelector from '../components/LanguageSelector';

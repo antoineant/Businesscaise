@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AlertCircle, CheckCircle, Send } from 'lucide-react';
 import FileUploadBackend from './FileUploadBackend';
-import { teamAPI } from '../services/api.client';
+import { unifiedTeamAPI as teamAPI } from '../services/api.unified';
 
 interface SubmissionFormProps {
   gameId: string;
