@@ -435,14 +435,20 @@ class MockDataStore {
     const team = this.teams.find((t) => t.id === teamId);
     if (!team) throw new Error('Team not found');
 
+    const game = this.games.find((g) => g.id === team.game_id);
+    if (!game) throw new Error('Game not found');
+
     const sessions = this.sessions.filter((s) => s.game_id === team.game_id);
     const currentSession = sessions.find((s) => s.status === 'active');
     const submissions = this.submissions.filter((sub) => sub.team_id === teamId);
 
     return {
       team,
-      currentSession,
+      game,
+      current_session: currentSession,
+      sessions,
       submissions,
+      metrics_history: [],
     };
   }
 
