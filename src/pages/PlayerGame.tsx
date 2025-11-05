@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Users, TrendingUp, FileText, Trophy, AlertCircle } from 'lucide-react';
 import LanguageSelector from '../components/LanguageSelector';
 import DepartmentDashboard from '../components/DepartmentDashboard';
+import SubmissionForm from '../components/SubmissionForm';
 import { DepartmentMetrics } from '../types/game';
 
 // Helper function to convert backend metrics to frontend DepartmentMetrics format
@@ -358,23 +359,21 @@ export default function PlayerGame() {
 
         {activeTab === 'game' && (
           <div className="space-y-6">
-            {currentSession && currentSession.status === 'active' ? (
-              <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">{currentSession.title}</h2>
-                <p className="text-gray-600 mb-6">{currentSession.description}</p>
-
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                  <p className="text-sm text-blue-900">
-                    <strong>Note:</strong> Challenge submission interface will be integrated here with the existing DecisionView component.
-                  </p>
-                </div>
-
-                {currentSession.deadline && (
-                  <div className="text-sm text-gray-600">
-                    <strong>Deadline:</strong> {new Date(currentSession.deadline).toLocaleString()}
-                  </div>
-                )}
-              </div>
+            {currentSession && currentSession.status === 'active' && gameId && teamId ? (
+              <SubmissionForm
+                gameId={gameId}
+                teamId={teamId}
+                sessionId={currentSession.id}
+                challengeId={currentSession.challenges?.id || `session-${currentSession.session_number}`}
+                challengeTitle={currentSession.title}
+                challengeDescription={currentSession.description || 'Submit your decision for this session'}
+                onSubmissionComplete={() => {
+                  // Reload game data to show the new submission
+                  if (teamId) {
+                    loadGameData(teamId);
+                  }
+                }}
+              />
             ) : (
               <div className="bg-gray-50 rounded-lg p-8 text-center">
                 <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
