@@ -140,16 +140,13 @@ export const mockTeamAPI = {
     members?: string[];
   }): Promise<Team> => {
     await delay(500);
-    console.log('[mockTeamAPI] createTeam called with:', data);
     // Map team_name to name for internal storage
-    const team = mockDataStore.createTeam({
+    return mockDataStore.createTeam({
       game_id: data.game_id,
       name: data.team_name,
       color: data.color || '#3B82F6',
       members: data.members || [],
     });
-    console.log('[mockTeamAPI] createTeam returning team:', team.id);
-    return team;
   },
 
   getTeamDetails: async (teamId: string): Promise<Team> => {
@@ -159,7 +156,6 @@ export const mockTeamAPI = {
 
   getDashboardData: async (teamId: string) => {
     await delay();
-    console.log('[mockTeamAPI] getDashboardData called with teamId:', teamId);
     return mockDataStore.getDashboardData(teamId);
   },
 

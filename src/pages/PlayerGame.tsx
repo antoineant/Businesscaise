@@ -75,7 +75,6 @@ export default function PlayerGame() {
       // Check if user has a team for this game in localStorage
       const storedTeamId = localStorage.getItem(`team_${gameId}`);
       if (storedTeamId) {
-        console.log('[PlayerGame] Found stored team ID:', storedTeamId);
         setTeamId(storedTeamId);
         loadGameData(storedTeamId).catch(() => {
           // Error is already handled in loadGameData
@@ -128,7 +127,6 @@ export default function PlayerGame() {
 
       // If team not found (e.g., localStorage has stale data), clear it and show join modal
       if (err.message?.includes('Team not found') && gameId) {
-        console.log('[PlayerGame] Team not found, clearing localStorage and showing join modal');
         localStorage.removeItem(`team_${gameId}`);
         setTeamId(null);
         setShowJoinModal(true);
@@ -145,7 +143,6 @@ export default function PlayerGame() {
     if (!gameId) return;
 
     try {
-      console.log('[PlayerGame] handleJoinTeam called with:', { gameId, teamName, color, members });
       const newTeam = await teamAPI.joinGame({
         game_id: gameId,
         team_name: teamName,
@@ -153,7 +150,6 @@ export default function PlayerGame() {
         members,
       });
 
-      console.log('[PlayerGame] Team created successfully:', newTeam.id);
       localStorage.setItem(`team_${gameId}`, newTeam.id);
       setTeamId(newTeam.id);
       setShowJoinModal(false);

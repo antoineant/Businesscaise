@@ -422,8 +422,6 @@ class MockDataStore {
       updated_at: new Date().toISOString(),
     };
     this.teams.push(team);
-    console.log('[MockDataStore] Team created:', team.id, 'Total teams:', this.teams.length);
-    console.log('[MockDataStore] All team IDs:', this.teams.map(t => t.id));
     return team;
   }
 
@@ -434,13 +432,8 @@ class MockDataStore {
   }
 
   getDashboardData(teamId: string) {
-    console.log('[MockDataStore] getDashboardData called with teamId:', teamId);
-    console.log('[MockDataStore] Available teams:', this.teams.map(t => ({ id: t.id, name: t.name })));
     const team = this.teams.find((t) => t.id === teamId);
-    if (!team) {
-      console.error('[MockDataStore] Team not found! Looking for:', teamId);
-      throw new Error('Team not found');
-    }
+    if (!team) throw new Error('Team not found');
 
     const game = this.games.find((g) => g.id === team.game_id);
     if (!game) throw new Error('Game not found');
