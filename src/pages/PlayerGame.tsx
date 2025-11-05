@@ -75,8 +75,11 @@ export default function PlayerGame() {
       // Check if user has a team for this game in localStorage
       const storedTeamId = localStorage.getItem(`team_${gameId}`);
       if (storedTeamId) {
+        console.log('[PlayerGame] Found stored team ID:', storedTeamId);
         setTeamId(storedTeamId);
-        loadGameData(storedTeamId);
+        loadGameData(storedTeamId).catch(() => {
+          // Error is already handled in loadGameData
+        });
       } else {
         setShowJoinModal(true);
         setIsLoading(false);
@@ -122,7 +125,17 @@ export default function PlayerGame() {
       setCurrentSession(dashboard.current_session);
     } catch (err: any) {
       console.error('Failed to load game data:', err);
-      setError('Failed to load game data');
+
+      // If team not found (e.g., localStorage has stale data), clear it and show join modal
+      if (err.message?.includes('Team not found') && gameId) {
+        console.log('[PlayerGame] Team not found, clearing localStorage and showing join modal');
+        localStorage.removeItem(`team_${gameId}`);
+        setTeamId(null);
+        setShowJoinModal(true);
+        setError('');
+      } else {
+        setError('Failed to load game data');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -132,6 +145,7 @@ export default function PlayerGame() {
     if (!gameId) return;
 
     try {
+      console.log('[PlayerGame] handleJoinTeam called with:', { gameId, teamName, color, members });
       const newTeam = await teamAPI.joinGame({
         game_id: gameId,
         team_name: teamName,
@@ -139,11 +153,13 @@ export default function PlayerGame() {
         members,
       });
 
+      console.log('[PlayerGame] Team created successfully:', newTeam.id);
       localStorage.setItem(`team_${gameId}`, newTeam.id);
       setTeamId(newTeam.id);
       setShowJoinModal(false);
       await loadGameData(newTeam.id);
     } catch (err: any) {
+      console.error('[PlayerGame] Failed to join team:', err);
       setError(err.response?.data?.error?.message || 'Failed to join game');
     }
   };
