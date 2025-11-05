@@ -13,6 +13,7 @@ dotenv.config();
 import authRoutes from './routes/auth.routes';
 import gmRoutes from './routes/gm.routes';
 import teamRoutes from './routes/team.routes';
+import uploadRoutes from './routes/upload.routes';
 
 // Import socket handler
 import { initializeSocket } from './socket/socket.handler';
@@ -39,6 +40,9 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static files from uploads directory
+app.use('/uploads', express.static(process.env.UPLOAD_DIR || './uploads'));
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({
@@ -52,6 +56,7 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/gm', gmRoutes);
 app.use('/api/teams', teamRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Initialize WebSocket handlers
 initializeSocket(io);

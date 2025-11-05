@@ -4,6 +4,8 @@ import { TeamModel } from '../models/Team.model';
 import { SessionModel } from '../models/Session.model';
 import { SubmissionModel } from '../models/Submission.model';
 import { AppError, asyncHandler } from '../middleware/errorHandler.middleware';
+import * as metricsService from '../services/metrics.service';
+import * as socketHandler from '../socket/socket.handler';
 
 /**
  * Create a new game
@@ -167,6 +169,9 @@ export const startGame = asyncHandler(async (req: Request, res: Response) => {
     throw new AppError('Game not found', 404);
   }
 
+  // Notify all participants via WebSocket
+  socketHandler.notifyGameStatusChanged(id, 'active', { game });
+
   res.json({
     message: 'Game started successfully',
     game,
@@ -265,6 +270,9 @@ export const unlockSession = asyncHandler(async (req: Request, res: Response) =>
 
   // Update game's current session
   await GameModel.update(gameId, { current_session_id: sessionId });
+
+  // Notify all teams via WebSocket
+  socketHandler.notifySessionUnlocked(gameId, session);
 
   res.json({
     message: 'Session unlocked successfully',
@@ -544,32 +552,46 @@ export const scoreSubmission = asyncHandler(async (req: Request, res: Response) 
   // Update team metrics based on score
   const team = await TeamModel.findById(submissionDetails.team_id);
   if (team) {
-    const currentMetrics = team.metrics || {
-      financial: 50,
-      hr: 50,
-      market_communication: 50,
-      operations: 50,
-      customer_satisfaction: 50,
-    };
+    const currentMetrics = team.metrics || metricsService.DEFAULT_METRICS;
 
-    // Simple scoring impact (can be made more sophisticated)
-    const impactFactor = (score - 50) / 10; // score is 0-100, adjust metrics accordingly
+    // Calculate impact based on challenge type and score
+    const challengeType = submissionDetails.challenge_id?.split('-')[0] || 'general';
+    const impact = metricsService.calculateSubmissionImpact(score, challengeType);
 
-    const updatedMetrics = {
-      financial: Math.max(0, Math.min(100, currentMetrics.financial + impactFactor)),
-      hr: Math.max(0, Math.min(100, currentMetrics.hr + impactFactor)),
-      market_communication: Math.max(0, Math.min(100, currentMetrics.market_communication + impactFactor)),
-      operations: Math.max(0, Math.min(100, currentMetrics.operations + impactFactor)),
-      customer_satisfaction: Math.max(0, Math.min(100, currentMetrics.customer_satisfaction + impactFactor)),
-    };
+    // Apply impact to metrics
+    const updatedMetrics = metricsService.applyMetricsImpact(currentMetrics, impact);
 
-    // Calculate overall score: Financial 40%, HR 30%, Market Communication 30%
-    const overallScore =
-      updatedMetrics.financial * 0.4 +
-      updatedMetrics.hr * 0.3 +
-      updatedMetrics.market_communication * 0.3;
+    // Calculate overall score with weighted formula
+    const overallScore = metricsService.calculateOverallScore(updatedMetrics);
 
+    // Update database
     await TeamModel.updateMetrics(team.id, updatedMetrics, overallScore);
+
+    // Notify team via WebSocket
+    socketHandler.notifySubmissionScored(team.id, {
+      submission_id: id,
+      score,
+      feedback,
+      metrics: updatedMetrics,
+      overall_score: overallScore,
+    });
+
+    // Notify metrics update
+    socketHandler.notifyMetricsUpdated(team.id, updatedMetrics);
+
+    // Update leaderboard
+    const allTeams = await TeamModel.findByGame(submissionDetails.game_id);
+    const leaderboard = allTeams
+      .filter(t => t.overall_score !== null)
+      .sort((a, b) => (b.overall_score || 0) - (a.overall_score || 0))
+      .map((t, idx) => ({
+        rank: idx + 1,
+        team_id: t.id,
+        team_name: t.name,
+        overall_score: t.overall_score,
+      }));
+
+    socketHandler.notifyLeaderboardUpdated(submissionDetails.game_id, leaderboard);
   }
 
   res.json({

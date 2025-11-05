@@ -4,6 +4,7 @@ import { TeamModel } from '../models/Team.model';
 import { SessionModel } from '../models/Session.model';
 import { SubmissionModel } from '../models/Submission.model';
 import { AppError, asyncHandler } from '../middleware/errorHandler.middleware';
+import * as socketHandler from '../socket/socket.handler';
 
 /**
  * Join a game (create team)
@@ -36,6 +37,9 @@ export const joinGame = asyncHandler(async (req: Request, res: Response) => {
       customer_satisfaction: 50,
     },
   });
+
+  // Notify Game Master via WebSocket
+  socketHandler.notifyTeamJoined(game_id, team);
 
   res.status(201).json({
     message: 'Team joined game successfully',
@@ -193,6 +197,16 @@ export const submitDecision = asyncHandler(async (req: Request, res: Response) =
     challenge_id,
     submission_data,
     file_urls: file_urls || [],
+  });
+
+  // Notify Game Master via WebSocket
+  socketHandler.notifySubmissionReceived(team.game_id, {
+    submission_id: submission.id,
+    team_id: teamId,
+    team_name: team.name,
+    session_id,
+    challenge_id,
+    submitted_at: submission.submitted_at,
   });
 
   res.status(201).json({
