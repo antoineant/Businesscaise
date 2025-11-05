@@ -1,0 +1,579 @@
+import { Request, Response } from 'express';
+import { GameModel } from '../models/Game.model';
+import { TeamModel } from '../models/Team.model';
+import { SessionModel } from '../models/Session.model';
+import { SubmissionModel } from '../models/Submission.model';
+import { AppError, asyncHandler } from '../middleware/errorHandler.middleware';
+
+/**
+ * Create a new game
+ * POST /api/gm/games
+ */
+export const createGame = asyncHandler(async (req: Request, res: Response) => {
+  const { title, description, settings } = req.body;
+  const gameMasterId = req.user!.userId;
+
+  // Create game
+  const game = await GameModel.create({
+    title,
+    description,
+    game_master_id: gameMasterId,
+    settings: settings || {},
+  });
+
+  // Create default 10 sessions (5 days, AM/PM)
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  const periods: ('AM' | 'PM')[] = ['AM', 'PM'];
+  const defaultSessions = [];
+
+  let sessionNumber = 1;
+  for (const day of days) {
+    for (const period of periods) {
+      defaultSessions.push({
+        game_id: game.id,
+        session_number: sessionNumber,
+        day,
+        period,
+        title: `${day} ${period} - Session ${sessionNumber}`,
+        description: `Business challenge for ${day} ${period}`,
+      });
+      sessionNumber++;
+    }
+  }
+
+  const sessions = await SessionModel.createBulk(defaultSessions);
+
+  res.status(201).json({
+    message: 'Game created successfully',
+    game,
+    sessions,
+  });
+});
+
+/**
+ * Get all games for current Game Master
+ * GET /api/gm/games
+ */
+export const listGames = asyncHandler(async (req: Request, res: Response) => {
+  const gameMasterId = req.user!.userId;
+
+  const games = await GameModel.findByGameMaster(gameMasterId);
+
+  res.json({
+    games,
+  });
+});
+
+/**
+ * Get game details with teams and sessions
+ * GET /api/gm/games/:id
+ */
+export const getGameDetails = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const gameMasterId = req.user!.userId;
+
+  // Check if user is game master
+  const isGM = await GameModel.isGameMaster(id, gameMasterId);
+  if (!isGM) {
+    throw new AppError('Not authorized to access this game', 403);
+  }
+
+  const game = await GameModel.findById(id);
+  if (!game) {
+    throw new AppError('Game not found', 404);
+  }
+
+  const teams = await TeamModel.findByGame(id);
+  const sessions = await SessionModel.findByGame(id);
+
+  res.json({
+    game,
+    teams,
+    sessions,
+  });
+});
+
+/**
+ * Update game
+ * PUT /api/gm/games/:id
+ */
+export const updateGame = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const gameMasterId = req.user!.userId;
+  const { title, description, settings } = req.body;
+
+  // Check if user is game master
+  const isGM = await GameModel.isGameMaster(id, gameMasterId);
+  if (!isGM) {
+    throw new AppError('Not authorized to update this game', 403);
+  }
+
+  const game = await GameModel.update(id, {
+    title,
+    description,
+    settings,
+  });
+
+  if (!game) {
+    throw new AppError('Game not found', 404);
+  }
+
+  res.json({
+    message: 'Game updated successfully',
+    game,
+  });
+});
+
+/**
+ * Delete game
+ * DELETE /api/gm/games/:id
+ */
+export const deleteGame = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const gameMasterId = req.user!.userId;
+
+  // Check if user is game master
+  const isGM = await GameModel.isGameMaster(id, gameMasterId);
+  if (!isGM) {
+    throw new AppError('Not authorized to delete this game', 403);
+  }
+
+  const deleted = await GameModel.delete(id);
+  if (!deleted) {
+    throw new AppError('Game not found', 404);
+  }
+
+  res.json({
+    message: 'Game deleted successfully',
+  });
+});
+
+/**
+ * Start game (change status to active)
+ * POST /api/gm/games/:id/start
+ */
+export const startGame = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const gameMasterId = req.user!.userId;
+
+  // Check if user is game master
+  const isGM = await GameModel.isGameMaster(id, gameMasterId);
+  if (!isGM) {
+    throw new AppError('Not authorized to start this game', 403);
+  }
+
+  const game = await GameModel.updateStatus(id, 'active');
+  if (!game) {
+    throw new AppError('Game not found', 404);
+  }
+
+  res.json({
+    message: 'Game started successfully',
+    game,
+  });
+});
+
+/**
+ * Pause game
+ * POST /api/gm/games/:id/pause
+ */
+export const pauseGame = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const gameMasterId = req.user!.userId;
+
+  // Check if user is game master
+  const isGM = await GameModel.isGameMaster(id, gameMasterId);
+  if (!isGM) {
+    throw new AppError('Not authorized to pause this game', 403);
+  }
+
+  const game = await GameModel.updateStatus(id, 'paused');
+  if (!game) {
+    throw new AppError('Game not found', 404);
+  }
+
+  res.json({
+    message: 'Game paused successfully',
+    game,
+  });
+});
+
+/**
+ * Resume game
+ * POST /api/gm/games/:id/resume
+ */
+export const resumeGame = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const gameMasterId = req.user!.userId;
+
+  // Check if user is game master
+  const isGM = await GameModel.isGameMaster(id, gameMasterId);
+  if (!isGM) {
+    throw new AppError('Not authorized to resume this game', 403);
+  }
+
+  const game = await GameModel.updateStatus(id, 'active');
+  if (!game) {
+    throw new AppError('Game not found', 404);
+  }
+
+  res.json({
+    message: 'Game resumed successfully',
+    game,
+  });
+});
+
+/**
+ * Get all sessions for a game
+ * GET /api/gm/games/:id/sessions
+ */
+export const listSessions = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const gameMasterId = req.user!.userId;
+
+  // Check if user is game master
+  const isGM = await GameModel.isGameMaster(id, gameMasterId);
+  if (!isGM) {
+    throw new AppError('Not authorized to access this game', 403);
+  }
+
+  const sessions = await SessionModel.findByGame(id);
+
+  res.json({
+    sessions,
+  });
+});
+
+/**
+ * Unlock a session
+ * POST /api/gm/games/:gameId/sessions/:sessionId/unlock
+ */
+export const unlockSession = asyncHandler(async (req: Request, res: Response) => {
+  const { gameId, sessionId } = req.params;
+  const gameMasterId = req.user!.userId;
+
+  // Check if user is game master
+  const isGM = await GameModel.isGameMaster(gameId, gameMasterId);
+  if (!isGM) {
+    throw new AppError('Not authorized to unlock sessions in this game', 403);
+  }
+
+  const session = await SessionModel.unlock(sessionId);
+  if (!session) {
+    throw new AppError('Session not found', 404);
+  }
+
+  // Update game's current session
+  await GameModel.update(gameId, { current_session_id: sessionId });
+
+  res.json({
+    message: 'Session unlocked successfully',
+    session,
+  });
+});
+
+/**
+ * Update session
+ * PUT /api/gm/games/:gameId/sessions/:sessionId
+ */
+export const updateSession = asyncHandler(async (req: Request, res: Response) => {
+  const { gameId, sessionId } = req.params;
+  const gameMasterId = req.user!.userId;
+  const { title, description, deadline, challenges } = req.body;
+
+  // Check if user is game master
+  const isGM = await GameModel.isGameMaster(gameId, gameMasterId);
+  if (!isGM) {
+    throw new AppError('Not authorized to update sessions in this game', 403);
+  }
+
+  const session = await SessionModel.update(sessionId, {
+    title,
+    description,
+    deadline,
+    challenges,
+  });
+
+  if (!session) {
+    throw new AppError('Session not found', 404);
+  }
+
+  res.json({
+    message: 'Session updated successfully',
+    session,
+  });
+});
+
+/**
+ * Get all teams for a game with metrics
+ * GET /api/gm/games/:id/teams
+ */
+export const listTeams = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const gameMasterId = req.user!.userId;
+
+  // Check if user is game master
+  const isGM = await GameModel.isGameMaster(id, gameMasterId);
+  if (!isGM) {
+    throw new AppError('Not authorized to access this game', 403);
+  }
+
+  const teams = await TeamModel.findByGame(id);
+
+  res.json({
+    teams,
+  });
+});
+
+/**
+ * Get team details
+ * GET /api/gm/games/:gameId/teams/:teamId
+ */
+export const getTeamDetails = asyncHandler(async (req: Request, res: Response) => {
+  const { gameId, teamId } = req.params;
+  const gameMasterId = req.user!.userId;
+
+  // Check if user is game master
+  const isGM = await GameModel.isGameMaster(gameId, gameMasterId);
+  if (!isGM) {
+    throw new AppError('Not authorized to access this game', 403);
+  }
+
+  const team = await TeamModel.findById(teamId);
+  if (!team || team.game_id !== gameId) {
+    throw new AppError('Team not found', 404);
+  }
+
+  res.json({
+    team,
+  });
+});
+
+/**
+ * Get team metrics history
+ * GET /api/gm/games/:gameId/teams/:teamId/history
+ */
+export const getTeamHistory = asyncHandler(async (req: Request, res: Response) => {
+  const { gameId, teamId } = req.params;
+  const gameMasterId = req.user!.userId;
+
+  // Check if user is game master
+  const isGM = await GameModel.isGameMaster(gameId, gameMasterId);
+  if (!isGM) {
+    throw new AppError('Not authorized to access this game', 403);
+  }
+
+  const history = await TeamModel.getMetricsHistory(teamId);
+
+  res.json({
+    history,
+  });
+});
+
+/**
+ * Get leaderboard for a game
+ * GET /api/gm/games/:id/leaderboard
+ */
+export const getLeaderboard = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const gameMasterId = req.user!.userId;
+
+  // Check if user is game master
+  const isGM = await GameModel.isGameMaster(id, gameMasterId);
+  if (!isGM) {
+    throw new AppError('Not authorized to access this game', 403);
+  }
+
+  const teams = await TeamModel.findByGame(id);
+
+  // Sort by overall score
+  const leaderboard = teams
+    .filter(team => team.overall_score !== null)
+    .sort((a, b) => {
+      const scoreA = a.overall_score || 0;
+      const scoreB = b.overall_score || 0;
+      return scoreB - scoreA;
+    })
+    .map((team, index) => ({
+      rank: index + 1,
+      team_id: team.id,
+      team_name: team.name,
+      overall_score: team.overall_score,
+      metrics: team.metrics,
+    }));
+
+  res.json({
+    leaderboard,
+  });
+});
+
+/**
+ * Get analytics for a game
+ * GET /api/gm/games/:id/analytics
+ */
+export const getAnalytics = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const gameMasterId = req.user!.userId;
+
+  // Check if user is game master
+  const isGM = await GameModel.isGameMaster(id, gameMasterId);
+  if (!isGM) {
+    throw new AppError('Not authorized to access this game', 403);
+  }
+
+  const game = await GameModel.findById(id);
+  const teams = await TeamModel.findByGame(id);
+  const sessions = await SessionModel.findByGame(id);
+
+  // Calculate analytics
+  const totalTeams = teams.length;
+  const completedSessions = sessions.filter(s => s.status === 'completed').length;
+  const activeSessions = sessions.filter(s => s.status === 'active').length;
+
+  // Average metrics across all teams
+  const avgMetrics = {
+    financial: 0,
+    hr: 0,
+    market_communication: 0,
+    operations: 0,
+    customer_satisfaction: 0,
+  };
+
+  if (teams.length > 0) {
+    teams.forEach(team => {
+      if (team.metrics) {
+        avgMetrics.financial += team.metrics.financial || 0;
+        avgMetrics.hr += team.metrics.hr || 0;
+        avgMetrics.market_communication += team.metrics.market_communication || 0;
+        avgMetrics.operations += team.metrics.operations || 0;
+        avgMetrics.customer_satisfaction += team.metrics.customer_satisfaction || 0;
+      }
+    });
+
+    Object.keys(avgMetrics).forEach(key => {
+      avgMetrics[key as keyof typeof avgMetrics] /= teams.length;
+    });
+  }
+
+  res.json({
+    game,
+    analytics: {
+      total_teams: totalTeams,
+      completed_sessions: completedSessions,
+      active_sessions: activeSessions,
+      average_metrics: avgMetrics,
+    },
+  });
+});
+
+/**
+ * Get all submissions for a game
+ * GET /api/gm/games/:id/submissions
+ */
+export const listSubmissions = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const gameMasterId = req.user!.userId;
+  const { status } = req.query;
+
+  // Check if user is game master
+  const isGM = await GameModel.isGameMaster(id, gameMasterId);
+  if (!isGM) {
+    throw new AppError('Not authorized to access this game', 403);
+  }
+
+  let submissions;
+  if (status) {
+    submissions = await SubmissionModel.findByStatus(id, status as any);
+  } else {
+    submissions = await SubmissionModel.findByGame(id);
+  }
+
+  res.json({
+    submissions,
+  });
+});
+
+/**
+ * Get submission details
+ * GET /api/gm/submissions/:id
+ */
+export const getSubmissionDetails = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const gameMasterId = req.user!.userId;
+
+  const submission = await SubmissionModel.getSubmissionWithDetails(id);
+  if (!submission) {
+    throw new AppError('Submission not found', 404);
+  }
+
+  // Check if user is game master of the game
+  const isGM = await GameModel.isGameMaster(submission.game_id, gameMasterId);
+  if (!isGM) {
+    throw new AppError('Not authorized to access this submission', 403);
+  }
+
+  res.json({
+    submission,
+  });
+});
+
+/**
+ * Score a submission
+ * POST /api/gm/submissions/:id/score
+ */
+export const scoreSubmission = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const gameMasterId = req.user!.userId;
+  const { score, feedback } = req.body;
+
+  // Get submission details to check authorization
+  const submissionDetails = await SubmissionModel.getSubmissionWithDetails(id);
+  if (!submissionDetails) {
+    throw new AppError('Submission not found', 404);
+  }
+
+  // Check if user is game master of the game
+  const isGM = await GameModel.isGameMaster(submissionDetails.game_id, gameMasterId);
+  if (!isGM) {
+    throw new AppError('Not authorized to score this submission', 403);
+  }
+
+  // Score the submission
+  const submission = await SubmissionModel.score(id, score, feedback);
+
+  // Update team metrics based on score
+  const team = await TeamModel.findById(submissionDetails.team_id);
+  if (team) {
+    const currentMetrics = team.metrics || {
+      financial: 50,
+      hr: 50,
+      market_communication: 50,
+      operations: 50,
+      customer_satisfaction: 50,
+    };
+
+    // Simple scoring impact (can be made more sophisticated)
+    const impactFactor = (score - 50) / 10; // score is 0-100, adjust metrics accordingly
+
+    const updatedMetrics = {
+      financial: Math.max(0, Math.min(100, currentMetrics.financial + impactFactor)),
+      hr: Math.max(0, Math.min(100, currentMetrics.hr + impactFactor)),
+      market_communication: Math.max(0, Math.min(100, currentMetrics.market_communication + impactFactor)),
+      operations: Math.max(0, Math.min(100, currentMetrics.operations + impactFactor)),
+      customer_satisfaction: Math.max(0, Math.min(100, currentMetrics.customer_satisfaction + impactFactor)),
+    };
+
+    // Calculate overall score: Financial 40%, HR 30%, Market Communication 30%
+    const overallScore =
+      updatedMetrics.financial * 0.4 +
+      updatedMetrics.hr * 0.3 +
+      updatedMetrics.market_communication * 0.3;
+
+    await TeamModel.updateMetrics(team.id, updatedMetrics, overallScore);
+  }
+
+  res.json({
+    message: 'Submission scored successfully',
+    submission,
+  });
+});

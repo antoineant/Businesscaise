@@ -1,92 +1,156 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
+import { authenticate, requireGameMaster } from '../middleware/auth.middleware';
+import { validate } from '../middleware/validation.middleware';
+import * as gmController from '../controllers/gm.controller';
 
 const router = Router();
 
-// All routes require GM authentication (will add middleware in next phase)
+// All routes require GM authentication
+router.use(authenticate);
+router.use(requireGameMaster);
 
 /**
  * Game Management
  */
-router.post('/games', async (req, res) => {
-  res.json({ message: 'Create game - to be implemented' });
-});
+router.post('/games',
+  [
+    body('title').notEmpty().withMessage('Title is required'),
+    body('description').optional().isString(),
+    body('settings').optional().isObject(),
+  ],
+  validate,
+  gmController.createGame
+);
 
-router.get('/games', async (req, res) => {
-  res.json({ message: 'List games - to be implemented' });
-});
+router.get('/games', gmController.listGames);
 
-router.get('/games/:id', async (req, res) => {
-  res.json({ message: 'Get game details - to be implemented' });
-});
+router.get('/games/:id',
+  [param('id').isUUID()],
+  validate,
+  gmController.getGameDetails
+);
 
-router.put('/games/:id', async (req, res) => {
-  res.json({ message: 'Update game - to be implemented' });
-});
+router.put('/games/:id',
+  [
+    param('id').isUUID(),
+    body('title').optional().isString(),
+    body('description').optional().isString(),
+    body('settings').optional().isObject(),
+  ],
+  validate,
+  gmController.updateGame
+);
 
-router.delete('/games/:id', async (req, res) => {
-  res.json({ message: 'Delete game - to be implemented' });
-});
+router.delete('/games/:id',
+  [param('id').isUUID()],
+  validate,
+  gmController.deleteGame
+);
 
 /**
  * Game Control
  */
-router.post('/games/:id/start', async (req, res) => {
-  res.json({ message: 'Start game - to be implemented' });
-});
+router.post('/games/:id/start',
+  [param('id').isUUID()],
+  validate,
+  gmController.startGame
+);
 
-router.post('/games/:id/pause', async (req, res) => {
-  res.json({ message: 'Pause game - to be implemented' });
-});
+router.post('/games/:id/pause',
+  [param('id').isUUID()],
+  validate,
+  gmController.pauseGame
+);
 
-router.post('/games/:id/resume', async (req, res) => {
-  res.json({ message: 'Resume game - to be implemented' });
-});
+router.post('/games/:id/resume',
+  [param('id').isUUID()],
+  validate,
+  gmController.resumeGame
+);
 
 /**
  * Session Management
  */
-router.get('/games/:id/sessions', async (req, res) => {
-  res.json({ message: 'List sessions - to be implemented' });
-});
+router.get('/games/:id/sessions',
+  [param('id').isUUID()],
+  validate,
+  gmController.listSessions
+);
 
-router.post('/games/:gameId/sessions/:sessionId/unlock', async (req, res) => {
-  res.json({ message: 'Unlock session - to be implemented' });
-});
+router.post('/games/:gameId/sessions/:sessionId/unlock',
+  [
+    param('gameId').isUUID(),
+    param('sessionId').isUUID(),
+  ],
+  validate,
+  gmController.unlockSession
+);
 
-router.put('/games/:gameId/sessions/:sessionId', async (req, res) => {
-  res.json({ message: 'Update session - to be implemented' });
-});
+router.put('/games/:gameId/sessions/:sessionId',
+  [
+    param('gameId').isUUID(),
+    param('sessionId').isUUID(),
+    body('title').optional().isString(),
+    body('description').optional().isString(),
+    body('deadline').optional().isISO8601(),
+    body('challenges').optional().isObject(),
+  ],
+  validate,
+  gmController.updateSession
+);
 
 /**
  * Team Monitoring
  */
-router.get('/games/:id/teams', async (req, res) => {
-  res.json({ message: 'List teams with metrics - to be implemented' });
-});
+router.get('/games/:id/teams',
+  [param('id').isUUID()],
+  validate,
+  gmController.listTeams
+);
 
-router.get('/games/:gameId/teams/:teamId', async (req, res) => {
-  res.json({ message: 'Get team details - to be implemented' });
-});
+router.get('/games/:gameId/teams/:teamId',
+  [
+    param('gameId').isUUID(),
+    param('teamId').isUUID(),
+  ],
+  validate,
+  gmController.getTeamDetails
+);
 
-router.get('/games/:gameId/teams/:teamId/history', async (req, res) => {
-  res.json({ message: 'Get team metrics history - to be implemented' });
-});
+router.get('/games/:gameId/teams/:teamId/history',
+  [
+    param('gameId').isUUID(),
+    param('teamId').isUUID(),
+  ],
+  validate,
+  gmController.getTeamHistory
+);
 
 /**
  * Submissions & Scoring
  */
-router.get('/games/:id/submissions', async (req, res) => {
-  res.json({ message: 'List all submissions - to be implemented' });
-});
+router.get('/games/:id/submissions',
+  [param('id').isUUID()],
+  validate,
+  gmController.listSubmissions
+);
 
-router.get('/submissions/:id', async (req, res) => {
-  res.json({ message: 'Get submission details - to be implemented' });
-});
+router.get('/submissions/:id',
+  [param('id').isUUID()],
+  validate,
+  gmController.getSubmissionDetails
+);
 
-router.post('/submissions/:id/score', async (req, res) => {
-  res.json({ message: 'Score submission - to be implemented' });
-});
+router.post('/submissions/:id/score',
+  [
+    param('id').isUUID(),
+    body('score').isNumeric().withMessage('Score is required'),
+    body('feedback').optional().isString(),
+  ],
+  validate,
+  gmController.scoreSubmission
+);
 
 /**
  * Narratives & Events
@@ -106,17 +170,21 @@ router.post('/games/:id/events', async (req, res) => {
 /**
  * Analytics & Reporting
  */
-router.get('/games/:id/leaderboard', async (req, res) => {
-  res.json({ message: 'Get leaderboard - to be implemented' });
-});
+router.get('/games/:id/leaderboard',
+  [param('id').isUUID()],
+  validate,
+  gmController.getLeaderboard
+);
 
 router.post('/games/:id/generate-briefing', async (req, res) => {
   res.json({ message: 'Generate results briefing - to be implemented' });
 });
 
-router.get('/games/:id/analytics', async (req, res) => {
-  res.json({ message: 'Get analytics - to be implemented' });
-});
+router.get('/games/:id/analytics',
+  [param('id').isUUID()],
+  validate,
+  gmController.getAnalytics
+);
 
 router.post('/games/:id/export', async (req, res) => {
   res.json({ message: 'Export data - to be implemented' });

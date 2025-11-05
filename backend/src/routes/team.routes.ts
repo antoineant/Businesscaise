@@ -1,64 +1,110 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
+import { authenticate, requirePlayer } from '../middleware/auth.middleware';
+import { validate } from '../middleware/validation.middleware';
+import * as teamController from '../controllers/team.controller';
 
 const router = Router();
 
-// All routes require team authentication (will add middleware in next phase)
+// Most routes require player authentication (except join)
+// Join route is public to allow teams to register
 
 /**
- * Join game
+ * Join game (no auth required)
  */
-router.post('/join', async (req, res) => {
-  res.json({ message: 'Join game - to be implemented' });
-});
+router.post('/join',
+  [
+    body('game_id').isUUID().withMessage('Game ID is required'),
+    body('team_name').notEmpty().withMessage('Team name is required'),
+    body('color').optional().isString(),
+    body('members').optional().isArray(),
+  ],
+  validate,
+  teamController.joinGame
+);
+
+// Apply authentication to remaining routes
+router.use(authenticate);
 
 /**
  * Get current team info
  */
-router.get('/current', async (req, res) => {
-  res.json({ message: 'Get current team - to be implemented' });
-});
+router.get('/current/:teamId',
+  [param('teamId').isUUID()],
+  validate,
+  teamController.getCurrentTeam
+);
 
 /**
  * Get dashboard data
  */
-router.get('/dashboard', async (req, res) => {
-  res.json({ message: 'Get dashboard - to be implemented' });
-});
+router.get('/:teamId/dashboard',
+  [param('teamId').isUUID()],
+  validate,
+  teamController.getDashboard
+);
 
 /**
  * Get current active session
  */
-router.get('/sessions/current', async (req, res) => {
-  res.json({ message: 'Get current session - to be implemented' });
-});
+router.get('/:teamId/sessions/current',
+  [param('teamId').isUUID()],
+  validate,
+  teamController.getCurrentSession
+);
 
 /**
  * Get challenges for a session
  */
-router.get('/sessions/:id/challenges', async (req, res) => {
-  res.json({ message: 'Get challenges - to be implemented' });
-});
+router.get('/:teamId/sessions/:sessionId/challenges',
+  [
+    param('teamId').isUUID(),
+    param('sessionId').isUUID(),
+  ],
+  validate,
+  teamController.getSessionChallenges
+);
 
 /**
  * Submit decision
  */
-router.post('/submit', async (req, res) => {
-  res.json({ message: 'Submit decision - to be implemented' });
-});
+router.post('/:teamId/submit',
+  [
+    param('teamId').isUUID(),
+    body('session_id').isUUID().withMessage('Session ID is required'),
+    body('challenge_id').notEmpty().withMessage('Challenge ID is required'),
+    body('submission_data').notEmpty().withMessage('Submission data is required'),
+    body('file_urls').optional().isArray(),
+  ],
+  validate,
+  teamController.submitDecision
+);
 
 /**
  * Get latest results briefing
  */
-router.get('/results/latest', async (req, res) => {
-  res.json({ message: 'Get latest results - to be implemented' });
-});
+router.get('/:teamId/results/latest',
+  [param('teamId').isUUID()],
+  validate,
+  teamController.getLatestResults
+);
 
 /**
  * Get metrics history
  */
-router.get('/history', async (req, res) => {
-  res.json({ message: 'Get metrics history - to be implemented' });
-});
+router.get('/:teamId/history',
+  [param('teamId').isUUID()],
+  validate,
+  teamController.getMetricsHistory
+);
+
+/**
+ * Get leaderboard
+ */
+router.get('/:teamId/leaderboard',
+  [param('teamId').isUUID()],
+  validate,
+  teamController.getLeaderboard
+);
 
 export default router;
