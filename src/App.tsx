@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GameState, Team, DepartmentImpact } from './types/game';
 import { gameDecisions } from './data/gameData';
 import { applyImpacts, calculateTeamScore } from './utils/gameEngine';
@@ -6,10 +7,12 @@ import TeamSetup from './components/TeamSetup';
 import DepartmentDashboard from './components/DepartmentDashboard';
 import DecisionView from './components/DecisionView';
 import Leaderboard from './components/Leaderboard';
+import LanguageSelector from './components/LanguageSelector';
 
 const STORAGE_KEY = 'businesscaise-game-state';
 
 function App() {
+  const { t } = useTranslation(['common', 'game']);
   const [gameState, setGameState] = useState<GameState>(() => {
     // Load from localStorage
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -142,10 +145,12 @@ function App() {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">BusinessCaise</h1>
-              <p className="text-sm text-gray-600 mt-1">Strategic Business Simulation Game</p>
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold text-gray-900">{t('appName')}</h1>
+              <p className="text-sm text-gray-600 mt-1">{t('appTagline')}</p>
             </div>
+
+            <LanguageSelector />
 
             {gameState.teams.length > 0 && (
               <div className="flex items-center gap-4">

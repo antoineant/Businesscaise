@@ -1,0 +1,37 @@
+{
+  "leaderboard": {
+    "title": "Leaderboard",
+    "noTeams": "No teams yet!",
+    "createTeam": "Create a team to get started.",
+    "scoring": {
+      "title": "How Scoring Works",
+      "description": "Your overall score is calculated based on performance across all five departments:",
+      "marketing": "Marketing (20%): Brand awareness, customer acquisition, market share",
+      "sales": "Sales (25%): Revenue, conversion rate, customer satisfaction",
+      "research": "Research & Development (20%): Innovation, quality, efficiency",
+      "finance": "Finance (20%): Cash flow, profit margin, investor confidence",
+      "hr": "Human Resources (15%): Morale, productivity, retention"
+    },
+    "decisionsMode": "decisions made"
+  },
+  "decision": {
+    "yourDecisions": "Your Decisions",
+    "guaranteedImpacts": "Guaranteed Impacts",
+    "guaranteedDescription": "These impacts will occur regardless of your choices:",
+    "departmentsAffected": "departments affected",
+    "enterValue": "Enter Value ({{min}} - {{max}} {{unit}})",
+    "scoringRubric": "Scoring Rubric",
+    "fileSubmitted": "File Submitted",
+    "selectOption": "Select an option to continue"
+  },
+  "weekComplete": {
+    "title": "Ready for Week {{week}}?",
+    "description": "Make sure your team has made all necessary decisions before advancing.",
+    "finalWeek": "Final Week Complete!",
+    "finalDescription": "You've completed all 5 weeks of the business simulation. Check the leaderboard to see how your team performed!"
+  },
+  "admin": {
+    "controls": "Admin Controls",
+    "confirmReset": "Are you sure you want to reset the entire game? This cannot be undone."
+  }
+}

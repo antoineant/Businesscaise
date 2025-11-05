@@ -1,0 +1,37 @@
+{
+  "leaderboard": {
+    "title": "Classement",
+    "noTeams": "Aucune équipe pour le moment!",
+    "createTeam": "Créez une équipe pour commencer.",
+    "scoring": {
+      "title": "Fonctionnement du Score",
+      "description": "Votre score global est calculé en fonction des performances dans les cinq départements:",
+      "marketing": "Marketing (20%): Notoriété de la marque, acquisition de clients, part de marché",
+      "sales": "Ventes (25%): Chiffre d'affaires, taux de conversion, satisfaction client",
+      "research": "Recherche & Développement (20%): Innovation, qualité, efficacité",
+      "finance": "Finance (20%): Trésorerie, marge bénéficiaire, confiance des investisseurs",
+      "hr": "Ressources Humaines (15%): Moral, productivité, rétention"
+    },
+    "decisionsMode": "décisions prises"
+  },
+  "decision": {
+    "yourDecisions": "Vos Décisions",
+    "guaranteedImpacts": "Impacts Garantis",
+    "guaranteedDescription": "Ces impacts se produiront quels que soient vos choix:",
+    "departmentsAffected": "départements affectés",
+    "enterValue": "Entrer une Valeur ({{min}} - {{max}} {{unit}})",
+    "scoringRubric": "Grille d'Évaluation",
+    "fileSubmitted": "Fichier Soumis",
+    "selectOption": "Sélectionnez une option pour continuer"
+  },
+  "weekComplete": {
+    "title": "Prêt pour la Semaine {{week}}?",
+    "description": "Assurez-vous que votre équipe a pris toutes les décisions nécessaires avant de continuer.",
+    "finalWeek": "Semaine Finale Terminée!",
+    "finalDescription": "Vous avez terminé les 5 semaines de simulation d'entreprise. Consultez le classement pour voir les performances de votre équipe!"
+  },
+  "admin": {
+    "controls": "Contrôles Administrateur",
+    "confirmReset": "Êtes-vous sûr de vouloir réinitialiser tout le jeu? Cette action est irréversible."
+  }
+}

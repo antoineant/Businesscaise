@@ -1,0 +1,64 @@
+{
+  "appName": "BusinessCaise",
+  "appTagline": "Strategic Business Simulation Game",
+  "buttons": {
+    "createTeam": "Create New Team",
+    "create": "Create Team",
+    "cancel": "Cancel",
+    "submit": "Submit Decision",
+    "submitDocument": "Submit Document",
+    "remove": "Remove",
+    "reset": "Reset Game (Admin)",
+    "advanceWeek": "Advance to Week {{week}}",
+    "viewResults": "View Final Results",
+    "showImpact": "Preview Impact",
+    "hideImpact": "Hide",
+    "viewImpact": "View Impact"
+  },
+  "navigation": {
+    "currentDecision": "Current Decision",
+    "leaderboard": "Leaderboard",
+    "teams": "Teams"
+  },
+  "teamSetup": {
+    "title": "Team Selection",
+    "selectYour": "Select Your Team:",
+    "teamName": "Team Name",
+    "teamNamePlaceholder": "e.g., Alpha Squad, Marketing Mavericks",
+    "teamMembers": "Team Members (comma-separated)",
+    "teamMembersPlaceholder": "John Doe, Jane Smith, Alex Johnson",
+    "members": "member",
+    "members_plural": "members",
+    "score": "Score",
+    "required": "*"
+  },
+  "howToPlay": {
+    "title": "How to Play",
+    "weekChallenge": "<strong>5 Week Challenge:</strong> Make strategic decisions over 5 weeks",
+    "departments": "<strong>5 Departments:</strong> Every decision affects Marketing, Sales, R&D, Finance, and HR",
+    "decisionTypes": "<strong>Multiple Decision Types:</strong> Numeric inputs, PDF uploads for creative work, and strategic choices",
+    "competition": "<strong>Team Competition:</strong> Compete with other teams for the highest overall score",
+    "consequences": "<strong>Real Consequences:</strong> Your choices have lasting impacts on your business metrics"
+  },
+  "fileUpload": {
+    "dropHere": "Drop your file here or click to browse",
+    "acceptedFormats": "Accepted formats: {{formats}} (Max {{maxSize}}MB)",
+    "processing": "Processing file...",
+    "invalidType": "Invalid file type. Accepted formats: {{formats}}",
+    "tooLarge": "File too large. Maximum size: {{maxSize}}MB",
+    "failed": "Failed to process file. Please try again."
+  },
+  "common": {
+    "week": "Week",
+    "you": "(You)",
+    "points": "points",
+    "submitted": "Submitted",
+    "deadline": "Deadline",
+    "context": "Context",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "footer": {
+    "tagline": "A comprehensive business strategy simulation for students"
+  }
+}

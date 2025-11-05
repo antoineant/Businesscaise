@@ -1,0 +1,34 @@
+{
+  "impacts": {
+    "positive": "Positive Impact",
+    "negative": "Negative Impact",
+    "neutral": "No significant impact"
+  },
+  "minimumImpacts": {
+    "week1": {
+      "innovation": "Product launch validates R&D efforts",
+      "investorConfidence": "Market entry shows progress"
+    },
+    "week2": {
+      "employeeMorale": "Crisis creates stress"
+    },
+    "week3": {
+      "salesGrowth": "Natural market momentum"
+    },
+    "week4": {
+      "marketShare": "Competitive pressure",
+      "employeeMorale": "Market anxiety"
+    },
+    "week5": {
+      "investorConfidence": "Strategic milestone reached"
+    }
+  },
+  "resultsBriefing": {
+    "title": "Executive Briefing",
+    "overnightDevelopments": "Overnight Developments",
+    "impactReport": "Impact Report",
+    "overallPosition": "Overall Position",
+    "rank": "Rank",
+    "marketNews": "Market News"
+  }
+}

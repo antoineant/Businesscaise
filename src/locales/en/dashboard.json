@@ -1,0 +1,48 @@
+{
+  "title": "Your Company Performance",
+  "yourScore": "Your Score",
+  "departments": {
+    "marketing": {
+      "name": "Marketing",
+      "icon": "📢"
+    },
+    "sales": {
+      "name": "Sales",
+      "icon": "💰"
+    },
+    "research": {
+      "name": "Research & Development",
+      "icon": "🔬"
+    },
+    "finance": {
+      "name": "Finance",
+      "icon": "📊"
+    },
+    "hr": {
+      "name": "Human Resources",
+      "icon": "👥"
+    }
+  },
+  "metrics": {
+    "brandAwareness": "Brand Awareness",
+    "customerAcquisition": "Customer Acquisition",
+    "campaignEffectiveness": "Campaign Effectiveness",
+    "marketShare": "Market Share",
+    "revenue": "Revenue",
+    "conversionRate": "Conversion Rate",
+    "customerSatisfaction": "Customer Satisfaction",
+    "salesGrowth": "Sales Growth",
+    "innovation": "Innovation Score",
+    "productQuality": "Product Quality",
+    "rdBudgetEfficiency": "R&D Efficiency",
+    "patentsFiled": "Patents Filed",
+    "cashFlow": "Cash Flow",
+    "profitMargin": "Profit Margin",
+    "debtRatio": "Debt Ratio",
+    "investorConfidence": "Investor Confidence",
+    "employeeMorale": "Employee Morale",
+    "productivity": "Productivity",
+    "retentionRate": "Retention Rate",
+    "talentQuality": "Talent Quality"
+  }
+}

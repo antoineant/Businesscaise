@@ -1,0 +1,277 @@
+{
+  "company": {
+    "name": "TechVenture Inc."
+  },
+  "week1": {
+    "title": "Product Launch Strategy",
+    "description": "Your company is about to launch a revolutionary product. Define your go-to-market strategy.",
+    "context": "TechVenture Inc. has developed an innovative product after 18 months of R&D. The market is competitive, with three major players controlling 60% of market share. You have $150K allocated for the launch, but investor pressure is high for quick returns.",
+    "decisions": {
+      "marketing": {
+        "title": "Marketing Budget Allocation",
+        "description": "Allocate your marketing budget across channels"
+      },
+      "campaign": {
+        "title": "Creative Campaign Proposal",
+        "description": "Submit your creative marketing campaign strategy (PDF)",
+        "rubric": "Creativity (25%), Market fit (25%), Feasibility (25%), Brand alignment (25%)"
+      },
+      "pricing": {
+        "title": "Pricing Strategy",
+        "description": "Choose your pricing approach for market entry",
+        "options": {
+          "premium": {
+            "label": "Premium Pricing ($199) - Position as luxury/quality product",
+            "impacts": {
+              "revenue": "High price, moderate volume",
+              "marketShare": "Limited market penetration",
+              "profitMargin": "Higher margins",
+              "productQuality": "Premium expectations drive quality"
+            }
+          },
+          "competitive": {
+            "label": "Competitive Pricing ($129) - Match market leaders",
+            "impacts": {
+              "revenue": "Moderate price and volume",
+              "marketShare": "Fair market penetration",
+              "profitMargin": "Balanced margins",
+              "customerSatisfaction": "Good value perception"
+            }
+          },
+          "penetration": {
+            "label": "Penetration Pricing ($79) - Aggressive market capture",
+            "impacts": {
+              "revenue": "Low price, high volume",
+              "marketShare": "Rapid market penetration",
+              "profitMargin": "Thin margins",
+              "cashFlow": "Cash flow pressure",
+              "salesGrowth": "High growth rate"
+            }
+          }
+        }
+      },
+      "hiring": {
+        "title": "Initial Hiring Plan",
+        "description": "How many new employees to hire for launch (Sales + Support)"
+      }
+    }
+  },
+  "week2": {
+    "title": "Crisis Management: Supply Chain Disruption",
+    "description": "A major supplier has failed. Navigate this crisis while maintaining operations.",
+    "context": "Week 2 brings unexpected challenges. Your primary component supplier has declared bankruptcy, disrupting 70% of your supply chain. Competitors are facing the same issue. Customer orders are piling up, and your reputation is at stake.",
+    "decisions": {
+      "supplier": {
+        "title": "Supplier Strategy",
+        "description": "Choose your approach to solving the supply chain crisis",
+        "options": {
+          "premium": {
+            "label": "Emergency Premium Supplier (3x cost, immediate delivery)",
+            "impacts": {
+              "customerSatisfaction": "Orders fulfilled on time",
+              "cashFlow": "Expensive emergency sourcing",
+              "profitMargin": "Margin compression",
+              "brandAwareness": "Reliable reputation"
+            }
+          },
+          "inhouse": {
+            "label": "In-house Production (High upfront, long-term savings)",
+            "impacts": {
+              "cashFlow": "Equipment and setup costs",
+              "innovation": "New capabilities developed",
+              "talentQuality": "Manufacturing expertise gained",
+              "customerSatisfaction": "Delayed orders during setup",
+              "investorConfidence": "Strategic independence"
+            }
+          },
+          "delay": {
+            "label": "Delay & Negotiate (Wait for market stabilization)",
+            "impacts": {
+              "customerSatisfaction": "Significant order delays",
+              "revenue": "Lost sales",
+              "brandAwareness": "Reputation damage",
+              "cashFlow": "Cash preserved"
+            }
+          }
+        }
+      },
+      "communication": {
+        "title": "Crisis Communication Plan",
+        "description": "Submit your stakeholder communication strategy (PDF)",
+        "rubric": "Transparency (30%), Stakeholder management (30%), Action plan (20%), Tone (20%)"
+      },
+      "retention": {
+        "title": "Customer Retention Budget",
+        "description": "Allocate budget for customer retention (discounts, expedited shipping)"
+      },
+      "overtime": {
+        "title": "Employee Overtime Authorization",
+        "description": "Approve overtime hours to meet demand (hours per week per employee)"
+      }
+    }
+  },
+  "week3": {
+    "title": "Growth Strategy: Expansion or Optimization",
+    "description": "Your product has gained traction. Decide how to scale the business.",
+    "context": "Sales are growing steadily at 20% month-over-month. You have three options: expand to new markets, optimize current operations, or invest in R&D for next-gen products. Investor board meeting is next month - they expect a clear vision.",
+    "decisions": {
+      "strategy": {
+        "title": "Strategic Direction",
+        "description": "Choose your primary growth strategy",
+        "options": {
+          "expansion": {
+            "label": "Market Expansion - Enter 3 new geographic markets",
+            "impacts": {
+              "marketShare": "Geographic expansion",
+              "revenue": "New market revenue",
+              "cashFlow": "Expansion costs",
+              "talentQuality": "Rapid hiring quality challenges",
+              "investorConfidence": "Growth vision"
+            }
+          },
+          "optimization": {
+            "label": "Operational Excellence - Optimize efficiency and margins",
+            "impacts": {
+              "profitMargin": "Efficiency gains",
+              "rdBudgetEfficiency": "Better processes",
+              "productivity": "Streamlined operations",
+              "salesGrowth": "Focus shifts from growth",
+              "cashFlow": "Cost savings"
+            }
+          },
+          "innovation": {
+            "label": "Innovation Focus - Invest heavily in R&D for Product 2.0",
+            "impacts": {
+              "innovation": "Major R&D push",
+              "patentsFiled": "New IP created",
+              "cashFlow": "R&D investment",
+              "investorConfidence": "Long-term vision",
+              "brandAwareness": "Innovation reputation"
+            }
+          }
+        }
+      },
+      "pitch": {
+        "title": "Investment Pitch Deck",
+        "description": "Submit your strategic vision presentation for investors (PDF)",
+        "rubric": "Vision clarity (25%), Financial projections (25%), Risk mitigation (25%), Market analysis (25%)"
+      },
+      "rdBudget": {
+        "title": "R&D Budget Allocation",
+        "description": "Allocate quarterly R&D budget"
+      },
+      "talent": {
+        "title": "Talent Acquisition Investment",
+        "description": "Budget for recruiting senior talent"
+      }
+    }
+  },
+  "week4": {
+    "title": "Competitive Threat Response",
+    "description": "A major competitor launches a product directly targeting your market.",
+    "context": "Intel reveals that market leader GlobalTech has launched a competing product at 30% lower price. Their marketing budget is 5x yours. Early reviews are mixed but their brand recognition is strong. You must respond decisively to protect your market position.",
+    "decisions": {
+      "response": {
+        "title": "Competitive Response Strategy",
+        "description": "Choose how to respond to the competitive threat",
+        "options": {
+          "pricewar": {
+            "label": "Price War - Match their pricing and compete head-on",
+            "impacts": {
+              "revenue": "Revenue drop from price cuts",
+              "profitMargin": "Margin compression",
+              "marketShare": "Defend market position",
+              "investorConfidence": "Concern about profitability"
+            }
+          },
+          "differentiation": {
+            "label": "Differentiation - Emphasize quality and unique features",
+            "impacts": {
+              "brandAwareness": "Strong positioning",
+              "productQuality": "Quality focus",
+              "customerSatisfaction": "Value-based selling",
+              "campaignEffectiveness": "Clear messaging"
+            }
+          },
+          "pivot": {
+            "label": "Pivot - Target different customer segment they ignore",
+            "impacts": {
+              "marketShareLoss": "Exit contested segment",
+              "revenueDip": "Short-term revenue dip",
+              "marketShareGain": "New segment capture",
+              "innovation": "Adaptive innovation",
+              "salesGrowth": "Blue ocean opportunity"
+            }
+          }
+        }
+      },
+      "analysis": {
+        "title": "Competitive Analysis Report",
+        "description": "Submit detailed competitor analysis and response plan (PDF)",
+        "rubric": "Competitive intelligence (30%), Strategic response (30%), Execution plan (20%), Risk assessment (20%)"
+      },
+      "marketing": {
+        "title": "Emergency Marketing Fund",
+        "description": "Allocate emergency budget for counter-marketing campaign"
+      },
+      "timeline": {
+        "title": "Product Enhancement Timeline",
+        "description": "Fast-track product improvements (weeks to launch)"
+      }
+    }
+  },
+  "week5": {
+    "title": "Future Vision: Exit Strategy or Scale",
+    "description": "You have received an acquisition offer. Decide the future of your company.",
+    "context": "Major corporation TechGlobal has offered to acquire TechVenture Inc. for $10M. Alternatively, venture capital firm wants to invest $5M for 30% equity to scale globally. Or you can continue bootstrapping with current trajectory. This decision will define your legacy.",
+    "decisions": {
+      "future": {
+        "title": "Strategic Decision",
+        "description": "Choose the future path for your company",
+        "options": {
+          "acquisition": {
+            "label": "Accept Acquisition - $10M exit, team absorbed by TechGlobal",
+            "impacts": {
+              "investorConfidence": "Successful exit",
+              "cashFlow": "Acquisition proceeds",
+              "employeeMorale": "Uncertainty about future",
+              "brandAwareness": "Major acquisition news"
+            }
+          },
+          "vcinvestment": {
+            "label": "Take VC Investment - Scale aggressively with $5M injection",
+            "impacts": {
+              "cashFlow": "Investment capital",
+              "investorConfidence": "VC validation",
+              "talentQuality": "Attract top talent",
+              "salesGrowth": "Funded expansion",
+              "marketShare": "Aggressive growth"
+            }
+          },
+          "bootstrap": {
+            "label": "Continue Bootstrapping - Maintain independence and organic growth",
+            "impacts": {
+              "employeeMorale": "Startup culture preserved",
+              "profitMargin": "No dilution",
+              "innovation": "Creative freedom",
+              "salesGrowthSlow": "Slower growth rate"
+            }
+          }
+        }
+      },
+      "presentation": {
+        "title": "Board Presentation & Recommendation",
+        "description": "Submit your strategic recommendation with detailed analysis (PDF)",
+        "rubric": "Strategic vision (25%), Financial analysis (25%), Stakeholder impact (25%), Long-term planning (25%)"
+      },
+      "budget": {
+        "title": "12-Month Budget Plan",
+        "description": "Project your budget for next year under chosen strategy"
+      },
+      "culture": {
+        "title": "Company Culture Investment",
+        "description": "Allocate budget for employee retention and culture"
+      }
+    }
+  }
+}

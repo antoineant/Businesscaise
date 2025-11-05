@@ -1,0 +1,64 @@
+{
+  "appName": "BusinessCaise",
+  "appTagline": "Jeu de Simulation Stratégique d'Entreprise",
+  "buttons": {
+    "createTeam": "Créer une Nouvelle Équipe",
+    "create": "Créer l'Équipe",
+    "cancel": "Annuler",
+    "submit": "Soumettre la Décision",
+    "submitDocument": "Soumettre le Document",
+    "remove": "Supprimer",
+    "reset": "Réinitialiser le Jeu (Admin)",
+    "advanceWeek": "Passer à la Semaine {{week}}",
+    "viewResults": "Voir les Résultats Finaux",
+    "showImpact": "Aperçu de l'Impact",
+    "hideImpact": "Masquer",
+    "viewImpact": "Voir l'Impact"
+  },
+  "navigation": {
+    "currentDecision": "Décision Actuelle",
+    "leaderboard": "Classement",
+    "teams": "Équipes"
+  },
+  "teamSetup": {
+    "title": "Sélection d'Équipe",
+    "selectYour": "Sélectionnez Votre Équipe:",
+    "teamName": "Nom de l'Équipe",
+    "teamNamePlaceholder": "ex: Escouade Alpha, Champions du Marketing",
+    "teamMembers": "Membres de l'Équipe (séparés par des virgules)",
+    "teamMembersPlaceholder": "Jean Dupont, Marie Martin, Alex Bernard",
+    "members": "membre",
+    "members_plural": "membres",
+    "score": "Score",
+    "required": "*"
+  },
+  "howToPlay": {
+    "title": "Comment Jouer",
+    "weekChallenge": "<strong>Défi de 5 Semaines:</strong> Prenez des décisions stratégiques sur 5 semaines",
+    "departments": "<strong>5 Départements:</strong> Chaque décision affecte le Marketing, les Ventes, la R&D, les Finances et les RH",
+    "decisionTypes": "<strong>Types de Décisions Multiples:</strong> Saisies numériques, téléchargements PDF pour le travail créatif et choix stratégiques",
+    "competition": "<strong>Compétition d'Équipe:</strong> Affrontez d'autres équipes pour le meilleur score global",
+    "consequences": "<strong>Conséquences Réelles:</strong> Vos choix ont des impacts durables sur vos indicateurs d'entreprise"
+  },
+  "fileUpload": {
+    "dropHere": "Déposez votre fichier ici ou cliquez pour parcourir",
+    "acceptedFormats": "Formats acceptés: {{formats}} (Max {{maxSize}}Mo)",
+    "processing": "Traitement du fichier...",
+    "invalidType": "Type de fichier invalide. Formats acceptés: {{formats}}",
+    "tooLarge": "Fichier trop volumineux. Taille maximale: {{maxSize}}Mo",
+    "failed": "Échec du traitement du fichier. Veuillez réessayer."
+  },
+  "common": {
+    "week": "Semaine",
+    "you": "(Vous)",
+    "points": "points",
+    "submitted": "Soumis",
+    "deadline": "Date Limite",
+    "context": "Contexte",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "footer": {
+    "tagline": "Une simulation complète de stratégie d'entreprise pour les étudiants"
+  }
+}

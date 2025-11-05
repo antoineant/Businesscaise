@@ -1,0 +1,48 @@
+{
+  "title": "Performance de Votre Entreprise",
+  "yourScore": "Votre Score",
+  "departments": {
+    "marketing": {
+      "name": "Marketing",
+      "icon": "📢"
+    },
+    "sales": {
+      "name": "Ventes",
+      "icon": "💰"
+    },
+    "research": {
+      "name": "Recherche & Développement",
+      "icon": "🔬"
+    },
+    "finance": {
+      "name": "Finance",
+      "icon": "📊"
+    },
+    "hr": {
+      "name": "Ressources Humaines",
+      "icon": "👥"
+    }
+  },
+  "metrics": {
+    "brandAwareness": "Notoriété de la Marque",
+    "customerAcquisition": "Acquisition de Clients",
+    "campaignEffectiveness": "Efficacité des Campagnes",
+    "marketShare": "Part de Marché",
+    "revenue": "Chiffre d'Affaires",
+    "conversionRate": "Taux de Conversion",
+    "customerSatisfaction": "Satisfaction Client",
+    "salesGrowth": "Croissance des Ventes",
+    "innovation": "Score d'Innovation",
+    "productQuality": "Qualité du Produit",
+    "rdBudgetEfficiency": "Efficacité R&D",
+    "patentsFiled": "Brevets Déposés",
+    "cashFlow": "Trésorerie",
+    "profitMargin": "Marge Bénéficiaire",
+    "debtRatio": "Taux d'Endettement",
+    "investorConfidence": "Confiance des Investisseurs",
+    "employeeMorale": "Moral des Employés",
+    "productivity": "Productivité",
+    "retentionRate": "Taux de Rétention",
+    "talentQuality": "Qualité des Talents"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "impacts": {
+    "positive": "Impact Positif",
+    "negative": "Impact Négatif",
+    "neutral": "Aucun impact significatif"
+  },
+  "minimumImpacts": {
+    "week1": {
+      "innovation": "Le lancement du produit valide les efforts de R&D",
+      "investorConfidence": "L'entrée sur le marché montre des progrès"
+    },
+    "week2": {
+      "employeeMorale": "La crise crée du stress"
+    },
+    "week3": {
+      "salesGrowth": "Dynamique naturelle du marché"
+    },
+    "week4": {
+      "marketShare": "Pression concurrentielle",
+      "employeeMorale": "Anxiété du marché"
+    },
+    "week5": {
+      "investorConfidence": "Jalon stratégique atteint"
+    }
+  },
+  "resultsBriefing": {
+    "title": "Briefing Exécutif",
+    "overnightDevelopments": "Développements Nocturnes",
+    "impactReport": "Rapport d'Impact",
+    "overallPosition": "Position Globale",
+    "rank": "Rang",
+    "marketNews": "Actualités du Marché"
+  }
+}

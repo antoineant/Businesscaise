@@ -1,0 +1,277 @@
+{
+  "company": {
+    "name": "TechVenture Inc."
+  },
+  "week1": {
+    "title": "Stratégie de Lancement de Produit",
+    "description": "Votre entreprise s'apprête à lancer un produit révolutionnaire. Définissez votre stratégie de mise sur le marché.",
+    "context": "TechVenture Inc. a développé un produit innovant après 18 mois de R&D. Le marché est compétitif, avec trois acteurs majeurs contrôlant 60% des parts de marché. Vous disposez de 150K$ alloués au lancement, mais la pression des investisseurs est forte pour des retours rapides.",
+    "decisions": {
+      "marketing": {
+        "title": "Allocation du Budget Marketing",
+        "description": "Allouez votre budget marketing entre les canaux"
+      },
+      "campaign": {
+        "title": "Proposition de Campagne Créative",
+        "description": "Soumettez votre stratégie de campagne marketing créative (PDF)",
+        "rubric": "Créativité (25%), Adéquation au marché (25%), Faisabilité (25%), Alignement de marque (25%)"
+      },
+      "pricing": {
+        "title": "Stratégie de Prix",
+        "description": "Choisissez votre approche tarifaire pour l'entrée sur le marché",
+        "options": {
+          "premium": {
+            "label": "Prix Premium (199$) - Positionnement luxe/qualité",
+            "impacts": {
+              "revenue": "Prix élevé, volume modéré",
+              "marketShare": "Pénétration de marché limitée",
+              "profitMargin": "Marges plus élevées",
+              "productQuality": "Les attentes premium stimulent la qualité"
+            }
+          },
+          "competitive": {
+            "label": "Prix Compétitif (129$) - Égaler les leaders du marché",
+            "impacts": {
+              "revenue": "Prix et volume modérés",
+              "marketShare": "Pénétration de marché équitable",
+              "profitMargin": "Marges équilibrées",
+              "customerSatisfaction": "Bonne perception de la valeur"
+            }
+          },
+          "penetration": {
+            "label": "Prix de Pénétration (79$) - Capture agressive du marché",
+            "impacts": {
+              "revenue": "Prix bas, volume élevé",
+              "marketShare": "Pénétration rapide du marché",
+              "profitMargin": "Marges minces",
+              "cashFlow": "Pression sur la trésorerie",
+              "salesGrowth": "Taux de croissance élevé"
+            }
+          }
+        }
+      },
+      "hiring": {
+        "title": "Plan d'Embauche Initial",
+        "description": "Combien de nouveaux employés embaucher pour le lancement (Ventes + Support)"
+      }
+    }
+  },
+  "week2": {
+    "title": "Gestion de Crise: Perturbation de la Chaîne d'Approvisionnement",
+    "description": "Un fournisseur majeur a fait faillite. Naviguez cette crise tout en maintenant les opérations.",
+    "context": "La semaine 2 apporte des défis inattendus. Votre principal fournisseur de composants a déclaré faillite, perturbant 70% de votre chaîne d'approvisionnement. Les concurrents font face au même problème. Les commandes clients s'accumulent et votre réputation est en jeu.",
+    "decisions": {
+      "supplier": {
+        "title": "Stratégie Fournisseur",
+        "description": "Choisissez votre approche pour résoudre la crise d'approvisionnement",
+        "options": {
+          "premium": {
+            "label": "Fournisseur d'Urgence Premium (coût x3, livraison immédiate)",
+            "impacts": {
+              "customerSatisfaction": "Commandes honorées à temps",
+              "cashFlow": "Approvisionnement d'urgence coûteux",
+              "profitMargin": "Compression des marges",
+              "brandAwareness": "Réputation de fiabilité"
+            }
+          },
+          "inhouse": {
+            "label": "Production Interne (Coût initial élevé, économies à long terme)",
+            "impacts": {
+              "cashFlow": "Coûts d'équipement et d'installation",
+              "innovation": "Nouvelles capacités développées",
+              "talentQuality": "Expertise manufacturière acquise",
+              "customerSatisfaction": "Commandes retardées pendant l'installation",
+              "investorConfidence": "Indépendance stratégique"
+            }
+          },
+          "delay": {
+            "label": "Retard & Négociation (Attendre la stabilisation du marché)",
+            "impacts": {
+              "customerSatisfaction": "Retards de commandes importants",
+              "revenue": "Ventes perdues",
+              "brandAwareness": "Dommages à la réputation",
+              "cashFlow": "Trésorerie préservée"
+            }
+          }
+        }
+      },
+      "communication": {
+        "title": "Plan de Communication de Crise",
+        "description": "Soumettez votre stratégie de communication avec les parties prenantes (PDF)",
+        "rubric": "Transparence (30%), Gestion des parties prenantes (30%), Plan d'action (20%), Ton (20%)"
+      },
+      "retention": {
+        "title": "Budget de Rétention Client",
+        "description": "Allouez un budget pour la rétention client (remises, expédition accélérée)"
+      },
+      "overtime": {
+        "title": "Autorisation d'Heures Supplémentaires",
+        "description": "Approuvez les heures supplémentaires pour répondre à la demande (heures par semaine par employé)"
+      }
+    }
+  },
+  "week3": {
+    "title": "Stratégie de Croissance: Expansion ou Optimisation",
+    "description": "Votre produit gagne du terrain. Décidez comment faire évoluer l'entreprise.",
+    "context": "Les ventes croissent régulièrement de 20% mois après mois. Vous avez trois options: vous étendre à de nouveaux marchés, optimiser les opérations actuelles, ou investir dans la R&D pour les produits de prochaine génération. La réunion du conseil d'investisseurs est le mois prochain - ils attendent une vision claire.",
+    "decisions": {
+      "strategy": {
+        "title": "Direction Stratégique",
+        "description": "Choisissez votre stratégie de croissance principale",
+        "options": {
+          "expansion": {
+            "label": "Expansion du Marché - Entrer dans 3 nouveaux marchés géographiques",
+            "impacts": {
+              "marketShare": "Expansion géographique",
+              "revenue": "Revenus des nouveaux marchés",
+              "cashFlow": "Coûts d'expansion",
+              "talentQuality": "Défis de qualité d'embauche rapide",
+              "investorConfidence": "Vision de croissance"
+            }
+          },
+          "optimization": {
+            "label": "Excellence Opérationnelle - Optimiser l'efficacité et les marges",
+            "impacts": {
+              "profitMargin": "Gains d'efficacité",
+              "rdBudgetEfficiency": "Meilleurs processus",
+              "productivity": "Opérations rationalisées",
+              "salesGrowth": "L'accent se déplace de la croissance",
+              "cashFlow": "Économies de coûts"
+            }
+          },
+          "innovation": {
+            "label": "Focus Innovation - Investir massivement dans la R&D pour le Produit 2.0",
+            "impacts": {
+              "innovation": "Poussée R&D majeure",
+              "patentsFiled": "Nouvelle PI créée",
+              "cashFlow": "Investissement R&D",
+              "investorConfidence": "Vision à long terme",
+              "brandAwareness": "Réputation d'innovation"
+            }
+          }
+        }
+      },
+      "pitch": {
+        "title": "Présentation Investisseurs",
+        "description": "Soumettez votre présentation de vision stratégique pour les investisseurs (PDF)",
+        "rubric": "Clarté de la vision (25%), Projections financières (25%), Atténuation des risques (25%), Analyse de marché (25%)"
+      },
+      "rdBudget": {
+        "title": "Allocation du Budget R&D",
+        "description": "Allouez le budget R&D trimestriel"
+      },
+      "talent": {
+        "title": "Investissement en Acquisition de Talents",
+        "description": "Budget pour le recrutement de talents seniors"
+      }
+    }
+  },
+  "week4": {
+    "title": "Réponse à la Menace Concurrentielle",
+    "description": "Un concurrent majeur lance un produit ciblant directement votre marché.",
+    "context": "Les renseignements révèlent que le leader du marché GlobalTech a lancé un produit concurrent à 30% de prix inférieur. Leur budget marketing est 5 fois le vôtre. Les premières critiques sont mitigées mais leur reconnaissance de marque est forte. Vous devez répondre de manière décisive pour protéger votre position sur le marché.",
+    "decisions": {
+      "response": {
+        "title": "Stratégie de Réponse Concurrentielle",
+        "description": "Choisissez comment répondre à la menace concurrentielle",
+        "options": {
+          "pricewar": {
+            "label": "Guerre des Prix - Égaler leurs prix et rivaliser frontalement",
+            "impacts": {
+              "revenue": "Baisse des revenus due aux réductions de prix",
+              "profitMargin": "Compression des marges",
+              "marketShare": "Défendre la position sur le marché",
+              "investorConfidence": "Inquiétude concernant la rentabilité"
+            }
+          },
+          "differentiation": {
+            "label": "Différenciation - Mettre l'accent sur la qualité et les caractéristiques uniques",
+            "impacts": {
+              "brandAwareness": "Positionnement fort",
+              "productQuality": "Focus qualité",
+              "customerSatisfaction": "Vente basée sur la valeur",
+              "campaignEffectiveness": "Message clair"
+            }
+          },
+          "pivot": {
+            "label": "Pivot - Cibler un segment client différent qu'ils ignorent",
+            "impacts": {
+              "marketShareLoss": "Sortir du segment contesté",
+              "revenueDip": "Baisse temporaire des revenus",
+              "marketShareGain": "Capture de nouveau segment",
+              "innovation": "Innovation adaptative",
+              "salesGrowth": "Opportunité d'océan bleu"
+            }
+          }
+        }
+      },
+      "analysis": {
+        "title": "Rapport d'Analyse Concurrentielle",
+        "description": "Soumettez une analyse détaillée des concurrents et un plan de réponse (PDF)",
+        "rubric": "Intelligence concurrentielle (30%), Réponse stratégique (30%), Plan d'exécution (20%), Évaluation des risques (20%)"
+      },
+      "marketing": {
+        "title": "Fonds Marketing d'Urgence",
+        "description": "Allouez un budget d'urgence pour une campagne marketing de contre-attaque"
+      },
+      "timeline": {
+        "title": "Calendrier d'Amélioration du Produit",
+        "description": "Accélérer les améliorations du produit (semaines jusqu'au lancement)"
+      }
+    }
+  },
+  "week5": {
+    "title": "Vision Future: Stratégie de Sortie ou Croissance",
+    "description": "Vous avez reçu une offre d'acquisition. Décidez de l'avenir de votre entreprise.",
+    "context": "La grande entreprise TechGlobal a proposé d'acquérir TechVenture Inc. pour 10M$. Alternativement, une société de capital-risque veut investir 5M$ pour 30% de capital afin de se développer mondialement. Ou vous pouvez continuer en bootstrapping avec la trajectoire actuelle. Cette décision définira votre héritage.",
+    "decisions": {
+      "future": {
+        "title": "Décision Stratégique",
+        "description": "Choisissez le chemin futur pour votre entreprise",
+        "options": {
+          "acquisition": {
+            "label": "Accepter l'Acquisition - Sortie de 10M$, équipe absorbée par TechGlobal",
+            "impacts": {
+              "investorConfidence": "Sortie réussie",
+              "cashFlow": "Produit de l'acquisition",
+              "employeeMorale": "Incertitude sur l'avenir",
+              "brandAwareness": "Actualité d'acquisition majeure"
+            }
+          },
+          "vcinvestment": {
+            "label": "Accepter l'Investissement VC - Croître agressivement avec une injection de 5M$",
+            "impacts": {
+              "cashFlow": "Capital d'investissement",
+              "investorConfidence": "Validation VC",
+              "talentQuality": "Attirer les meilleurs talents",
+              "salesGrowth": "Expansion financée",
+              "marketShare": "Croissance agressive"
+            }
+          },
+          "bootstrap": {
+            "label": "Continuer en Bootstrapping - Maintenir l'indépendance et la croissance organique",
+            "impacts": {
+              "employeeMorale": "Culture startup préservée",
+              "profitMargin": "Pas de dilution",
+              "innovation": "Liberté créative",
+              "salesGrowthSlow": "Taux de croissance plus lent"
+            }
+          }
+        }
+      },
+      "presentation": {
+        "title": "Présentation au Conseil & Recommandation",
+        "description": "Soumettez votre recommandation stratégique avec analyse détaillée (PDF)",
+        "rubric": "Vision stratégique (25%), Analyse financière (25%), Impact sur les parties prenantes (25%), Planification à long terme (25%)"
+      },
+      "budget": {
+        "title": "Plan Budgétaire 12 Mois",
+        "description": "Projetez votre budget pour l'année prochaine selon la stratégie choisie"
+      },
+      "culture": {
+        "title": "Investissement Culture d'Entreprise",
+        "description": "Allouez un budget pour la rétention des employés et la culture"
+      }
+    }
+  }
+}
