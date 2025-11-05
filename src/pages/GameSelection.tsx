@@ -14,6 +14,7 @@ export default function GameSelection() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [gameCode, setGameCode] = useState('');
 
   useEffect(() => {
     loadGames();
@@ -49,6 +50,17 @@ export default function GameSelection() {
     } else {
       navigate(`/game/${gameId}`);
     }
+  };
+
+  const handleJoinGame = () => {
+    if (!gameCode.trim()) {
+      setError('Please enter a game code');
+      return;
+    }
+
+    setError('');
+    // Navigate to the game page with the entered game code
+    navigate(`/game/${gameCode.trim()}`);
   };
 
   const getStatusColor = (status: string) => {
@@ -209,10 +221,17 @@ export default function GameSelection() {
               <div className="max-w-md mx-auto">
                 <input
                   type="text"
-                  placeholder="Enter game code..."
+                  value={gameCode}
+                  onChange={(e) => setGameCode(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleJoinGame()}
+                  placeholder="Enter game code (e.g., game-demo-001)..."
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-                <button className="w-full mt-3 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+                <button
+                  onClick={handleJoinGame}
+                  disabled={!gameCode.trim()}
+                  className="w-full mt-3 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
                   Join Game
                 </button>
               </div>
