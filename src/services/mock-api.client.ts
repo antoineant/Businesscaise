@@ -135,12 +135,18 @@ export const mockGmAPI = {
 export const mockTeamAPI = {
   createTeam: async (data: {
     game_id: string;
-    name: string;
-    color: string;
-    members: string[];
+    team_name: string;
+    color?: string;
+    members?: string[];
   }): Promise<Team> => {
     await delay(500);
-    return mockDataStore.createTeam(data);
+    // Map team_name to name for internal storage
+    return mockDataStore.createTeam({
+      game_id: data.game_id,
+      name: data.team_name,
+      color: data.color || '#3B82F6',
+      members: data.members || [],
+    });
   },
 
   getTeamDetails: async (teamId: string): Promise<Team> => {
