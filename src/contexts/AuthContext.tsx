@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { authAPI, User } from '../services/api.client';
-import websocketService from '../services/websocket.service';
+import { unifiedAuthAPI, unifiedWebSocketService, User } from '../services/api.unified';
 
 interface AuthContextType {
   user: User | null;
@@ -31,11 +30,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (token && storedUser) {
         try {
           // Verify token is still valid by fetching current user
-          const currentUser = await authAPI.getCurrentUser();
+          const currentUser = await unifiedAuthAPI.getCurrentUser();
           setUser(currentUser);
 
           // Connect WebSocket
-          websocketService.connect(token);
+          unifiedWebSocketService.connect(token);
         } catch (error) {
           console.error('Failed to initialize auth:', error);
           // Token invalid, clear storage
@@ -52,11 +51,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await authAPI.login(email, password);
+      const response = await unifiedAuthAPI.login(email, password);
       setUser(response.user);
 
       // Connect WebSocket
-      websocketService.connect(response.token);
+      unifiedWebSocketService.connect(response.token);
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
@@ -70,7 +69,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     role: 'game_master' | 'player' = 'player'
   ) => {
     try {
-      const response = await authAPI.register({ email, password, name, role });
+      const response = await unifiedAuthAPI.register({ email, password, name, role });
 
       // Auto-login after registration
       if (response.token && response.user) {
@@ -79,7 +78,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(response.user);
 
         // Connect WebSocket
-        websocketService.connect(response.token);
+        unifiedWebSocketService.connect(response.token);
       }
     } catch (error) {
       console.error('Registration failed:', error);
@@ -89,18 +88,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
-      await authAPI.logout();
+      await unifiedAuthAPI.logout();
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
       setUser(null);
-      websocketService.disconnect();
+      unifiedWebSocketService.disconnect();
     }
   };
 
   const refreshUser = async () => {
     try {
-      const currentUser = await authAPI.getCurrentUser();
+      const currentUser = await unifiedAuthAPI.getCurrentUser();
       setUser(currentUser);
     } catch (error) {
       console.error('Failed to refresh user:', error);
