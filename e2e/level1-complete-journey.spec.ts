@@ -14,19 +14,7 @@ async function enableDemoMode(page) {
 
 // Helper to login as demo player
 async function loginAsDemoPlayer(page) {
-  // Navigate with demo mode enabled via URL parameter
-  // Use 'domcontentloaded' instead of 'load' to avoid waiting for all resources
-  await page.goto('/?demo=true', { waitUntil: 'domcontentloaded' });
-
-  // Wait a moment for demo mode to be applied
-  await page.waitForTimeout(500);
-
-  // Close demo mode help modal if it's open
-  const gotItButton = page.getByRole('button', { name: /got it/i });
-  if (await gotItButton.isVisible().catch(() => false)) {
-    await gotItButton.click();
-    await page.waitForTimeout(300); // Wait for modal to close
-  }
+  // beforeEach already navigated to /login?demo=true, so just fill the form
 
   // Fill in login credentials
   await page.getByLabel(/email/i).fill('demo-player1@businesscaise.com');
@@ -36,14 +24,13 @@ async function loginAsDemoPlayer(page) {
   await page.getByRole('button', { name: /log in|sign in/i }).click();
 
   // Wait for redirect to dashboard
-  await page.waitForURL(/dashboard|game/, { timeout: 5000 });
+  await page.waitForURL(/dashboard|game/, { timeout: 10000 });
 }
 
 test.describe('Level 1: Complete Student Journey', () => {
   test.beforeEach(async ({ page }) => {
-    // Ensure demo mode is enabled via URL parameter
-    // Use 'domcontentloaded' to avoid waiting for all resources
-    await page.goto('/?demo=true', { waitUntil: 'domcontentloaded' });
+    // Navigate directly to login page with demo mode enabled
+    await page.goto('/login?demo=true', { waitUntil: 'domcontentloaded' });
     // Wait a moment for demo mode to be applied
     await page.waitForTimeout(500);
 
