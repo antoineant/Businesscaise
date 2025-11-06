@@ -8,6 +8,7 @@ import LanguageSelector from '../components/LanguageSelector';
 import DepartmentDashboard from '../components/DepartmentDashboard';
 import SubmissionForm from '../components/SubmissionForm';
 import { DepartmentMetrics } from '../types/game';
+import { demoMode } from '../services/demo-mode';
 
 // Helper function to convert backend metrics to frontend DepartmentMetrics format
 function convertToDepartmentMetrics(backendMetrics: any): DepartmentMetrics {
@@ -108,6 +109,13 @@ export default function PlayerGame() {
       };
     }
   }, [teamId, gameId]);
+
+  // Auto-switch to game tab when there's an active session (especially for demo mode)
+  useEffect(() => {
+    if (currentSession?.status === 'active' && demoMode.isEnabled()) {
+      setActiveTab('game');
+    }
+  }, [currentSession]);
 
   const loadGameData = async (tId: string) => {
     try {
