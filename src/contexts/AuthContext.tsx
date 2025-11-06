@@ -24,6 +24,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Initialize auth state from localStorage
   useEffect(() => {
     const initAuth = async () => {
+      // Skip auth initialization in demo mode to avoid API calls
+      if (window.location.search.includes('demo=true')) {
+        console.log('[AUTH] Demo mode detected, skipping token verification');
+        setIsLoading(false);
+        return;
+      }
+
       const token = localStorage.getItem('auth_token');
       const storedUser = localStorage.getItem('user');
 
