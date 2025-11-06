@@ -88,12 +88,12 @@ test.describe('Level 1: Complete Student Journey', () => {
     await expect(submitButton).toBeEnabled();
     await submitButton.click();
 
-    // STEP 11: Wait for results to load
-    await expect(page.getByText(/overall score/i)).toBeVisible({ timeout: 10000 });
+    // STEP 11: Wait for results to load - use heading to avoid strict mode violation
+    await expect(page.getByRole('heading', { name: /overall score/i })).toBeVisible({ timeout: 10000 });
 
-    // STEP 12: Verify results are displayed
-    await expect(page.getByText(/performance breakdown/i)).toBeVisible();
-    await expect(page.getByText(/financial summary/i)).toBeVisible();
+    // STEP 12: Verify results are displayed - use headings for specificity
+    await expect(page.getByRole('heading', { name: /performance breakdown/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /financial summary/i })).toBeVisible();
 
     // STEP 13: Verify score components
     await expect(page.getByText(/cash.*profit/i)).toBeVisible();
@@ -107,11 +107,11 @@ test.describe('Level 1: Complete Student Journey', () => {
     await expect(page.getByText(/net profit/i)).toBeVisible();
     await expect(page.getByText(/ending cash/i)).toBeVisible();
 
-    // STEP 15: Verify feedback is provided
-    await expect(page.getByText(/learning tips/i)).toBeVisible();
+    // STEP 15: Verify feedback is provided - use heading
+    await expect(page.getByRole('heading', { name: /learning tips/i })).toBeVisible();
 
-    // STEP 16: Verify next session state is shown
-    await expect(page.getByText(/next session starting position/i)).toBeVisible();
+    // STEP 16: Verify next session state is shown - use heading
+    await expect(page.getByRole('heading', { name: /next session starting position/i })).toBeVisible();
 
     // STEP 17: Take a screenshot of the results
     await page.screenshot({ path: 'e2e-results/level1-complete-session.png', fullPage: true });
@@ -141,8 +141,8 @@ test.describe('Level 1: Complete Student Journey', () => {
     if (await submitButton.isEnabled()) {
       await submitButton.click();
 
-      // Wait for results
-      await page.waitForSelector('text=/overall score/i', { timeout: 10000 });
+      // Wait for results - use heading to avoid strict mode violation
+      await expect(page.getByRole('heading', { name: /overall score/i })).toBeVisible({ timeout: 10000 });
 
       // Verify no debt
       await expect(page.getByText(/total debt.*\$0/i)).toBeVisible();
@@ -188,8 +188,8 @@ test.describe('Level 1: Complete Student Journey', () => {
       if (await submitButton.isEnabled()) {
         await submitButton.click();
 
-        // Wait for results
-        await page.waitForSelector('text=/overall score/i', { timeout: 10000 });
+        // Wait for results - use heading to avoid strict mode violation
+        await expect(page.getByRole('heading', { name: /overall score/i })).toBeVisible({ timeout: 10000 });
 
         // Verify high debt
         await expect(page.getByText(/total debt.*\$100,000|112,000/i)).toBeVisible();
@@ -228,8 +228,8 @@ test.describe('Level 1: Complete Student Journey', () => {
       if (await submitButton.isEnabled()) {
         await submitButton.click();
 
-        // Wait for results
-        await page.waitForSelector('text=/overall score/i', { timeout: 10000 });
+        // Wait for results - use heading to avoid strict mode violation
+        await expect(page.getByRole('heading', { name: /overall score/i })).toBeVisible({ timeout: 10000 });
 
         // Should show warnings (info, warning, or critical)
         const warningElements = page.locator('[class*="bg-yellow"], [class*="bg-red"], [class*="bg-blue"]');
@@ -303,8 +303,8 @@ test.describe('Level 1: Complete Student Journey', () => {
 
       await submitPromise;
 
-      // Eventually results should appear
-      await expect(page.getByText(/overall score/i)).toBeVisible({ timeout: 10000 });
+      // Eventually results should appear - use heading to avoid strict mode violation
+      await expect(page.getByRole('heading', { name: /overall score/i })).toBeVisible({ timeout: 10000 });
     }
   });
 });
