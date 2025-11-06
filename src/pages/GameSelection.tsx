@@ -5,6 +5,7 @@ import { unifiedGmAPI as gmAPI, unifiedTeamAPI as teamAPI, Game } from '../servi
 import { useTranslation } from 'react-i18next';
 import { Plus, Users, Clock, Play, AlertCircle } from 'lucide-react';
 import LanguageSelector from '../components/LanguageSelector';
+import { demoMode } from '../services/demo-mode';
 
 export default function GameSelection() {
   const { t } = useTranslation('common');
@@ -15,6 +16,18 @@ export default function GameSelection() {
   const [error, setError] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [gameCode, setGameCode] = useState('');
+
+  // Auto-navigate demo mode players to the demo game
+  useEffect(() => {
+    if (user?.role === 'player' && demoMode.isEnabled()) {
+      const demoGameId = 'game-demo-001';
+      const teamId = 'team-demo-001';
+
+      // Store team ID for demo player
+      localStorage.setItem(`team_${demoGameId}`, teamId);
+      navigate(`/game/${demoGameId}`, { replace: true });
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
     loadGames();
