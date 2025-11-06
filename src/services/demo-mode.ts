@@ -8,15 +8,21 @@ export class DemoModeManager {
   private isDemoMode: boolean = false;
 
   private constructor() {
-    // Check localStorage for demo mode preference
-    const stored = localStorage.getItem(DEMO_MODE_KEY);
-    this.isDemoMode = stored === 'true';
+    try {
+      // Check localStorage for demo mode preference
+      const stored = localStorage.getItem(DEMO_MODE_KEY);
+      this.isDemoMode = stored === 'true';
 
-    // Check URL parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('demo')) {
-      this.isDemoMode = urlParams.get('demo') === 'true';
-      this.save();
+      // Check URL parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('demo')) {
+        this.isDemoMode = urlParams.get('demo') === 'true';
+        this.save();
+      }
+    } catch (error) {
+      console.error('Error initializing demo mode:', error);
+      // Default to false if there's an error
+      this.isDemoMode = false;
     }
   }
 
