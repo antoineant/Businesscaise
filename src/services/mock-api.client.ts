@@ -21,12 +21,22 @@ export const mockAuthAPI = {
 
   login: async (email: string, password: string) => {
     await delay();
-    return mockDataStore.login(email, password);
+    const result = mockDataStore.login(email, password);
+
+    // Store token and user in localStorage (same as real API client)
+    localStorage.setItem('auth_token', result.token);
+    localStorage.setItem('user', JSON.stringify(result.user));
+
+    return result;
   },
 
   logout: async () => {
     await delay();
     mockDataStore.logout();
+
+    // Remove token and user from localStorage (same as real API client)
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user');
   },
 
   getCurrentUser: async (): Promise<User> => {
