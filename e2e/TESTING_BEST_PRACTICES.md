@@ -41,10 +41,16 @@ await page.getByPlaceholder(/search/i).fill('query');
 Use parent containers to narrow down searches:
 
 ```typescript
-// Find within a specific section
+// Find within a specific section using test ID
 const financialState = page.getByTestId('current-financial-state');
 await expect(financialState.getByText('$50,000')).toBeVisible();
+
+// Find within a section using heading + parent locator
+const financialSection = page.getByRole('heading', { name: /financial summary/i }).locator('..');
+await expect(financialSection.getByText(/revenue/i)).toBeVisible();
 ```
+
+**Why this works**: Limits the search scope to a specific container, preventing matches in other sections.
 
 #### 4. **Use .first() or .nth() as LAST RESORT**
 Only when you can't be more specific:
@@ -80,6 +86,136 @@ await page.getByTestId('loan-checkbox').check();
 // More stable, won't break on text changes
 ```
 
+### Advanced: Scoping to Sections (Critical for Results Pages)
+
+#### The Problem with Common Terms
+Financial and business terms like "Revenue", "Debt", "Profit" often appear in **multiple sections** of the same page:
+- Financial Summary (the actual metric)
+- Learning Tips (educational explanations)
+- Warnings (alerts about performance)
+- Feedback sections (strengths/concerns)
+
+**Example from Level 1 Results:**
+```
+Error: strict mode violation: getByText(/revenue/i) resolved to 3 elements
+```
+"Revenue" appeared in:
+1. Financial Summary section (the label)
+2. Learning Tips section ("Understanding revenue...")
+3. Feedback section ("Your revenue was...")
+
+#### ✅ **SOLUTION**: Scope selectors to parent sections
+
+Use the **heading + parent locator** technique:
+
+```typescript
+// ❌ BAD: Matches multiple elements
+await expect(page.getByText(/revenue/i)).toBeVisible();
+
+// ✅ GOOD: Scoped to Financial Summary section
+const financialSection = page.getByRole('heading', { name: /financial summary/i }).locator('..');
+await expect(financialSection.getByText(/revenue/i)).toBeVisible();
+```
+
+#### How the Scoping Technique Works
+
+1. **Find the section heading** using semantic selector:
+   ```typescript
+   page.getByRole('heading', { name: /financial summary/i })
+   ```
+
+2. **Get the parent container** using `.locator('..')`:
+   ```typescript
+   .locator('..') // Goes up to parent element
+   ```
+
+3. **Search within that container**:
+   ```typescript
+   const section = page.getByRole('heading', { name: /financial summary/i }).locator('..');
+   await expect(section.getByText(/revenue/i)).toBeVisible();
+   ```
+
+#### Real-World Examples from Level 1 Tests
+
+**Example 1: Financial Metrics**
+```typescript
+// Get Financial Summary section
+const financialSection = page.getByRole('heading', { name: /financial summary/i }).locator('..');
+
+// Now search only within that section
+await expect(financialSection.getByText(/revenue/i)).toBeVisible();
+await expect(financialSection.getByText(/gross profit/i)).toBeVisible();
+await expect(financialSection.getByText(/net profit/i)).toBeVisible();
+await expect(financialSection.getByText(/ending cash/i)).toBeVisible();
+```
+
+**Example 2: Performance Scores**
+```typescript
+// Get Performance Breakdown section
+const performanceSection = page.getByRole('heading', { name: /performance breakdown/i }).locator('..');
+
+// Search only within that section
+await expect(performanceSection.getByText(/cash.*profit/i)).toBeVisible();
+await expect(performanceSection.getByText(/debt health/i)).toBeVisible();
+await expect(performanceSection.getByText(/employee happiness/i)).toBeVisible();
+```
+
+**Example 3: Next Session State**
+```typescript
+// Get Next Session section
+const nextSessionSection = page.getByRole('heading', { name: /next session starting position/i }).locator('..');
+
+// Verify debt info only in this section
+await expect(nextSessionSection.getByText(/total debt/i)).toBeVisible();
+await expect(nextSessionSection.getByText(/\$0/)).toBeVisible();
+```
+
+#### Common Terms That Need Scoping
+
+When testing results or dashboard pages, these terms typically appear in multiple places and should be scoped:
+
+**Financial Terms:**
+- Revenue
+- Profit (Gross/Net)
+- Debt
+- Cash
+- Balance
+- Income
+- Expenses
+
+**Score/Performance Terms:**
+- Score
+- Health
+- Satisfaction
+- Happiness
+- Performance
+- Rating
+
+**Status Terms:**
+- Active
+- Pending
+- Complete
+- Failed
+- Warning
+
+#### When to Use Scoping vs Test IDs
+
+| Use Scoping | Use Test IDs |
+|-------------|--------------|
+| Results pages with multiple sections | Form inputs and controls |
+| Dashboard with similar metrics | Navigation elements |
+| Educational content with repeated terms | Action buttons |
+| Feedback sections | Status indicators |
+
+**Tip**: For results pages, combine both:
+```typescript
+// Section heading uses semantic selector
+const resultsSection = page.getByRole('heading', { name: /results/i }).locator('..');
+
+// Individual metrics use test IDs within the section
+await expect(resultsSection.getByTestId('overall-score')).toHaveText('85');
+```
+
 ### When to Add Test IDs
 
 Add `data-testid` attributes to:
@@ -103,9 +239,11 @@ Use kebab-case and be descriptive:
 |----------|------------------|
 | Unique button | `getByRole('button', { name: /exact text/i })` or `getByTestId('button-name')` |
 | Form input | `getByLabel(/label text/i)` or `getByTestId('input-name')` |
-| Text in specific section | Scope with parent: `parent.getByText()` or use `getByTestId()` |
+| Text in specific section | Scope: `page.getByRole('heading', {name: /section/i}).locator('..').getByText()` |
+| Common terms (Revenue, Debt, etc.) | **Always scope to parent section** using heading + `.locator('..')` |
 | Multiple similar elements | Add `data-testid` to each and select by ID |
 | Dynamic content | Always use `data-testid` |
+| Results/Dashboard pages | **Scope all metrics to their sections** to avoid strict mode violations |
 
 ### Additional Tips
 
@@ -134,8 +272,17 @@ Use kebab-case and be descriptive:
 
 ## Summary
 
-**The golden rule**: When a selector could match multiple elements, use `data-testid` instead of text-based selectors. This makes tests:
-- ✅ More stable (won't break on text changes)
-- ✅ Faster (direct ID lookup)
-- ✅ Clearer (explicit intent)
-- ✅ Maintainable (easy to update)
+**The Golden Rules**:
+
+1. **For form inputs and controls**: Use `data-testid` attributes for stability
+2. **For common terms on results pages**: Scope selectors to parent sections using `getByRole('heading').locator('..')`
+3. **For headings and landmarks**: Use semantic `getByRole()` selectors
+
+**Why this matters**:
+- ✅ Prevents strict mode violations (selector matches exactly one element)
+- ✅ More stable (won't break on content changes)
+- ✅ Faster test execution (precise targeting)
+- ✅ Clearer test intent (explicit about what you're testing)
+- ✅ Maintainable (easy to update and debug)
+
+**Critical insight**: Financial/business terms like "Revenue", "Debt", "Profit" appear in multiple sections (metrics, tips, feedback). **Always scope these to their parent section** to avoid strict mode violations.
