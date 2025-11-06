@@ -8,15 +8,21 @@ export class DemoModeManager {
   private isDemoMode: boolean = false;
 
   private constructor() {
-    // Check localStorage for demo mode preference
-    const stored = localStorage.getItem(DEMO_MODE_KEY);
-    this.isDemoMode = stored === 'true';
+    try {
+      // Check localStorage for demo mode preference
+      const stored = localStorage.getItem(DEMO_MODE_KEY);
+      this.isDemoMode = stored === 'true';
 
-    // Check URL parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('demo')) {
-      this.isDemoMode = urlParams.get('demo') === 'true';
-      this.save();
+      // Check URL parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('demo')) {
+        this.isDemoMode = urlParams.get('demo') === 'true';
+        this.save();
+      }
+    } catch (error) {
+      console.error('Error initializing demo mode:', error);
+      // Default to false if there's an error
+      this.isDemoMode = false;
     }
   }
 
@@ -28,6 +34,19 @@ export class DemoModeManager {
   }
 
   isEnabled(): boolean {
+    // Always check URL parameter first (for E2E tests and dynamic switching)
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('demo')) {
+        const urlValue = urlParams.get('demo') === 'true';
+        // Just return URL value without saving to avoid infinite loops
+        return urlValue;
+      }
+    } catch (error) {
+      console.error('Error checking URL for demo mode:', error);
+    }
+
+    // Fall back to stored value
     return this.isDemoMode;
   }
 

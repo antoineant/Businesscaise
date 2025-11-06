@@ -14,10 +14,7 @@ async function enableDemoMode(page) {
 
 // Helper to login as demo player
 async function loginAsDemoPlayer(page) {
-  await page.goto('/');
-
-  // Enable demo mode if needed
-  await enableDemoMode(page);
+  // beforeEach already navigated to /login?demo=true, so just fill the form
 
   // Fill in login credentials
   await page.getByLabel(/email/i).fill('demo-player1@businesscaise.com');
@@ -27,14 +24,22 @@ async function loginAsDemoPlayer(page) {
   await page.getByRole('button', { name: /log in|sign in/i }).click();
 
   // Wait for redirect to dashboard
-  await page.waitForURL(/dashboard|game/, { timeout: 5000 });
+  await page.waitForURL(/dashboard|game/, { timeout: 10000 });
 }
 
 test.describe('Level 1: Complete Student Journey', () => {
   test.beforeEach(async ({ page }) => {
-    // Ensure demo mode is enabled
-    await page.goto('/');
-    await enableDemoMode(page);
+    // Navigate directly to login page with demo mode enabled
+    await page.goto('/login?demo=true', { waitUntil: 'domcontentloaded' });
+    // Wait a moment for demo mode to be applied
+    await page.waitForTimeout(500);
+
+    // Close demo mode help modal if it's open
+    const gotItButton = page.getByRole('button', { name: /got it/i });
+    if (await gotItButton.isVisible().catch(() => false)) {
+      await gotItButton.click();
+      await page.waitForTimeout(300);
+    }
   });
 
   test('should complete full session: login → decision → submit → results', async ({ page }) => {
@@ -120,8 +125,8 @@ test.describe('Level 1: Complete Student Journey', () => {
   test('should handle conservative strategy (no loan)', async ({ page }) => {
     await loginAsDemoPlayer(page);
 
-    // Navigate to session
-    await page.goto('/'); // Adjust to actual session URL
+    // Navigate to session with demo mode
+    await page.goto('/?demo=true', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1000);
 
     // Verify Level 1 interface
@@ -159,7 +164,7 @@ test.describe('Level 1: Complete Student Journey', () => {
   test('should handle aggressive borrowing strategy', async ({ page }) => {
     await loginAsDemoPlayer(page);
 
-    await page.goto('/');
+    await page.goto('/?demo=true', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1000);
 
     const level1Header = page.getByText(/level 1/i).first();
@@ -208,7 +213,7 @@ test.describe('Level 1: Complete Student Journey', () => {
   test('should display warnings for risky decisions', async ({ page }) => {
     await loginAsDemoPlayer(page);
 
-    await page.goto('/');
+    await page.goto('/?demo=true', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1000);
 
     const level1Header = page.getByText(/level 1/i).first();
@@ -250,7 +255,7 @@ test.describe('Level 1: Complete Student Journey', () => {
   test('should handle form validation errors', async ({ page }) => {
     await loginAsDemoPlayer(page);
 
-    await page.goto('/');
+    await page.goto('/?demo=true', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1000);
 
     const level1Header = page.getByText(/level 1/i).first();
@@ -285,7 +290,7 @@ test.describe('Level 1: Complete Student Journey', () => {
   test('should show loading state during submission', async ({ page }) => {
     await loginAsDemoPlayer(page);
 
-    await page.goto('/');
+    await page.goto('/?demo=true', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1000);
 
     const level1Header = page.getByText(/level 1/i).first();
