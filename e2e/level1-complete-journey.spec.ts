@@ -141,18 +141,17 @@ test.describe('Level 1: Complete Student Journey', () => {
     if (await submitButton.isEnabled()) {
       await submitButton.click();
 
-        // Wait for results
-        await page.waitForSelector('text=/overall score/i', { timeout: 10000 });
+      // Wait for results
+      await page.waitForSelector('text=/overall score/i', { timeout: 10000 });
 
-        // Verify no debt
-        await expect(page.getByText(/total debt.*\$0/i)).toBeVisible();
+      // Verify no debt
+      await expect(page.getByText(/total debt.*\$0/i)).toBeVisible();
 
-        // Verify perfect debt health score
-        await expect(page.getByText(/debt health.*100/i)).toBeVisible();
+      // Verify perfect debt health score
+      await expect(page.getByText(/debt health.*100/i)).toBeVisible();
 
-        // Screenshot
-        await page.screenshot({ path: 'e2e-results/level1-conservative.png', fullPage: true });
-      }
+      // Screenshot
+      await page.screenshot({ path: 'e2e-results/level1-conservative.png', fullPage: true });
     }
   });
 
@@ -168,39 +167,38 @@ test.describe('Level 1: Complete Student Journey', () => {
     const loanCheckbox = page.getByTestId('loan-checkbox');
     await loanCheckbox.check();
 
-      // Select long-term
-      const longTermButton = page.getByRole('button', { name: /long-term/i });
-      if (await longTermButton.isVisible()) {
-        await longTermButton.click();
+    // Select long-term
+    const longTermButton = page.getByRole('button', { name: /long-term/i });
+    if (await longTermButton.isVisible()) {
+      await longTermButton.click();
 
-        // Max out loan amount
-        const loanSlider = page.locator('input[type="range"]').first();
-        await loanSlider.fill('100000');
+      // Max out loan amount
+      const loanSlider = page.locator('input[type="range"]').first();
+      await loanSlider.fill('100000');
 
-        // Set aggressive marketing allocation
-        const sliders = page.locator('input[type="range"]');
-        const count = await sliders.count();
+      // Set aggressive marketing allocation
+      const sliders = page.locator('input[type="range"]');
+      const count = await sliders.count();
 
-        // Try to set allocations (if we can identify them)
-        // This is simplified - in real test you'd identify each slider specifically
+      // Try to set allocations (if we can identify them)
+      // This is simplified - in real test you'd identify each slider specifically
 
-        // Submit
-        const submitButton = page.getByTestId('submit-decision-button');
-        if (await submitButton.isEnabled()) {
-          await submitButton.click();
+      // Submit
+      const submitButton = page.getByTestId('submit-decision-button');
+      if (await submitButton.isEnabled()) {
+        await submitButton.click();
 
-          // Wait for results
-          await page.waitForSelector('text=/overall score/i', { timeout: 10000 });
+        // Wait for results
+        await page.waitForSelector('text=/overall score/i', { timeout: 10000 });
 
-          // Verify high debt
-          await expect(page.getByText(/total debt.*\$100,000|112,000/i)).toBeVisible();
+        // Verify high debt
+        await expect(page.getByText(/total debt.*\$100,000|112,000/i)).toBeVisible();
 
-          // Should have debt warnings
-          await expect(page.getByText(/debt/i)).toBeVisible();
+        // Should have debt warnings
+        await expect(page.getByText(/debt/i)).toBeVisible();
 
-          // Screenshot
-          await page.screenshot({ path: 'e2e-results/level1-aggressive.png', fullPage: true });
-        }
+        // Screenshot
+        await page.screenshot({ path: 'e2e-results/level1-aggressive.png', fullPage: true });
       }
     }
   });
@@ -217,32 +215,31 @@ test.describe('Level 1: Complete Student Journey', () => {
     const loanCheckbox = page.getByTestId('loan-checkbox');
     await loanCheckbox.check();
 
-      const shortTermButton = page.getByRole('button', { name: /short-term/i });
-      if (await shortTermButton.isVisible()) {
-        await shortTermButton.click();
+    const shortTermButton = page.getByRole('button', { name: /short-term/i });
+    if (await shortTermButton.isVisible()) {
+      await shortTermButton.click();
 
-        // Set max amount
-        const loanSlider = page.locator('input[type="range"]').first();
-        await loanSlider.fill('50000');
+      // Set max amount
+      const loanSlider = page.locator('input[type="range"]').first();
+      await loanSlider.fill('50000');
 
-        // Submit
-        const submitButton = page.getByTestId('submit-decision-button');
-        if (await submitButton.isEnabled()) {
-          await submitButton.click();
+      // Submit
+      const submitButton = page.getByTestId('submit-decision-button');
+      if (await submitButton.isEnabled()) {
+        await submitButton.click();
 
-          // Wait for results
-          await page.waitForSelector('text=/overall score/i', { timeout: 10000 });
+        // Wait for results
+        await page.waitForSelector('text=/overall score/i', { timeout: 10000 });
 
-          // Should show warnings (info, warning, or critical)
-          const warningElements = page.locator('[class*="bg-yellow"], [class*="bg-red"], [class*="bg-blue"]');
-          const warningCount = await warningElements.count();
+        // Should show warnings (info, warning, or critical)
+        const warningElements = page.locator('[class*="bg-yellow"], [class*="bg-red"], [class*="bg-blue"]');
+        const warningCount = await warningElements.count();
 
-          // At least some visual feedback should exist
-          expect(warningCount).toBeGreaterThan(0);
+        // At least some visual feedback should exist
+        expect(warningCount).toBeGreaterThan(0);
 
-          // Screenshot
-          await page.screenshot({ path: 'e2e-results/level1-warnings.png', fullPage: true });
-        }
+        // Screenshot
+        await page.screenshot({ path: 'e2e-results/level1-warnings.png', fullPage: true });
       }
     }
   });
