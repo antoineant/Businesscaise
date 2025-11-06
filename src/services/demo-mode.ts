@@ -39,11 +39,7 @@ export class DemoModeManager {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.has('demo')) {
         const urlValue = urlParams.get('demo') === 'true';
-        // Update internal state if URL parameter is present
-        if (this.isDemoMode !== urlValue) {
-          this.isDemoMode = urlValue;
-          this.save();
-        }
+        // Just return URL value without saving to avoid infinite loops
         return urlValue;
       }
     } catch (error) {
