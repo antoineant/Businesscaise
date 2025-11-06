@@ -79,7 +79,9 @@ export default function SubmissionForm({
       }
 
       setSuccess(true);
-      onSubmissionComplete?.();
+      // DON'T call onSubmissionComplete for Level 1 - we want to show results immediately
+      // without the parent reloading data which would show the next session's input form
+      // onSubmissionComplete?.();
     } catch (err: any) {
       setError(err.response?.data?.error?.message || 'Failed to submit decision');
     } finally {
@@ -154,12 +156,21 @@ export default function SubmissionForm({
           <div>
             <Level1Results result={level1Result} />
             <div className="mt-6 bg-green-50 border border-green-200 rounded-lg p-4">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 mb-4">
                 <CheckCircle className="w-5 h-5 text-green-600" />
                 <p className="font-medium text-green-900">
                   Decision submitted and scored! Your team's state has been updated.
                 </p>
               </div>
+              <button
+                onClick={() => {
+                  setLevel1Result(null);
+                  onSubmissionComplete?.();
+                }}
+                className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              >
+                Continue to Next Session
+              </button>
             </div>
           </div>
         ) : (
