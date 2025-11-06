@@ -5,15 +5,14 @@ export interface Session {
   game_id: string;
   session_number: number;
   day: string;
-  period: 'AM' | 'PM';
+  period: 'am' | 'pm';
   title: string;
   description: string | null;
-  unlock_type: 'manual' | 'scheduled';
-  scheduled_unlock_time: Date | null;
-  actual_unlock_time: Date | null;
+  narrative: string | null;
+  start_time: Date | null;
   deadline: Date | null;
   status: 'locked' | 'active' | 'completed';
-  challenges: any;
+  unlocked_at: Date | null;
   created_at: Date;
   updated_at: Date;
 }
@@ -22,13 +21,12 @@ export interface CreateSessionData {
   game_id: string;
   session_number: number;
   day: string;
-  period: 'AM' | 'PM';
+  period: 'am' | 'pm';
   title: string;
   description?: string;
-  unlock_type?: 'manual' | 'scheduled';
-  scheduled_unlock_time?: Date;
+  narrative?: string;
+  start_time?: Date;
   deadline?: Date;
-  challenges?: any;
 }
 
 export class SessionModel {
@@ -39,8 +37,8 @@ export class SessionModel {
     const result = await query(
       `INSERT INTO sessions (
         game_id, session_number, day, period, title, description,
-        unlock_type, scheduled_unlock_time, deadline, challenges
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        narrative, start_time, deadline
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
       RETURNING *`,
       [
         data.game_id,
@@ -49,10 +47,9 @@ export class SessionModel {
         data.period,
         data.title,
         data.description || null,
-        data.unlock_type || 'manual',
-        data.scheduled_unlock_time || null,
-        data.deadline || null,
-        data.challenges || {}
+        data.narrative || null,
+        data.start_time || null,
+        data.deadline || null
       ]
     );
 
@@ -157,7 +154,7 @@ export class SessionModel {
   static async unlock(id: string): Promise<Session | null> {
     const result = await query(
       `UPDATE sessions
-       SET status = 'active', actual_unlock_time = NOW(), updated_at = NOW()
+       SET status = 'active', unlocked_at = NOW(), updated_at = NOW()
        WHERE id = $1
        RETURNING *`,
       [id]
