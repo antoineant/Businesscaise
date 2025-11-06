@@ -21,6 +21,13 @@ async function loginAsDemoPlayer(page) {
   // Wait a moment for demo mode to be applied
   await page.waitForTimeout(500);
 
+  // Close demo mode help modal if it's open
+  const gotItButton = page.getByRole('button', { name: /got it/i });
+  if (await gotItButton.isVisible().catch(() => false)) {
+    await gotItButton.click();
+    await page.waitForTimeout(300); // Wait for modal to close
+  }
+
   // Fill in login credentials
   await page.getByLabel(/email/i).fill('demo-player1@businesscaise.com');
   await page.getByLabel(/password/i).fill('demo123');
@@ -39,6 +46,13 @@ test.describe('Level 1: Complete Student Journey', () => {
     await page.goto('/?demo=true', { waitUntil: 'domcontentloaded' });
     // Wait a moment for demo mode to be applied
     await page.waitForTimeout(500);
+
+    // Close demo mode help modal if it's open
+    const gotItButton = page.getByRole('button', { name: /got it/i });
+    if (await gotItButton.isVisible().catch(() => false)) {
+      await gotItButton.click();
+      await page.waitForTimeout(300);
+    }
   });
 
   test('should complete full session: login → decision → submit → results', async ({ page }) => {
