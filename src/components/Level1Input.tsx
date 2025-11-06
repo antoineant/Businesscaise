@@ -84,32 +84,32 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Current State Overview */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4" data-testid="current-financial-state">
         <h3 className="font-bold text-blue-900 mb-2">Current Financial State</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           <div>
             <p className="text-blue-600">Cash</p>
-            <p className="font-bold text-blue-900">${teamState.cash.toLocaleString()}</p>
+            <p className="font-bold text-blue-900" data-testid="starting-cash">${teamState.cash.toLocaleString()}</p>
           </div>
           <div>
             <p className="text-blue-600">Total Debt</p>
-            <p className="font-bold text-blue-900">${teamState.totalDebt.toLocaleString()}</p>
+            <p className="font-bold text-blue-900" data-testid="total-debt">${teamState.totalDebt.toLocaleString()}</p>
           </div>
           <div>
             <p className="text-blue-600">Session</p>
-            <p className="font-bold text-blue-900">#{teamState.sessionNumber + 1}</p>
+            <p className="font-bold text-blue-900" data-testid="session-number">#{teamState.sessionNumber + 1}</p>
           </div>
           {teamState.activeLoan && (
             <div>
               <p className="text-blue-600">Monthly Payment</p>
-              <p className="font-bold text-blue-900">${teamState.activeLoan.monthlyPayment.toLocaleString()}</p>
+              <p className="font-bold text-blue-900" data-testid="active-loan-payment">${teamState.activeLoan.monthlyPayment.toLocaleString()}</p>
             </div>
           )}
         </div>
       </div>
 
       {/* Banking Decision */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white border border-gray-200 rounded-lg p-6" data-testid="banking-decision">
         <div className="flex items-center gap-2 mb-4">
           <DollarSign className="w-5 h-5 text-green-600" />
           <h3 className="text-lg font-bold text-gray-900">Banking Decision</h3>
@@ -124,6 +124,7 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
               onChange={(e) => setTakeLoan(e.target.checked)}
               className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
               disabled={isSubmitting}
+              data-testid="loan-checkbox"
             />
             <span className="font-medium text-gray-900">Take a loan this session?</span>
           </label>
@@ -180,22 +181,22 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
             </div>
 
             {/* Loan Summary */}
-            <div className="bg-gray-50 rounded p-3 space-y-1 text-sm">
+            <div className="bg-gray-50 rounded p-3 space-y-1 text-sm" data-testid="loan-summary">
               <div className="flex justify-between">
                 <span className="text-gray-600">Principal:</span>
-                <span className="font-medium">${loanAmount.toLocaleString()}</span>
+                <span className="font-medium" data-testid="loan-principal">${loanAmount.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Interest ({selectedLoan.interestRate * 100}%):</span>
-                <span className="font-medium">${(loanAmount * selectedLoan.interestRate).toLocaleString()}</span>
+                <span className="font-medium" data-testid="loan-interest">${(loanAmount * selectedLoan.interestRate).toLocaleString()}</span>
               </div>
               <div className="flex justify-between border-t border-gray-300 pt-1">
                 <span className="text-gray-900 font-medium">Total Owed:</span>
-                <span className="font-bold">${totalOwed.toLocaleString()}</span>
+                <span className="font-bold" data-testid="loan-total-owed">${totalOwed.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Monthly Payment:</span>
-                <span className="font-medium">${monthlyPayment.toLocaleString()} × {selectedLoan.sessions}</span>
+                <span className="font-medium" data-testid="loan-monthly-payment">${monthlyPayment.toLocaleString()} × {selectedLoan.sessions}</span>
               </div>
             </div>
           </div>
@@ -203,14 +204,14 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
       </div>
 
       {/* Budget Allocation */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white border border-gray-200 rounded-lg p-6" data-testid="budget-allocation">
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="w-5 h-5 text-purple-600" />
           <h3 className="text-lg font-bold text-gray-900">Budget Allocation</h3>
         </div>
 
         <p className="text-sm text-gray-600 mb-4">
-          Available funds: <span className="font-bold">${availableFunds.toLocaleString()}</span>
+          Available funds: <span className="font-bold" data-testid="available-funds">${availableFunds.toLocaleString()}</span>
         </p>
 
         <div className="space-y-4">
@@ -264,12 +265,12 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
             employees + products + marketing + savings === 100
               ? 'bg-green-50 border border-green-200'
               : 'bg-red-50 border border-red-200'
-          }`}>
+          }`} data-testid="total-allocation">
             <div className="flex justify-between items-center">
               <span className="font-medium text-gray-900">Total Allocation:</span>
               <span className={`text-lg font-bold ${
                 employees + products + marketing + savings === 100 ? 'text-green-600' : 'text-red-600'
-              }`}>
+              }`} data-testid="total-allocation-percentage">
                 {employees + products + marketing + savings}%
               </span>
             </div>
@@ -299,6 +300,7 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
         type="submit"
         disabled={isSubmitting || employees + products + marketing + savings !== 100}
         className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        data-testid="submit-decision-button"
       >
         {isSubmitting ? 'Submitting...' : 'Submit Decision'}
       </button>

@@ -47,21 +47,18 @@ test.describe('Level 1: Complete Student Journey', () => {
     await loginAsDemoPlayer(page);
     await expect(page).toHaveURL(/dashboard|game/);
 
-    // STEP 2: Navigate to active session
-    const sessionLink = page.getByText(/session|challenge/i).first();
-    if (await sessionLink.isVisible().catch(() => false)) {
-      await sessionLink.click();
-    }
+    // STEP 2: Navigate to active session (if needed, though auto-navigation should handle this)
+    // The auto-navigation in GameSelection and PlayerGame should show the game tab directly
 
     // STEP 3: Verify Level 1 interface appears
     await expect(page.getByText(/level 1.*business fundamentals/i)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/current financial state/i)).toBeVisible();
+    await expect(page.getByTestId('current-financial-state')).toBeVisible();
 
-    // STEP 4: Check starting cash is displayed
-    await expect(page.getByText(/\$50,000/)).toBeVisible();
+    // STEP 4: Check starting cash is displayed using test ID (more specific)
+    await expect(page.getByTestId('starting-cash')).toHaveText('$50,000');
 
     // STEP 5: Make banking decision - take a medium-term loan
-    const loanCheckbox = page.getByRole('checkbox', { name: /take a loan/i });
+    const loanCheckbox = page.getByTestId('loan-checkbox');
     await loanCheckbox.check();
 
     // Wait for loan form to appear
@@ -75,21 +72,19 @@ test.describe('Level 1: Complete Student Journey', () => {
     const loanSlider = page.locator('input[type="range"]').first();
     await loanSlider.fill('40000');
 
-    // STEP 7: Verify loan summary shows
-    await expect(page.getByText(/total owed/i)).toBeVisible();
-    await expect(page.getByText(/monthly payment/i)).toBeVisible();
+    // STEP 7: Verify loan summary shows using test ID
+    await expect(page.getByTestId('loan-summary')).toBeVisible();
+    await expect(page.getByTestId('loan-total-owed')).toBeVisible();
+    await expect(page.getByTestId('loan-monthly-payment')).toBeVisible();
 
-    // STEP 8: Adjust budget allocation sliders
-    // Note: Just verify they're visible - default allocation should work
-    await expect(page.getByText(/employees/i)).toBeVisible();
-    await expect(page.getByText(/marketing/i)).toBeVisible();
-    await expect(page.getByText(/products/i)).toBeVisible();
+    // STEP 8: Verify budget allocation section is visible
+    await expect(page.getByTestId('budget-allocation')).toBeVisible();
 
-    // STEP 9: Verify total allocation is 100%
-    await expect(page.getByText(/total allocation.*100%/i)).toBeVisible();
+    // STEP 9: Verify total allocation is 100% using test ID
+    await expect(page.getByTestId('total-allocation-percentage')).toHaveText('100%');
 
-    // STEP 10: Submit decision
-    const submitButton = page.getByRole('button', { name: /submit decision/i });
+    // STEP 10: Submit decision using test ID
+    const submitButton = page.getByTestId('submit-decision-button');
     await expect(submitButton).toBeEnabled();
     await submitButton.click();
 
@@ -125,26 +120,26 @@ test.describe('Level 1: Complete Student Journey', () => {
   test('should handle conservative strategy (no loan)', async ({ page }) => {
     await loginAsDemoPlayer(page);
 
-    // Navigate to session with demo mode
-    await page.goto('/?demo=true', { waitUntil: 'domcontentloaded' });
+    // Auto-navigation should take us to the game
+    await page.waitForURL(/game/);
     await page.waitForTimeout(1000);
 
     // Verify Level 1 interface
-    const level1Header = page.getByText(/level 1/i).first();
-    if (await level1Header.isVisible().catch(() => false)) {
-      // Make conservative decision - no loan
-      const loanCheckbox = page.getByRole('checkbox', { name: /take a loan/i });
+    await expect(page.getByText(/level 1.*business fundamentals/i)).toBeVisible({ timeout: 10000 });
 
-      // Ensure it's unchecked
-      if (await loanCheckbox.isChecked()) {
-        await loanCheckbox.uncheck();
-      }
+    // Make conservative decision - no loan
+    const loanCheckbox = page.getByTestId('loan-checkbox');
 
-      // Keep default allocations (33/33/34)
-      const submitButton = page.getByRole('button', { name: /submit decision/i });
+    // Ensure it's unchecked
+    if (await loanCheckbox.isChecked()) {
+      await loanCheckbox.uncheck();
+    }
 
-      if (await submitButton.isEnabled()) {
-        await submitButton.click();
+    // Keep default allocations (33/33/34)
+    const submitButton = page.getByTestId('submit-decision-button');
+
+    if (await submitButton.isEnabled()) {
+      await submitButton.click();
 
         // Wait for results
         await page.waitForSelector('text=/overall score/i', { timeout: 10000 });
@@ -164,14 +159,14 @@ test.describe('Level 1: Complete Student Journey', () => {
   test('should handle aggressive borrowing strategy', async ({ page }) => {
     await loginAsDemoPlayer(page);
 
-    await page.goto('/?demo=true', { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/game/);
     await page.waitForTimeout(1000);
 
-    const level1Header = page.getByText(/level 1/i).first();
-    if (await level1Header.isVisible().catch(() => false)) {
-      // Take maximum long-term loan
-      const loanCheckbox = page.getByRole('checkbox', { name: /take a loan/i });
-      await loanCheckbox.check();
+    await expect(page.getByText(/level 1.*business fundamentals/i)).toBeVisible({ timeout: 10000 });
+
+    // Take maximum long-term loan
+    const loanCheckbox = page.getByTestId('loan-checkbox');
+    await loanCheckbox.check();
 
       // Select long-term
       const longTermButton = page.getByRole('button', { name: /long-term/i });
@@ -190,7 +185,7 @@ test.describe('Level 1: Complete Student Journey', () => {
         // This is simplified - in real test you'd identify each slider specifically
 
         // Submit
-        const submitButton = page.getByRole('button', { name: /submit decision/i });
+        const submitButton = page.getByTestId('submit-decision-button');
         if (await submitButton.isEnabled()) {
           await submitButton.click();
 
@@ -213,14 +208,14 @@ test.describe('Level 1: Complete Student Journey', () => {
   test('should display warnings for risky decisions', async ({ page }) => {
     await loginAsDemoPlayer(page);
 
-    await page.goto('/?demo=true', { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/game/);
     await page.waitForTimeout(1000);
 
-    const level1Header = page.getByText(/level 1/i).first();
-    if (await level1Header.isVisible().catch(() => false)) {
-      // Take short-term loan (high payments)
-      const loanCheckbox = page.getByRole('checkbox', { name: /take a loan/i });
-      await loanCheckbox.check();
+    await expect(page.getByText(/level 1.*business fundamentals/i)).toBeVisible({ timeout: 10000 });
+
+    // Take short-term loan (high payments)
+    const loanCheckbox = page.getByTestId('loan-checkbox');
+    await loanCheckbox.check();
 
       const shortTermButton = page.getByRole('button', { name: /short-term/i });
       if (await shortTermButton.isVisible()) {
@@ -231,7 +226,7 @@ test.describe('Level 1: Complete Student Journey', () => {
         await loanSlider.fill('50000');
 
         // Submit
-        const submitButton = page.getByRole('button', { name: /submit decision/i });
+        const submitButton = page.getByTestId('submit-decision-button');
         if (await submitButton.isEnabled()) {
           await submitButton.click();
 
@@ -255,67 +250,64 @@ test.describe('Level 1: Complete Student Journey', () => {
   test('should handle form validation errors', async ({ page }) => {
     await loginAsDemoPlayer(page);
 
-    await page.goto('/?demo=true', { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/game/);
     await page.waitForTimeout(1000);
 
-    const level1Header = page.getByText(/level 1/i).first();
-    if (await level1Header.isVisible().catch(() => false)) {
-      // Try to manipulate allocations to not equal 100%
-      // This tests if validation prevents submission
+    await expect(page.getByText(/level 1.*business fundamentals/i)).toBeVisible({ timeout: 10000 });
 
-      const sliders = page.locator('input[type="range"]');
-      const count = await sliders.count();
+    // Try to manipulate allocations to not equal 100%
+    // This tests if validation prevents submission
+    const sliders = page.locator('input[type="range"]');
+    const count = await sliders.count();
 
-      if (count > 1) {
-        // Try to set employees to 90% (will make total > 100%)
-        const employeeSlider = sliders.nth(1); // Skip loan slider
-        await employeeSlider.fill('90');
+    if (count > 1) {
+      // Try to set employees to 90% (will make total > 100%)
+      const employeeSlider = sliders.nth(1); // Skip loan slider
+      await employeeSlider.fill('90');
 
-        // Submit button should be disabled
-        const submitButton = page.getByRole('button', { name: /submit decision/i });
+      // Submit button should be disabled
+      const submitButton = page.getByTestId('submit-decision-button');
 
-        // Wait a moment for state to update
-        await page.waitForTimeout(500);
+      // Wait a moment for state to update
+      await page.waitForTimeout(500);
 
-        // Button should be disabled (or error shown)
-        const isDisabled = await submitButton.isDisabled();
-        expect(isDisabled).toBe(true);
+      // Button should be disabled (or error shown)
+      const isDisabled = await submitButton.isDisabled();
+      expect(isDisabled).toBe(true);
 
-        // Screenshot
-        await page.screenshot({ path: 'e2e-results/level1-validation-error.png', fullPage: true });
-      }
+      // Screenshot
+      await page.screenshot({ path: 'e2e-results/level1-validation-error.png', fullPage: true });
     }
   });
 
   test('should show loading state during submission', async ({ page }) => {
     await loginAsDemoPlayer(page);
 
-    await page.goto('/?demo=true', { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/game/);
     await page.waitForTimeout(1000);
 
-    const level1Header = page.getByText(/level 1/i).first();
-    if (await level1Header.isVisible().catch(() => false)) {
-      // Submit with default values
-      const submitButton = page.getByRole('button', { name: /submit decision/i });
+    await expect(page.getByText(/level 1.*business fundamentals/i)).toBeVisible({ timeout: 10000 });
 
-      if (await submitButton.isEnabled()) {
-        // Click submit
-        const submitPromise = submitButton.click();
+    // Submit with default values
+    const submitButton = page.getByTestId('submit-decision-button');
 
-        // Immediately check for loading state
-        const loadingText = page.getByText(/submitting/i);
+    if (await submitButton.isEnabled()) {
+      // Click submit
+      const submitPromise = submitButton.click();
 
-        // Loading state might be very brief, so we use timeout
-        await expect(loadingText).toBeVisible({ timeout: 1000 }).catch(() => {
-          // It's okay if loading is too fast to catch
-          console.log('Loading state was too fast to observe');
-        });
+      // Immediately check for loading state
+      const loadingText = page.getByText(/submitting/i);
 
-        await submitPromise;
+      // Loading state might be very brief, so we use timeout
+      await expect(loadingText).toBeVisible({ timeout: 1000 }).catch(() => {
+        // It's okay if loading is too fast to catch
+        console.log('Loading state was too fast to observe');
+      });
 
-        // Eventually results should appear
-        await expect(page.getByText(/overall score/i)).toBeVisible({ timeout: 10000 });
-      }
+      await submitPromise;
+
+      // Eventually results should appear
+      await expect(page.getByText(/overall score/i)).toBeVisible({ timeout: 10000 });
     }
   });
 });
