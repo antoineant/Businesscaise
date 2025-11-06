@@ -2,6 +2,8 @@
 // Simulates complete backend behavior in the frontend
 
 import { User, Game, Team, Session, Submission } from './api.client';
+import { processLevel1Session, createInitialState } from './scoring/level1-engine';
+import type { Level1Decision, Level1TeamState } from './scoring/level1-types';
 
 // In-memory storage for demo mode
 class MockDataStore {
@@ -91,7 +93,7 @@ class MockDataStore {
       });
     });
 
-    // Create demo teams
+    // Create demo teams (all using Level 1 - Beginner)
     const alphaTeam: Team = {
       id: 'team-demo-001',
       game_id: demoGame.id,
@@ -106,6 +108,8 @@ class MockDataStore {
         customer_satisfaction: 54,
       },
       overall_score: 54.2,
+      difficulty_level: 'beginner',
+      level1_state: createInitialState(),
       created_at: new Date(Date.now() - 86400000).toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -124,6 +128,8 @@ class MockDataStore {
         customer_satisfaction: 50,
       },
       overall_score: 49.7,
+      difficulty_level: 'beginner',
+      level1_state: createInitialState(),
       created_at: new Date(Date.now() - 86400000).toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -142,6 +148,8 @@ class MockDataStore {
         customer_satisfaction: 52,
       },
       overall_score: 52.1,
+      difficulty_level: 'beginner',
+      level1_state: createInitialState(),
       created_at: new Date(Date.now() - 86400000).toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -403,7 +411,13 @@ class MockDataStore {
   }
 
   // Team/Player methods
-  createTeam(data: { game_id: string; name: string; color: string; members: string[] }): Team {
+  createTeam(data: {
+    game_id: string;
+    name: string;
+    color: string;
+    members: string[];
+    difficulty_level?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+  }): Team {
     const team: Team = {
       id: `team-${Date.now()}`,
       game_id: data.game_id,
@@ -418,6 +432,8 @@ class MockDataStore {
         customer_satisfaction: 50,
       },
       overall_score: 50.0,
+      difficulty_level: data.difficulty_level || 'beginner',
+      level1_state: createInitialState(), // Initialize Level 1 state
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -456,19 +472,78 @@ class MockDataStore {
     const team = this.teams.find((t) => t.id === teamId);
     if (!team) throw new Error('Team not found');
 
-    const submission: Submission = {
-      id: `submission-${Date.now()}`,
-      team_id: teamId,
-      session_id: data.session_id,
-      challenge_id: data.challenge_id,
-      submission_data: data.submission_data,
-      file_urls: data.file_urls || null,
-      submitted_at: new Date().toISOString(),
-      scored_at: null,
-      score: null,
-      feedback: null,
-      status: 'pending',
-    };
+    let submission: Submission;
+
+    // Process Level 1 (Beginner) submissions through scoring engine
+    if (team.difficulty_level === 'beginner' && team.level1_state) {
+      try {
+        const decision: Level1Decision = data.submission_data;
+        const currentState = team.level1_state as Level1TeamState;
+
+        // Process through Level 1 scoring engine
+        const result = processLevel1Session(decision, currentState);
+
+        // Update team's Level 1 state
+        team.level1_state = result.endingState;
+
+        // Map Level 1 scores to team metrics
+        team.metrics.financial = result.scores.cashAndProfit;
+        team.metrics.hr = result.scores.employeeHappiness;
+        team.metrics.market_communication = result.scores.customerSatisfaction;
+        team.metrics.operations = result.scores.debtHealth;
+        team.metrics.customer_satisfaction = result.scores.customerSatisfaction;
+        team.overall_score = result.scores.overall;
+        team.updated_at = new Date().toISOString();
+
+        // Create submission with score and feedback
+        submission = {
+          id: `submission-${Date.now()}`,
+          team_id: teamId,
+          session_id: data.session_id,
+          challenge_id: data.challenge_id,
+          submission_data: {
+            decision,
+            result, // Store full Level 1 result for viewing
+          },
+          file_urls: data.file_urls || null,
+          submitted_at: new Date().toISOString(),
+          scored_at: new Date().toISOString(), // Auto-scored
+          score: result.scores.overall,
+          feedback: result.feedback.summary,
+          status: 'scored', // Auto-scored for Level 1
+        };
+      } catch (error) {
+        // If processing fails, create pending submission
+        submission = {
+          id: `submission-${Date.now()}`,
+          team_id: teamId,
+          session_id: data.session_id,
+          challenge_id: data.challenge_id,
+          submission_data: data.submission_data,
+          file_urls: data.file_urls || null,
+          submitted_at: new Date().toISOString(),
+          scored_at: null,
+          score: null,
+          feedback: `Error processing submission: ${error}`,
+          status: 'pending',
+        };
+      }
+    } else {
+      // Other difficulty levels - pending manual scoring
+      submission = {
+        id: `submission-${Date.now()}`,
+        team_id: teamId,
+        session_id: data.session_id,
+        challenge_id: data.challenge_id,
+        submission_data: data.submission_data,
+        file_urls: data.file_urls || null,
+        submitted_at: new Date().toISOString(),
+        scored_at: null,
+        score: null,
+        feedback: null,
+        status: 'pending',
+      };
+    }
 
     this.submissions.push(submission);
 

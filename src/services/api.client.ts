@@ -76,6 +76,8 @@ export interface Team {
     customer_satisfaction: number;
   };
   overall_score: number;
+  difficulty_level?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+  level1_state?: any; // Level1TeamState from level1-types.ts
   created_at: string;
   updated_at: string;
 }
