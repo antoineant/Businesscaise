@@ -34,6 +34,23 @@ export class DemoModeManager {
   }
 
   isEnabled(): boolean {
+    // Always check URL parameter first (for E2E tests and dynamic switching)
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('demo')) {
+        const urlValue = urlParams.get('demo') === 'true';
+        // Update internal state if URL parameter is present
+        if (this.isDemoMode !== urlValue) {
+          this.isDemoMode = urlValue;
+          this.save();
+        }
+        return urlValue;
+      }
+    } catch (error) {
+      console.error('Error checking URL for demo mode:', error);
+    }
+
+    // Fall back to stored value
     return this.isDemoMode;
   }
 
