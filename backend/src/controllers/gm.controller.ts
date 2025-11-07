@@ -24,20 +24,22 @@ export const createGame = asyncHandler(async (req: Request, res: Response) => {
   });
 
   // Create default 10 sessions (5 days, AM/PM)
-  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
   const periods: ('am' | 'pm')[] = ['am', 'pm'];
   const defaultSessions = [];
 
   let sessionNumber = 1;
   for (const day of days) {
     for (const period of periods) {
+      // Capitalize day name for display
+      const dayCapitalized = day.charAt(0).toUpperCase() + day.slice(1);
       defaultSessions.push({
         game_id: game.id,
         session_number: sessionNumber,
         day,
         period,
-        title: `${day} ${period} - Session ${sessionNumber}`,
-        description: `Business challenge for ${day} ${period}`,
+        title: `${dayCapitalized} ${period.toUpperCase()} - Session ${sessionNumber}`,
+        description: `Business challenge for ${dayCapitalized} ${period.toUpperCase()}`,
       });
       sessionNumber++;
     }
