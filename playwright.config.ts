@@ -2,16 +2,17 @@ import { defineConfig, devices } from '@playwright/test';
 
 /**
  * Playwright configuration for E2E testing
+ * Supports testing both Team Frontend (port 5173) and GM Dashboard (port 3002)
  * See https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
   testDir: './e2e',
 
   // Maximum time one test can run for
-  timeout: 30 * 1000,
+  timeout: 60 * 1000, // Increased to 60s for integration tests
 
-  // Run tests in parallel
-  fullyParallel: true,
+  // Run tests in files sequentially for integration tests
+  fullyParallel: false,
 
   // Fail the build on CI if you accidentally left test.only in the source code
   forbidOnly: !!process.env.CI,
@@ -23,13 +24,14 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
 
   // Reporter to use
-  reporter: 'html',
+  reporter: [
+    ['html', { outputFolder: 'playwright-report' }],
+    ['list'],
+    ['json', { outputFile: 'test-results/results.json' }],
+  ],
 
   // Shared settings for all the projects below
   use: {
-    // Base URL to use in actions like `await page.goto('/')`
-    baseURL: 'http://localhost:5173',
-
     // Collect trace when retrying the failed test
     trace: 'on-first-retry',
 
@@ -41,15 +43,23 @@ export default defineConfig({
 
     // Headless mode settings
     headless: true,
+
+    // Increase timeout for slow network requests
+    actionTimeout: 15000,
+    navigationTimeout: 30000,
   },
 
-  // Configure projects for major browsers
+  // Configure test projects
   projects: [
+    // =============================================
+    // TEAM FRONTEND TESTS (Port 5173)
+    // =============================================
     {
-      name: 'chromium',
+      name: 'team-frontend',
+      testMatch: /level1-.*\.spec\.ts/,
       use: {
         ...devices['Desktop Chrome'],
-        // Launch options for headless environments
+        baseURL: 'http://localhost:5173',
         launchOptions: {
           args: [
             '--no-sandbox',
@@ -60,32 +70,65 @@ export default defineConfig({
       },
     },
 
+    // =============================================
+    // GM DASHBOARD TESTS (Port 3002)
+    // =============================================
+    {
+      name: 'gm-dashboard',
+      testMatch: /gm-.*\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'http://localhost:3002',
+        launchOptions: {
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+          ],
+        },
+      },
+    },
+
+    // =============================================
+    // FULL INTEGRATION TESTS (Multi-service)
+    // =============================================
+    {
+      name: 'integration',
+      testMatch: /integration-.*\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        // Integration tests will handle multiple URLs
+        baseURL: 'http://localhost:3002', // Start with GM Dashboard
+        launchOptions: {
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+          ],
+        },
+      },
+    },
+
+    // =============================================
+    // CROSS-BROWSER TESTS (Optional - only critical tests)
+    // =============================================
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      testMatch: /level1-complete-journey\.spec\.ts|gm-dashboard-flow\.spec\.ts/,
+      use: { ...devices['Desktop Firefox'], baseURL: 'http://localhost:5173' },
     },
 
+    // =============================================
+    // MOBILE TESTS (Optional)
+    // =============================================
     {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-
-    // Test against mobile viewports
-    {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
-    },
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
+      name: 'mobile',
+      testMatch: /level1-accessibility\.spec\.ts/,
+      use: { ...devices['iPhone 12'], baseURL: 'http://localhost:5173' },
     },
   ],
 
-  // Run local dev server before starting tests
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:5173',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
-  },
+  // Do NOT auto-start servers - they will be started by run-e2e-tests.sh
+  // This allows better control and proper cleanup
+  webServer: undefined,
 });
