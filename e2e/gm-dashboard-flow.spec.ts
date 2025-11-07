@@ -5,11 +5,14 @@ import { test, expect, Page } from '@playwright/test';
  * Tests the complete Game Master workflow from registration to game management
  */
 
-const TEST_GM = {
+// Generate unique test data for each test run
+const generateTestGM = () => ({
   name: 'Test Game Master',
-  email: `gm-test-${Date.now()}@businesscaise.com`,
+  email: `gm-test-${Date.now()}-${Math.random().toString(36).substring(2, 9)}@businesscaise.com`,
   password: 'TestGM123!',
-};
+});
+
+const TEST_GM = generateTestGM();
 
 const TEST_GAME = {
   title: `E2E Test Game ${Date.now()}`,
@@ -31,7 +34,26 @@ async function registerGM(page: Page) {
   await passwordFields[0].fill(TEST_GM.password);
   await passwordFields[1].fill(TEST_GM.password);
 
+  // Listen for network response to catch errors
+  const responsePromise = page.waitForResponse(
+    response => response.url().includes('/api/auth/register'),
+    { timeout: 10000 }
+  );
+
   await page.click('button[type="submit"]');
+
+  // Wait for the API response
+  const response = await responsePromise;
+
+  // If registration failed, throw detailed error
+  if (!response.ok()) {
+    const errorBody = await response.json().catch(() => ({ message: 'Unknown error' }));
+    const errorText = await page.locator('.bg-red-50, [class*="error"]').textContent().catch(() => '');
+    throw new Error(
+      `Registration failed with status ${response.status()}: ${JSON.stringify(errorBody)}. ` +
+      `Page error: "${errorText}"`
+    );
+  }
 
   // Wait for redirect to games page
   await page.waitForURL('/games', { timeout: 10000 });
