@@ -44,36 +44,44 @@ echo "Checking if backend server is running..."
 check_server
 echo -e "${GREEN}✓ Backend server is running${NC}"
 
-# Test 1: Authentication - Login
-print_section "TEST 1: Authentication - Login"
-echo "Logging in as Game Master (gm@test.com)..."
+# Test 1: Authentication - Register & Login
+print_section "TEST 1: Authentication - Register & Login"
+echo "Registering Game Master (gm@test.com)..."
 
-LOGIN_RESPONSE=$(curl -s -X POST "$BASE_URL/api/auth/register" \
+# Try to register (this creates the user with proper password hash)
+REGISTER_RESPONSE=$(curl -s -X POST "$BASE_URL/api/auth/register" \
   -H "Content-Type: application/json" \
   -d '{
     "email": "gm@test.com",
     "password": "test123",
     "name": "Test Game Master",
     "role": "game_master"
-  }' 2>/dev/null || echo '{}')
-
-# Try login if register failed (user might already exist)
-LOGIN_RESPONSE=$(curl -s -X POST "$BASE_URL/api/auth/login" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "gm@test.com",
-    "password": "test123"
   }')
 
-TOKEN=$(echo $LOGIN_RESPONSE | jq -r '.token')
+TOKEN=$(echo $REGISTER_RESPONSE | jq -r '.token')
 
+# If registration failed (user exists), try login
 if [ "$TOKEN" == "null" ] || [ -z "$TOKEN" ]; then
-    echo -e "${RED}✗ Login failed${NC}"
-    echo "Response: $LOGIN_RESPONSE"
-    exit 1
+    echo "User already exists, trying login..."
+    LOGIN_RESPONSE=$(curl -s -X POST "$BASE_URL/api/auth/login" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "email": "gm@test.com",
+        "password": "test123"
+      }')
+
+    TOKEN=$(echo $LOGIN_RESPONSE | jq -r '.token')
+
+    if [ "$TOKEN" == "null" ] || [ -z "$TOKEN" ]; then
+        echo -e "${RED}✗ Login failed${NC}"
+        echo "Response: $LOGIN_RESPONSE"
+        echo ""
+        echo "Please run './setup-db.sh' to reset the database"
+        exit 1
+    fi
 fi
 
-echo -e "${GREEN}✓ Login successful${NC}"
+echo -e "${GREEN}✓ Authentication successful${NC}"
 echo "Token: ${TOKEN:0:20}..."
 
 # Test 2: Get Current User
