@@ -25,7 +25,7 @@ export const createGame = asyncHandler(async (req: Request, res: Response) => {
 
   // Create default 10 sessions (5 days, AM/PM)
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-  const periods: ('AM' | 'PM')[] = ['AM', 'PM'];
+  const periods: ('am' | 'pm')[] = ['am', 'pm'];
   const defaultSessions = [];
 
   let sessionNumber = 1;
@@ -287,7 +287,7 @@ export const unlockSession = asyncHandler(async (req: Request, res: Response) =>
 export const updateSession = asyncHandler(async (req: Request, res: Response) => {
   const { gameId, sessionId } = req.params;
   const gameMasterId = req.user!.userId;
-  const { title, description, deadline, challenges } = req.body;
+  const { title, description, deadline, narrative } = req.body;
 
   // Check if user is game master
   const isGM = await GameModel.isGameMaster(gameId, gameMasterId);
@@ -299,7 +299,7 @@ export const updateSession = asyncHandler(async (req: Request, res: Response) =>
     title,
     description,
     deadline,
-    challenges,
+    narrative,
   });
 
   if (!session) {
