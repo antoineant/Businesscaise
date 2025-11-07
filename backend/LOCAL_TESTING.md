@@ -49,12 +49,14 @@ You should see:
 
 In a **new terminal**:
 
+#### Test Game Master Endpoints (15 tests)
+
 ```bash
 cd backend
 ./test-api.sh
 ```
 
-This will test all 15 endpoints:
+This will test all GM endpoints:
 - ✅ Authentication (login, get user)
 - ✅ Create game (with 10 auto-generated sessions)
 - ✅ List games
@@ -68,6 +70,24 @@ This will test all 15 endpoints:
 - ✅ Get analytics
 - ✅ Pause/resume game
 - ✅ List teams
+
+#### Test Team/Player Endpoints (9 tests)
+
+```bash
+cd backend
+./test-team-api.sh
+```
+
+This will test all player endpoints:
+- ✅ Join game (create team)
+- ✅ Get current team info
+- ✅ Get team dashboard
+- ✅ Get current active session
+- ✅ Get session challenges
+- ✅ Get leaderboard
+- ✅ Get metrics history
+- ✅ Create multiple teams
+- ✅ Verify GM can see teams
 
 ---
 
