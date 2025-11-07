@@ -155,7 +155,6 @@ export const getSessionChallenges = asyncHandler(async (req: Request, res: Respo
 
   res.json({
     session,
-    challenges: session.challenges,
   });
 });
 
