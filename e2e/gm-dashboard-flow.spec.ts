@@ -21,7 +21,9 @@ const TEST_GAME = {
 // Helper: Register a new GM account
 async function registerGM(page: Page) {
   await page.goto('/register');
-  await expect(page).toHaveTitle(/GM Dashboard/i);
+
+  // Wait for page to load by checking visible heading
+  await expect(page.locator('h1')).toContainText('Create GM Account');
 
   await page.fill('input[type="text"]', TEST_GM.name);
   await page.fill('input[type="email"]', TEST_GM.email);
