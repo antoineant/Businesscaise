@@ -124,35 +124,14 @@ psql -U "$DB_USER" -d "$DB_NAME" -c "\dt" || true
 echo ""
 echo "Creating test user accounts..."
 
-# Hash for password "test123" (bcrypt with 10 rounds)
-# Note: This is a pre-computed hash for "test123"
-PASSWORD_HASH='$2a$10$rH5K8GKZ5pCqZQY5YqQKe.VZwH3xH5xH5xH5xH5xH5xH5xH5xH5'
-
-# Create Game Master user
-psql -U "$DB_USER" -d "$DB_NAME" <<EOF
-INSERT INTO users (email, password_hash, role, name)
-VALUES (
-    'gm@test.com',
-    '\$2a\$10\$YQJWb8JZ5tJKZ5pCqZQY5e.VZwH3xH5xH5xH5xH5xH5xH5xH5xH5',
-    'game_master',
-    'Test Game Master'
-) ON CONFLICT DO NOTHING;
+# Delete existing test users first
+psql -U "$DB_USER" -d "$DB_NAME" <<EOF > /dev/null 2>&1
+DELETE FROM users WHERE email IN ('gm@test.com', 'player@test.com');
 EOF
 
-# Create Player user
-psql -U "$DB_USER" -d "$DB_NAME" <<EOF
-INSERT INTO users (email, password_hash, role, name)
-VALUES (
-    'player@test.com',
-    '\$2a\$10\$YQJWb8JZ5tJKZ5pCqZQY5e.VZwH3xH5xH5xH5xH5xH5xH5xH5xH5',
-    'player',
-    'Test Player'
-) ON CONFLICT DO NOTHING;
-EOF
-
-echo -e "${GREEN}✓ Test users created${NC}"
+echo -e "${GREEN}✓ Test users will be created via API${NC}"
 echo ""
-echo "Test accounts:"
+echo "Note: Test accounts will be created when you run the test script"
 echo "  Game Master: gm@test.com / test123"
 echo "  Player:      player@test.com / test123"
 
