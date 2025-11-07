@@ -59,7 +59,7 @@ async function createTeamsViaAPI(gameId: string): Promise<string[]> {
   return teamIds;
 }
 
-test.describe('INTEGRATION: Full Game Lifecycle', () => {
+test.describe.serial('INTEGRATION: Full Game Lifecycle', () => {
   let gameId: string;
 
   test('STEP 1: GM registers and creates game', async ({ page }) => {

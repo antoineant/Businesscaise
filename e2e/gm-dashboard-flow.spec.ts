@@ -91,6 +91,14 @@ test.describe('GM Dashboard - Authentication Flow', () => {
   });
 
   test('should login with existing GM account', async ({ page }) => {
+    // First register the user (ensure it exists)
+    await registerGM(page);
+
+    // Logout to test login
+    await page.click('button:has-text("Logout")');
+    await expect(page).toHaveURL('/login');
+
+    // Now login with same credentials
     await loginGM(page);
 
     // Should be on games page
@@ -99,8 +107,10 @@ test.describe('GM Dashboard - Authentication Flow', () => {
   });
 
   test('should logout successfully', async ({ page }) => {
-    await loginGM(page);
+    // First register the user (ensure it exists)
+    await registerGM(page);
 
+    // Now logout
     await page.click('button:has-text("Logout")');
 
     // Should redirect to login page
@@ -117,8 +127,8 @@ test.describe('GM Dashboard - Authentication Flow', () => {
 
 test.describe('GM Dashboard - Game Management Flow', () => {
   test.beforeEach(async ({ page }) => {
-    // Ensure we're logged in before each test
-    await loginGM(page);
+    // Register and login before each test (ensure test isolation)
+    await registerGM(page);
   });
 
   test('should create a new game successfully', async ({ page }) => {
@@ -268,7 +278,8 @@ test.describe('GM Dashboard - Game Management Flow', () => {
 
 test.describe('GM Dashboard - Navigation and UI', () => {
   test.beforeEach(async ({ page }) => {
-    await loginGM(page);
+    // Register and login before each test (ensure test isolation)
+    await registerGM(page);
   });
 
   test('should navigate between pages', async ({ page }) => {
@@ -321,7 +332,8 @@ test.describe('GM Dashboard - Navigation and UI', () => {
 
 test.describe('GM Dashboard - Error Handling', () => {
   test.beforeEach(async ({ page }) => {
-    await loginGM(page);
+    // Register and login before each test (ensure test isolation)
+    await registerGM(page);
   });
 
   test('should handle form validation errors', async ({ page }) => {
