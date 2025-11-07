@@ -125,7 +125,7 @@ export class TeamModel {
     const result = await query(
       `SELECT * FROM metrics_history
        WHERE team_id = $1
-       ORDER BY recorded_at ASC`,
+       ORDER BY created_at ASC`,
       [teamId]
     );
 
