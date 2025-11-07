@@ -22,10 +22,15 @@ import { initializeSocket } from './socket/socket.handler';
 const app: Express = express();
 const httpServer = createServer(app);
 
+// Parse CORS origins (comma-separated string to array)
+const corsOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+  : ['http://localhost:5173'];
+
 // Initialize Socket.IO
 const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+    origin: corsOrigins,
     methods: ['GET', 'POST'],
   },
 });
@@ -34,7 +39,7 @@ const io = new SocketIOServer(httpServer, {
 app.use(helmet());
 app.use(compression());
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin: corsOrigins,
   credentials: true,
 }));
 app.use(express.json());
