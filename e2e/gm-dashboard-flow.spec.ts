@@ -346,8 +346,21 @@ test.describe('GM Dashboard - Game Management Flow', () => {
     const firstUnlockButton = page.getByRole('button', { name: /unlock/i }).first();
     await expect(firstUnlockButton).toBeVisible();
 
+    // Wait for unlock API call to complete
+    const unlockResponsePromise = page.waitForResponse(
+      response => response.url().includes('/sessions/') && response.url().includes('/unlock') && response.status() === 200
+    );
+
     // Click to unlock
     await firstUnlockButton.click();
+
+    // Wait for unlock to complete
+    await unlockResponsePromise;
+
+    // Wait for the page to reload game data (sessions GET request)
+    await page.waitForResponse(
+      response => response.url().includes(`/games/${gameId}/sessions`) && response.status() === 200
+    );
 
     // Sessions count should update to 1/10
     await expect(page.getByTestId('sessions-stat-card')).toContainText('1/10', { timeout: 5000 });
