@@ -206,8 +206,8 @@ test.describe('GM Dashboard - Authentication Flow', () => {
   test('should register new GM account successfully', async ({ page }) => {
     await registerGM(page);
 
-    // Should be on dashboard page
-    await expect(page).toHaveURL('/dashboard');
+    // Should be on games list page (the main dashboard)
+    await expect(page).toHaveURL('/games');
 
     // Should see empty state or games list
     const heading = page.locator('h2');
@@ -234,8 +234,8 @@ test.describe('GM Dashboard - Authentication Flow', () => {
     // Now login with same credentials
     await loginGM(page);
 
-    // Should be on dashboard page
-    await expect(page).toHaveURL('/dashboard');
+    // Should be on games list page (the main dashboard)
+    await expect(page).toHaveURL('/games');
     await expect(page.locator('h2')).toContainText('Your Games');
   });
 
