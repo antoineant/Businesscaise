@@ -27,6 +27,9 @@ const corsOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
   : ['http://localhost:5173'];
 
+// Log CORS configuration on startup
+console.log('🔒 CORS configured for origins:', corsOrigins);
+
 // Initialize Socket.IO
 const io = new SocketIOServer(httpServer, {
   cors: {
