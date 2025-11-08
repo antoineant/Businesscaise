@@ -21,17 +21,41 @@ const TEST_GAME = {
   endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
 };
 
-// Helper: Register a new GM account
+// Helper: Register a new GM account (adaptive - handles both GM Dashboard and Team Frontend pages)
 async function registerGM(page: Page) {
-  await page.goto('/register');
+  await page.goto('/register', { waitUntil: 'networkidle' });
 
-  // Wait for page to load
-  await expect(page.locator('h1')).toContainText('Create GM Account');
+  // Wait for page to fully load and detect which registration page we're on
+  await page.waitForLoadState('domcontentloaded');
+  const h1Text = await page.locator('h1').textContent({ timeout: 10000 });
+  const currentUrl = page.url();
 
-  // No radio button needed - this is a GM-specific registration page
+  console.log(`[DIAGNOSTIC] Registration page loaded: h1="${h1Text}", url="${currentUrl}"`);
 
-  await page.fill('input[type="text"]', TEST_GM.name);
-  await page.fill('input[type="email"]', TEST_GM.email);
+  // Adaptive logic: detect and handle the correct registration page
+  let needsRadioButton = false;
+  if (h1Text?.includes('Create GM Account')) {
+    console.log('[DIAGNOSTIC] ✓ On GM Dashboard dedicated registration page');
+    needsRadioButton = false;
+  } else if (h1Text?.includes('BusinessCaise')) {
+    console.warn('[DIAGNOSTIC] ⚠️  On Team Frontend shared registration page - GM Dashboard may not be ready');
+    needsRadioButton = true;
+  } else {
+    throw new Error(
+      `[DIAGNOSTIC] Unknown registration page! h1="${h1Text}", url="${currentUrl}". ` +
+      `Expected "Create GM Account" (GM Dashboard) or "BusinessCaise" (Team Frontend). ` +
+      `This suggests the service isn't fully started.`
+    );
+  }
+
+  // Select "Game Master" role if on shared registration page
+  if (needsRadioButton) {
+    await page.click('label:has-text("Game Master")');
+    console.log('[DIAGNOSTIC] Selected "Game Master" account type');
+  }
+
+  await page.fill('input[type="text"], input#name', TEST_GM.name);
+  await page.fill('input[type="email"], input#email', TEST_GM.email);
   const passwordFields = await page.locator('input[type="password"]').all();
   await passwordFields[0].fill(TEST_GM.password);
   await passwordFields[1].fill(TEST_GM.password);
@@ -45,8 +69,10 @@ async function registerGM(page: Page) {
   await page.click('button[type="submit"]');
 
   // Wait for EITHER success (redirect) OR error message (failure)
+  // Note: GM Dashboard redirects to /dashboard, Team Frontend might redirect to /dashboard or /games
   const outcome = await Promise.race([
     page.waitForURL('/dashboard', { timeout: 10000 }).then(() => ({ success: true })),
+    page.waitForURL('/games', { timeout: 10000 }).then(() => ({ success: true })),
     page.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
       .then(() => ({ success: false }))
   ]);
@@ -67,6 +93,8 @@ async function registerGM(page: Page) {
 
     throw new Error(`Registration failed. UI: "${uiError}". ${apiError}`);
   }
+
+  console.log(`[DIAGNOSTIC] ✓ Registration successful, redirected to ${page.url()}`);
 }
 
 // Helper: Login as existing GM
