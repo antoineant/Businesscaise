@@ -21,13 +21,14 @@ export interface Game {
 export interface Session {
   id: string;
   game_id: string;
+  session_number: number;
   day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday';
   period: 'am' | 'pm';
   title: string;
   description?: string;
   deadline?: string;
   narrative?: string;
-  is_unlocked: boolean;
+  status: 'locked' | 'active' | 'completed';
   start_time?: string;
   unlocked_at?: string;
   created_at: string;
