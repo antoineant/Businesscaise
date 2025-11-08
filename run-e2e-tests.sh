@@ -202,6 +202,11 @@ main() {
   # Start Backend
   echo "Starting Backend API (port 3001)..."
   cd backend
+  # Source .env file to ensure environment variables are loaded
+  if [ -f .env ]; then
+    export $(cat .env | grep -v '^#' | xargs)
+    echo "Loaded environment variables from backend/.env"
+  fi
   npm run dev > ../logs/backend-e2e.log 2>&1 &
   BACKEND_PID=$!
   cd ..
