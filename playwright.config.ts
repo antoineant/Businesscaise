@@ -113,9 +113,14 @@ export default defineConfig({
     // CROSS-BROWSER TESTS (Optional - only critical tests)
     // =============================================
     {
-      name: 'firefox',
-      testMatch: /level1-complete-journey\.spec\.ts|gm-dashboard-flow\.spec\.ts/,
+      name: 'firefox-team-frontend',
+      testMatch: /level1-complete-journey\.spec\.ts/,
       use: { ...devices['Desktop Firefox'], baseURL: 'http://localhost:5173' },
+    },
+    {
+      name: 'firefox-gm-dashboard',
+      testMatch: /gm-dashboard-flow\.spec\.ts/,
+      use: { ...devices['Desktop Firefox'], baseURL: 'http://localhost:3002' },
     },
 
     // =============================================
