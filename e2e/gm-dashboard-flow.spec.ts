@@ -53,7 +53,16 @@ async function loginGM(page: Page) {
   await page.fill('input[type="email"]', TEST_GM.email);
   await page.fill('input[type="password"]', TEST_GM.password);
   await page.click('button[type="submit"]');
-  await page.waitForURL('/games', { timeout: 10000 });
+
+  // Wait for EITHER success (redirect) OR error message (failure)
+  await Promise.race([
+    page.waitForURL('/games', { timeout: 10000 }),
+    page.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
+      .then(async () => {
+        const errorText = await page.locator('.bg-red-50, [class*="error"]').textContent();
+        throw new Error(`Login failed: ${errorText}`);
+      })
+  ]);
 }
 
 // Helper: Create a new game
@@ -68,8 +77,15 @@ async function createGame(page: Page): Promise<string> {
 
   await page.click('button[type="submit"]');
 
-  // Wait for redirect to game details page
-  await page.waitForURL(/\/games\/[a-f0-9-]+$/, { timeout: 10000 });
+  // Wait for EITHER success (redirect to game page) OR error message (failure)
+  await Promise.race([
+    page.waitForURL(/\/games\/[a-f0-9-]+$/, { timeout: 10000 }),
+    page.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
+      .then(async () => {
+        const errorText = await page.locator('.bg-red-50, [class*="error"]').textContent();
+        throw new Error(`Game creation failed: ${errorText}`);
+      })
+  ]);
 
   // Extract game ID from URL
   const url = page.url();
@@ -180,9 +196,6 @@ test.describe('GM Dashboard - Game Management Flow', () => {
     // Click start game button
     await page.click('button:has-text("Start Game")');
 
-    // Wait for status to change
-    await page.waitForTimeout(1000);
-
     // Status should now be active
     await expect(page.locator('text=active')).toBeVisible();
 
@@ -201,16 +214,13 @@ test.describe('GM Dashboard - Game Management Flow', () => {
 
     // Start the game first
     await page.click('button:has-text("Start Game")');
-    await page.waitForTimeout(1000);
 
     // Pause the game
     await page.click('button:has-text("Pause Game")');
-    await page.waitForTimeout(1000);
     await expect(page.locator('text=paused')).toBeVisible();
 
     // Resume the game
     await page.click('button:has-text("Resume Game")');
-    await page.waitForTimeout(1000);
     await expect(page.locator('text=active')).toBeVisible();
   });
 
@@ -219,7 +229,6 @@ test.describe('GM Dashboard - Game Management Flow', () => {
 
     // Start the game first
     await page.click('button:has-text("Start Game")');
-    await page.waitForTimeout(1000);
 
     // Find first unlock button
     const firstUnlockButton = page.locator('button:has-text("Unlock")').first();
@@ -227,7 +236,6 @@ test.describe('GM Dashboard - Game Management Flow', () => {
 
     // Click to unlock
     await firstUnlockButton.click();
-    await page.waitForTimeout(1500);
 
     // Should see "Unlocked" text or green indicator
     await expect(page.locator('text=Unlocked').first()).toBeVisible();
@@ -257,7 +265,6 @@ test.describe('GM Dashboard - Game Management Flow', () => {
     page.on('dialog', dialog => dialog.accept());
 
     await deleteButton.click();
-    await page.waitForTimeout(1000);
 
     // Game should no longer be visible
     await expect(page.locator(`text=${TEST_GAME.title}`)).not.toBeVisible();
@@ -314,7 +321,6 @@ test.describe('GM Dashboard - Navigation and UI', () => {
 
     // Start game
     await page.click('button:has-text("Start Game")');
-    await page.waitForTimeout(1000);
 
     // Active status
     const activeBadge = page.locator('text=active');
