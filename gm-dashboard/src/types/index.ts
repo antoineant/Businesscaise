@@ -11,7 +11,7 @@ export interface Game {
   title: string;
   description?: string;
   game_master_id: string;
-  status: 'draft' | 'active' | 'paused' | 'completed';
+  status: 'setup' | 'active' | 'paused' | 'completed';
   start_date?: string;
   end_date?: string;
   created_at: string;

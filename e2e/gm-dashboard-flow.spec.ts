@@ -299,8 +299,8 @@ test.describe('GM Dashboard - Game Management Flow', () => {
   test('should start a game', async ({ page }) => {
     const gameId = await createGame(page);
 
-    // Game should start in draft status
-    await expect(page.getByTestId('game-status')).toHaveText('draft');
+    // Game should start in setup status
+    await expect(page.getByTestId('game-status')).toHaveText('setup');
 
     // Click start game button
     await page.getByRole('button', { name: /start game/i }).click();
@@ -424,8 +424,8 @@ test.describe('GM Dashboard - Navigation and UI', () => {
   test('should display correct game status badges', async ({ page }) => {
     const gameId = await createGame(page);
 
-    // Draft status
-    await expect(page.getByTestId('game-status')).toHaveText('draft');
+    // Setup status
+    await expect(page.getByTestId('game-status')).toHaveText('setup');
 
     // Start game
     await page.getByRole('button', { name: /start game/i }).click();

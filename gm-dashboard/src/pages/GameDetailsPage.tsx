@@ -149,7 +149,7 @@ export const GameDetailsPage: React.FC = () => {
         </div>
 
         <div className="flex space-x-2">
-          {game.status === 'draft' && (
+          {game.status === 'setup' && (
             <button
               onClick={handleStartGame}
               disabled={actionLoading}
