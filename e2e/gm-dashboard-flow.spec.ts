@@ -279,11 +279,11 @@ test.describe('GM Dashboard - Game Management Flow', () => {
     await expect(page.getByText(TEST_GAME.description)).toBeVisible();
 
     // Should see stats cards
-    await expect(page.getByText('Teams')).toBeVisible();
-    await expect(page.getByText('Sessions')).toBeVisible();
+    await expect(page.getByTestId('teams-stat-card')).toBeVisible();
+    await expect(page.getByTestId('sessions-stat-card')).toBeVisible();
 
     // Should see 10 sessions (0 unlocked initially)
-    await expect(page.getByText('0/10')).toBeVisible();
+    await expect(page.getByTestId('sessions-stat-card')).toContainText('0/10');
 
     // Should see all 10 sessions listed
     const sessions = page.locator('[class*="session"], [class*="rounded-lg border"]');
@@ -300,13 +300,13 @@ test.describe('GM Dashboard - Game Management Flow', () => {
     const gameId = await createGame(page);
 
     // Game should start in draft status
-    await expect(page.getByText('Draft')).toBeVisible();
+    await expect(page.getByTestId('game-status')).toHaveText('draft');
 
     // Click start game button
     await page.getByRole('button', { name: /start game/i }).click();
 
     // Status should now be active
-    await expect(page.getByText('Active')).toBeVisible();
+    await expect(page.getByTestId('game-status')).toHaveText('active');
 
     // Start button should be replaced with pause button
     await expect(page.getByRole('button', { name: /pause game/i })).toBeVisible();
@@ -326,11 +326,11 @@ test.describe('GM Dashboard - Game Management Flow', () => {
 
     // Pause the game
     await page.getByRole('button', { name: /pause game/i }).click();
-    await expect(page.getByText('Paused')).toBeVisible();
+    await expect(page.getByTestId('game-status')).toHaveText('paused');
 
     // Resume the game
     await page.getByRole('button', { name: /resume game/i }).click();
-    await expect(page.getByText('Active')).toBeVisible();
+    await expect(page.getByTestId('game-status')).toHaveText('active');
   });
 
   test('should unlock sessions', async ({ page }) => {
@@ -425,13 +425,13 @@ test.describe('GM Dashboard - Navigation and UI', () => {
     const gameId = await createGame(page);
 
     // Draft status
-    await expect(page.getByText('Draft')).toBeVisible();
+    await expect(page.getByTestId('game-status')).toHaveText('draft');
 
     // Start game
     await page.getByRole('button', { name: /start game/i }).click();
 
     // Active status
-    await expect(page.getByText('Active')).toBeVisible();
+    await expect(page.getByTestId('game-status')).toHaveText('active');
   });
 
   test('should be responsive', async ({ page }) => {
