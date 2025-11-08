@@ -140,7 +140,7 @@ export const GameDetailsPage: React.FC = () => {
               <p className="text-gray-600 mt-1">{game.description}</p>
             )}
             <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-              <span>Status: <span className="font-medium text-gray-900">{game.status}</span></span>
+              <span>Status: <span className="font-medium text-gray-900" data-testid="game-status">{game.status}</span></span>
               {game.start_date && (
                 <span>Start: {format(new Date(game.start_date), 'MMM d, yyyy')}</span>
               )}
@@ -184,7 +184,7 @@ export const GameDetailsPage: React.FC = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="card">
+        <div className="card" data-testid="teams-stat-card">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Teams</p>
@@ -194,7 +194,7 @@ export const GameDetailsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="card">
+        <div className="card" data-testid="sessions-stat-card">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Sessions</p>
@@ -206,7 +206,7 @@ export const GameDetailsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="card cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate(`/games/${gameId}/leaderboard`)}>
+        <div className="card cursor-pointer hover:shadow-md transition-shadow" data-testid="leaderboard-stat-card" onClick={() => navigate(`/games/${gameId}/leaderboard`)}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Leaderboard</p>
@@ -216,7 +216,7 @@ export const GameDetailsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="card cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate(`/games/${gameId}/analytics`)}>
+        <div className="card cursor-pointer hover:shadow-md transition-shadow" data-testid="analytics-stat-card" onClick={() => navigate(`/games/${gameId}/analytics`)}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Analytics</p>
