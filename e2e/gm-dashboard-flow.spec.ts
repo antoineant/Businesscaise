@@ -36,31 +36,36 @@ async function registerGM(page: Page) {
   await passwordFields[0].fill(TEST_GM.password);
   await passwordFields[1].fill(TEST_GM.password);
 
-  // Capture API response in background (non-blocking)
-  let apiError = '';
-  page.once('response', async (response) => {
-    if (response.url().includes('/auth/register') && !response.ok()) {
-      const body = await response.json().catch(() => ({}));
-      apiError = `API ${response.status()}: ${JSON.stringify(body)}`;
-    }
-  });
+  // Set up response listener BEFORE clicking submit
+  const responsePromise = page.waitForResponse(
+    response => response.url().includes('/auth/register'),
+    { timeout: 15000 }
+  );
 
   await page.click('button[type="submit"]');
 
-  // Wait for UI outcome (fast, reliable)
-  try {
-    await Promise.race([
-      page.waitForURL('/dashboard', { timeout: 10000 }),
-      page.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
-        .then(() => Promise.reject(new Error('error_on_page')))
-    ]);
-  } catch (err: any) {
-    if (err.message === 'error_on_page') {
-      const uiError = await page.locator('.bg-red-50, [class*="error"]').textContent();
-      await page.waitForTimeout(100); // Let API listener finish
-      throw new Error(`Registration failed. UI: "${uiError}". ${apiError || 'No API error captured'}`);
+  // Wait for EITHER success (redirect) OR error message (failure)
+  const outcome = await Promise.race([
+    page.waitForURL('/dashboard', { timeout: 10000 }).then(() => ({ success: true })),
+    page.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
+      .then(() => ({ success: false }))
+  ]);
+
+  if (!outcome.success) {
+    // Registration failed - get detailed error info
+    const uiError = await page.locator('.bg-red-50, [class*="error"]').textContent();
+
+    let apiError = 'No API response';
+    try {
+      const response = await responsePromise;
+      const status = response.status();
+      const body = await response.json().catch(() => response.text().catch(() => 'Could not parse response'));
+      apiError = `API ${status}: ${typeof body === 'string' ? body : JSON.stringify(body)}`;
+    } catch (err) {
+      apiError = `Failed to capture API response: ${err}`;
     }
-    throw err;
+
+    throw new Error(`Registration failed. UI: "${uiError}". ${apiError}`);
   }
 }
 
