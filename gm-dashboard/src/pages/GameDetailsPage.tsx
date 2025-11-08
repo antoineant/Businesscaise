@@ -36,9 +36,9 @@ export const GameDetailsPage: React.FC = () => {
         gameAPI.getTeams(gameId),
       ]);
 
-      setGame(gameResponse.data);
-      setSessions(sessionsResponse.data);
-      setTeams(teamsResponse.data);
+      setGame(gameResponse.data.game);
+      setSessions(sessionsResponse.data.sessions);
+      setTeams(teamsResponse.data.teams);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load game');
     } finally {

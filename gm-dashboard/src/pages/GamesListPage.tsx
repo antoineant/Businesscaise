@@ -15,7 +15,7 @@ export const GamesListPage: React.FC = () => {
     try {
       setLoading(true);
       const response = await gameAPI.getGames();
-      setGames(response.data);
+      setGames(response.data.games);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load games');
     } finally {

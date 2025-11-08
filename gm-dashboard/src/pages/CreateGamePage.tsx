@@ -25,7 +25,7 @@ export const CreateGamePage: React.FC = () => {
         end_date: endDate || undefined,
       });
 
-      navigate(`/games/${response.data.id}`);
+      navigate(`/games/${response.data.game.id}`);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to create game');
     } finally {
