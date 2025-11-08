@@ -42,7 +42,7 @@ export const GamesListPage: React.FC = () => {
 
   const getStatusBadge = (status: Game['status']) => {
     const badges = {
-      draft: { icon: Clock, class: 'bg-gray-100 text-gray-700', label: 'Draft' },
+      setup: { icon: Clock, class: 'bg-gray-100 text-gray-700', label: 'Setup' },
       active: { icon: Play, class: 'bg-green-100 text-green-700', label: 'Active' },
       paused: { icon: Pause, class: 'bg-yellow-100 text-yellow-700', label: 'Paused' },
       completed: { icon: CheckCircle, class: 'bg-blue-100 text-blue-700', label: 'Completed' },

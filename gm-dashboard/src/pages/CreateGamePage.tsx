@@ -130,7 +130,7 @@ export const CreateGamePage: React.FC = () => {
             <h3 className="font-medium text-blue-900 mb-2">What happens next?</h3>
             <ul className="text-sm text-blue-800 space-y-1">
               <li>• 10 sessions will be automatically created (Monday-Friday, AM/PM)</li>
-              <li>• Game will be created in "draft" status</li>
+              <li>• Game will be created in "setup" status</li>
               <li>• You can customize sessions before starting</li>
               <li>• Teams can join once you provide them with the game details</li>
             </ul>
