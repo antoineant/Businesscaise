@@ -157,6 +157,7 @@ export const GamesListPage: React.FC = () => {
                   }}
                   className="text-red-600 hover:text-red-700 p-1"
                   title="Delete game"
+                  data-testid="delete-game-button"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
