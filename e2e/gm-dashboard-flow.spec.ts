@@ -161,9 +161,9 @@ async function loginGM(page: Page) {
   await page.fill('input[type="password"]', TEST_GM.password);
   await page.click('button[type="submit"]');
 
-  // Wait for EITHER success (redirect) OR error message (failure)
+  // Wait for EITHER success (redirect to /games) OR error message (failure)
   await Promise.race([
-    page.waitForURL('/dashboard', { timeout: 10000 }),
+    page.waitForURL('/games', { timeout: 10000 }),
     page.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
       .then(async () => {
         const errorText = await page.locator('.bg-red-50, [class*="error"]').textContent();
@@ -236,7 +236,7 @@ test.describe('GM Dashboard - Authentication Flow', () => {
 
     // Should be on games list page (the main dashboard)
     await expect(page).toHaveURL('/games');
-    await expect(page.locator('h2')).toContainText('Your Games');
+    await expect(page.locator('h1')).toContainText('My Games');
   });
 
   test('should logout successfully', async ({ page }) => {
