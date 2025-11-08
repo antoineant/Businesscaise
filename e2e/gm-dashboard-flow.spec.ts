@@ -25,6 +25,15 @@ const TEST_GAME = {
 async function registerGM(page: Page) {
   await page.goto('/register', { waitUntil: 'networkidle' });
 
+  // Capture browser console errors
+  const consoleMessages: string[] = [];
+  page.on('console', msg => {
+    if (msg.type() === 'error' || msg.type() === 'warning') {
+      consoleMessages.push(`[BROWSER ${msg.type().toUpperCase()}] ${msg.text()}`);
+      console.log(`[DIAGNOSTIC] Browser console: ${msg.type()} - ${msg.text()}`);
+    }
+  });
+
   // Wait for page to fully load and detect which registration page we're on
   await page.waitForLoadState('domcontentloaded');
   const h1Text = await page.locator('h1').textContent({ timeout: 10000 });
@@ -130,13 +139,15 @@ async function registerGM(page: Page) {
     console.log(`[DIAGNOSTIC] API calls made:`, apiCalls);
     console.log(`[DIAGNOSTIC] API responses received:`, apiResponses);
     console.log(`[DIAGNOSTIC] Network errors:`, networkErrors);
+    console.log(`[DIAGNOSTIC] Browser console messages:`, consoleMessages);
     console.log(`[DIAGNOSTIC] Current URL: ${page.url()}`);
 
     throw new Error(
       `Registration failed. UI: "${uiError}". ${apiError}. ` +
       `Calls: ${apiCalls.join(', ') || 'none'}. ` +
       `Responses: ${apiResponses.join(', ') || 'none'}. ` +
-      `Network errors: ${networkErrors.join(', ') || 'none'}`
+      `Network errors: ${networkErrors.join(', ') || 'none'}. ` +
+      `Browser console: ${consoleMessages.join('; ') || 'none'}`
     );
   }
 
