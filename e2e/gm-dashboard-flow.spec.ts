@@ -298,13 +298,13 @@ test.describe('GM Dashboard - Game Management Flow', () => {
     const gameId = await createGame(page);
 
     // Game should start in draft status
-    await expect(page.locator('text=draft')).toBeVisible();
+    await expect(page.locator('text=Draft')).toBeVisible();
 
     // Click start game button
     await page.click('button:has-text("Start Game")');
 
     // Status should now be active
-    await expect(page.locator('text=active')).toBeVisible();
+    await expect(page.locator('text=Active')).toBeVisible();
 
     // Start button should be replaced with pause button
     await expect(page.locator('button:has-text("Pause Game")')).toBeVisible();
@@ -324,11 +324,11 @@ test.describe('GM Dashboard - Game Management Flow', () => {
 
     // Pause the game
     await page.click('button:has-text("Pause Game")');
-    await expect(page.locator('text=paused')).toBeVisible();
+    await expect(page.locator('text=Paused')).toBeVisible();
 
     // Resume the game
     await page.click('button:has-text("Resume Game")');
-    await expect(page.locator('text=active')).toBeVisible();
+    await expect(page.locator('text=Active')).toBeVisible();
   });
 
   test('should unlock sessions', async ({ page }) => {
@@ -423,14 +423,14 @@ test.describe('GM Dashboard - Navigation and UI', () => {
     const gameId = await createGame(page);
 
     // Draft status
-    const draftBadge = page.locator('text=draft');
+    const draftBadge = page.locator('text=Draft');
     await expect(draftBadge).toBeVisible();
 
     // Start game
     await page.click('button:has-text("Start Game")');
 
     // Active status
-    const activeBadge = page.locator('text=active');
+    const activeBadge = page.locator('text=Active');
     await expect(activeBadge).toBeVisible();
   });
 
