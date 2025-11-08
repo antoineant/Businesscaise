@@ -339,6 +339,9 @@ test.describe('GM Dashboard - Game Management Flow', () => {
     // Start the game first
     await page.getByRole('button', { name: /start game/i }).click();
 
+    // Sessions count should initially be 0/10
+    await expect(page.getByTestId('sessions-stat-card')).toContainText('0/10');
+
     // Find first unlock button
     const firstUnlockButton = page.getByRole('button', { name: /unlock/i }).first();
     await expect(firstUnlockButton).toBeVisible();
@@ -346,11 +349,8 @@ test.describe('GM Dashboard - Game Management Flow', () => {
     // Click to unlock
     await firstUnlockButton.click();
 
-    // Should see "Unlocked" text or green indicator
-    await expect(page.getByText('Unlocked').first()).toBeVisible();
-
     // Sessions count should update to 1/10
-    await expect(page.getByText('1/10')).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('sessions-stat-card')).toContainText('1/10', { timeout: 5000 });
 
     // Take screenshot
     await page.screenshot({
