@@ -26,10 +26,9 @@ async function registerGM(page: Page) {
   await page.goto('/register');
 
   // Wait for page to load
-  await expect(page.locator('h1')).toContainText('BusinessCaise');
+  await expect(page.locator('h1')).toContainText('Create GM Account');
 
-  // Select "Game Master" account type (defaults to "Player")
-  await page.click('input[type="radio"][value="game_master"], label:has-text("Game Master")');
+  // No radio button needed - this is a GM-specific registration page
 
   await page.fill('input[type="text"]', TEST_GM.name);
   await page.fill('input[type="email"]', TEST_GM.email);
