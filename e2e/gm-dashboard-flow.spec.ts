@@ -357,10 +357,12 @@ test.describe('GM Dashboard - Game Management Flow', () => {
     // Wait for unlock to complete
     await unlockResponsePromise;
 
-    // Wait for the page to reload game data (sessions GET request)
-    await page.waitForResponse(
-      response => response.url().includes(`/games/${gameId}/sessions`) && response.status() === 200
-    );
+    // Wait for ALL three reload API calls (game, sessions, teams) that loadGameData() makes
+    await Promise.all([
+      page.waitForResponse(response => response.url().includes(`/games/${gameId}`) && !response.url().includes('/sessions') && !response.url().includes('/teams') && response.status() === 200),
+      page.waitForResponse(response => response.url().includes(`/games/${gameId}/sessions`) && response.status() === 200),
+      page.waitForResponse(response => response.url().includes(`/games/${gameId}/teams`) && response.status() === 200),
+    ]);
 
     // Sessions count should update to 1/10
     await expect(page.getByTestId('sessions-stat-card')).toContainText('1/10', { timeout: 5000 });
