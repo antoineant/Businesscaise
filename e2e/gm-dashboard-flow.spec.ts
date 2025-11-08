@@ -209,9 +209,9 @@ test.describe('GM Dashboard - Authentication Flow', () => {
     // Should be on games list page (the main dashboard)
     await expect(page).toHaveURL('/games');
 
-    // Should see empty state or games list
-    const heading = page.locator('h2');
-    await expect(heading).toContainText('Your Games');
+    // Should see games list page heading
+    const heading = page.locator('h1');
+    await expect(heading).toContainText('My Games');
 
     // Should see GM name in navigation
     await expect(page.locator('text=' + TEST_GM.name)).toBeVisible();
