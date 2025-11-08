@@ -121,7 +121,7 @@ export const GameDetailsPage: React.FC = () => {
     );
   }
 
-  const unlockedSessions = sessions.filter((s) => s.is_unlocked).length;
+  const unlockedSessions = sessions.filter((s) => s.status !== 'locked').length;
 
   return (
     <div className="space-y-6">
@@ -235,7 +235,7 @@ export const GameDetailsPage: React.FC = () => {
             <div
               key={session.id}
               className={`flex items-center justify-between p-4 rounded-lg border ${
-                session.is_unlocked
+                session.status !== 'locked'
                   ? 'bg-green-50 border-green-200'
                   : 'bg-gray-50 border-gray-200'
               }`}
@@ -251,7 +251,7 @@ export const GameDetailsPage: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center space-x-2">
-                {session.is_unlocked ? (
+                {session.status !== 'locked' ? (
                   <span className="text-green-600 text-sm font-medium">Unlocked</span>
                 ) : (
                   <button
