@@ -50,7 +50,7 @@ async function registerGM(page: Page) {
   // Wait for UI outcome (fast, reliable)
   try {
     await Promise.race([
-      page.waitForURL('/games', { timeout: 10000 }),
+      page.waitForURL('/dashboard', { timeout: 10000 }),
       page.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
         .then(() => Promise.reject(new Error('error_on_page')))
     ]);
@@ -73,7 +73,7 @@ async function loginGM(page: Page) {
 
   // Wait for EITHER success (redirect) OR error message (failure)
   await Promise.race([
-    page.waitForURL('/games', { timeout: 10000 }),
+    page.waitForURL('/dashboard', { timeout: 10000 }),
     page.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
       .then(async () => {
         const errorText = await page.locator('.bg-red-50, [class*="error"]').textContent();
@@ -116,12 +116,12 @@ test.describe('GM Dashboard - Authentication Flow', () => {
   test('should register new GM account successfully', async ({ page }) => {
     await registerGM(page);
 
-    // Should be on games page
-    await expect(page).toHaveURL('/games');
+    // Should be on dashboard page
+    await expect(page).toHaveURL('/dashboard');
 
     // Should see empty state or games list
-    const heading = page.locator('h1');
-    await expect(heading).toContainText('My Games');
+    const heading = page.locator('h2');
+    await expect(heading).toContainText('Your Games');
 
     // Should see GM name in navigation
     await expect(page.locator('text=' + TEST_GM.name)).toBeVisible();
@@ -144,9 +144,9 @@ test.describe('GM Dashboard - Authentication Flow', () => {
     // Now login with same credentials
     await loginGM(page);
 
-    // Should be on games page
-    await expect(page).toHaveURL('/games');
-    await expect(page.locator('h1')).toContainText('My Games');
+    // Should be on dashboard page
+    await expect(page).toHaveURL('/dashboard');
+    await expect(page.locator('h2')).toContainText('Your Games');
   });
 
   test('should logout successfully', async ({ page }) => {
