@@ -384,8 +384,8 @@ test.describe('GM Dashboard - Game Management Flow', () => {
     await page.waitForURL('/games');
 
     // Find the delete button for our game
-    const gameCard = page.locator(`text=${TEST_GAME.title}`).locator('..');
-    const deleteButton = gameCard.locator('button[title="Delete game"]');
+    const gameCard = page.getByRole('heading', { name: TEST_GAME.title, level: 3 }).locator('../..');
+    const deleteButton = gameCard.getByTestId('delete-game-button');
 
     // Listen for confirm dialog
     page.on('dialog', dialog => dialog.accept());
@@ -393,14 +393,14 @@ test.describe('GM Dashboard - Game Management Flow', () => {
     await deleteButton.click();
 
     // Game should no longer be visible
-    await expect(page.locator(`text=${TEST_GAME.title}`)).not.toBeVisible();
+    await expect(page.getByRole('heading', { name: TEST_GAME.title })).not.toBeVisible();
   });
 
   test('should display empty state when no games exist', async ({ page }) => {
     await page.goto('/games');
 
     // Delete all test games first (if any)
-    const deleteButtons = await page.locator('button[title="Delete game"]').all();
+    const deleteButtons = await page.getByTestId('delete-game-button').all();
     for (const button of deleteButtons) {
       page.on('dialog', dialog => dialog.accept());
       await button.click();
