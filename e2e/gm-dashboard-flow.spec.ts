@@ -161,9 +161,9 @@ async function loginGM(page: Page) {
   await page.fill('input[type="password"]', TEST_GM.password);
   await page.click('button[type="submit"]');
 
-  // Wait for EITHER success (redirect) OR error message (failure)
+  // Wait for EITHER success (redirect to /games) OR error message (failure)
   await Promise.race([
-    page.waitForURL('/dashboard', { timeout: 10000 }),
+    page.waitForURL('/games', { timeout: 10000 }),
     page.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
       .then(async () => {
         const errorText = await page.locator('.bg-red-50, [class*="error"]').textContent();
@@ -209,9 +209,9 @@ test.describe('GM Dashboard - Authentication Flow', () => {
     // Should be on games list page (the main dashboard)
     await expect(page).toHaveURL('/games');
 
-    // Should see empty state or games list
-    const heading = page.locator('h2');
-    await expect(heading).toContainText('Your Games');
+    // Should see games list page heading
+    const heading = page.locator('h1');
+    await expect(heading).toContainText('My Games');
 
     // Should see GM name in navigation
     await expect(page.locator('text=' + TEST_GM.name)).toBeVisible();
@@ -236,7 +236,7 @@ test.describe('GM Dashboard - Authentication Flow', () => {
 
     // Should be on games list page (the main dashboard)
     await expect(page).toHaveURL('/games');
-    await expect(page.locator('h2')).toContainText('Your Games');
+    await expect(page.locator('h1')).toContainText('My Games');
   });
 
   test('should logout successfully', async ({ page }) => {
@@ -298,13 +298,13 @@ test.describe('GM Dashboard - Game Management Flow', () => {
     const gameId = await createGame(page);
 
     // Game should start in draft status
-    await expect(page.locator('text=draft')).toBeVisible();
+    await expect(page.locator('text=Draft')).toBeVisible();
 
     // Click start game button
     await page.click('button:has-text("Start Game")');
 
     // Status should now be active
-    await expect(page.locator('text=active')).toBeVisible();
+    await expect(page.locator('text=Active')).toBeVisible();
 
     // Start button should be replaced with pause button
     await expect(page.locator('button:has-text("Pause Game")')).toBeVisible();
@@ -324,11 +324,11 @@ test.describe('GM Dashboard - Game Management Flow', () => {
 
     // Pause the game
     await page.click('button:has-text("Pause Game")');
-    await expect(page.locator('text=paused')).toBeVisible();
+    await expect(page.locator('text=Paused')).toBeVisible();
 
     // Resume the game
     await page.click('button:has-text("Resume Game")');
-    await expect(page.locator('text=active')).toBeVisible();
+    await expect(page.locator('text=Active')).toBeVisible();
   });
 
   test('should unlock sessions', async ({ page }) => {
@@ -423,14 +423,14 @@ test.describe('GM Dashboard - Navigation and UI', () => {
     const gameId = await createGame(page);
 
     // Draft status
-    const draftBadge = page.locator('text=draft');
+    const draftBadge = page.locator('text=Draft');
     await expect(draftBadge).toBeVisible();
 
     // Start game
     await page.click('button:has-text("Start Game")');
 
     // Active status
-    const activeBadge = page.locator('text=active');
+    const activeBadge = page.locator('text=Active');
     await expect(activeBadge).toBeVisible();
   });
 
