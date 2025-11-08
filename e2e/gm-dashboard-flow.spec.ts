@@ -63,11 +63,20 @@ async function registerGM(page: Page) {
   // Log all network requests to debug API call issues
   const apiCalls: string[] = [];
   const apiResponses: string[] = [];
+  const networkErrors: string[] = [];
 
   page.on('request', request => {
     if (request.url().includes('/api/') || request.url().includes('/auth/')) {
       apiCalls.push(`${request.method()} ${request.url()}`);
       console.log(`[DIAGNOSTIC] Request: ${request.method()} ${request.url()}`);
+    }
+  });
+
+  page.on('requestfailed', request => {
+    if (request.url().includes('/api/') || request.url().includes('/auth/')) {
+      const failure = request.failure();
+      networkErrors.push(`${request.method()} ${request.url()} - ${failure?.errorText || 'unknown error'}`);
+      console.log(`[DIAGNOSTIC] Request FAILED: ${request.method()} ${request.url()} - ${failure?.errorText}`);
     }
   });
 
@@ -120,12 +129,14 @@ async function registerGM(page: Page) {
     // Log all API calls and responses
     console.log(`[DIAGNOSTIC] API calls made:`, apiCalls);
     console.log(`[DIAGNOSTIC] API responses received:`, apiResponses);
+    console.log(`[DIAGNOSTIC] Network errors:`, networkErrors);
     console.log(`[DIAGNOSTIC] Current URL: ${page.url()}`);
 
     throw new Error(
       `Registration failed. UI: "${uiError}". ${apiError}. ` +
       `Calls: ${apiCalls.join(', ') || 'none'}. ` +
-      `Responses: ${apiResponses.join(', ') || 'none'}`
+      `Responses: ${apiResponses.join(', ') || 'none'}. ` +
+      `Network errors: ${networkErrors.join(', ') || 'none'}`
     );
   }
 
