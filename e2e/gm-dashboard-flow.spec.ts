@@ -25,8 +25,11 @@ const TEST_GAME = {
 async function registerGM(page: Page) {
   await page.goto('/register');
 
-  // Wait for page to load by checking visible heading
-  await expect(page.locator('h1')).toContainText('Create GM Account');
+  // Wait for page to load
+  await expect(page.locator('h1')).toContainText('BusinessCaise');
+
+  // Select "Game Master" account type (defaults to "Player")
+  await page.click('input[type="radio"][value="game_master"], label:has-text("Game Master")');
 
   await page.fill('input[type="text"]', TEST_GM.name);
   await page.fill('input[type="email"]', TEST_GM.email);
