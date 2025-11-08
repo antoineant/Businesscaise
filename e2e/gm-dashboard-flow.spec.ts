@@ -12,8 +12,6 @@ const generateTestGM = () => ({
   password: 'TestGM123!',
 });
 
-const TEST_GM = generateTestGM();
-
 const TEST_GAME = {
   title: `E2E Test Game ${Date.now()}`,
   description: 'Automated test game for E2E testing',
@@ -23,6 +21,9 @@ const TEST_GAME = {
 
 // Helper: Register a new GM account (adaptive - handles both GM Dashboard and Team Frontend pages)
 async function registerGM(page: Page) {
+  // Generate unique credentials for each registration
+  const testGM = generateTestGM();
+
   await page.goto('/register', { waitUntil: 'networkidle' });
 
   // Capture browser console errors
@@ -63,11 +64,11 @@ async function registerGM(page: Page) {
     console.log('[DIAGNOSTIC] Selected "Game Master" account type');
   }
 
-  await page.fill('input[type="text"], input#name', TEST_GM.name);
-  await page.fill('input[type="email"], input#email', TEST_GM.email);
+  await page.fill('input[type="text"], input#name', testGM.name);
+  await page.fill('input[type="email"], input#email', testGM.email);
   const passwordFields = await page.locator('input[type="password"]').all();
-  await passwordFields[0].fill(TEST_GM.password);
-  await passwordFields[1].fill(TEST_GM.password);
+  await passwordFields[0].fill(testGM.password);
+  await passwordFields[1].fill(testGM.password);
 
   // Log all network requests to debug API call issues
   const apiCalls: string[] = [];
@@ -152,13 +153,15 @@ async function registerGM(page: Page) {
   }
 
   console.log(`[DIAGNOSTIC] ✓ Registration successful, redirected to ${page.url()}`);
+
+  return testGM;
 }
 
 // Helper: Login as existing GM
-async function loginGM(page: Page) {
+async function loginGM(page: Page, credentials: { email: string; password: string }) {
   await page.goto('/login');
-  await page.fill('input[type="email"]', TEST_GM.email);
-  await page.fill('input[type="password"]', TEST_GM.password);
+  await page.fill('input[type="email"]', credentials.email);
+  await page.fill('input[type="password"]', credentials.password);
   await page.click('button[type="submit"]');
 
   // Wait for EITHER success (redirect to /games) OR error message (failure)
@@ -204,7 +207,7 @@ async function createGame(page: Page): Promise<string> {
 
 test.describe('GM Dashboard - Authentication Flow', () => {
   test('should register new GM account successfully', async ({ page }) => {
-    await registerGM(page);
+    const testGM = await registerGM(page);
 
     // Should be on games list page (the main dashboard)
     await expect(page).toHaveURL('/games');
@@ -213,7 +216,7 @@ test.describe('GM Dashboard - Authentication Flow', () => {
     await expect(page.getByRole('heading', { name: /my games/i })).toBeVisible();
 
     // Should see GM name in navigation
-    await expect(page.getByText(TEST_GM.name)).toBeVisible();
+    await expect(page.getByText(testGM.name)).toBeVisible();
 
     // Take screenshot
     await page.screenshot({
@@ -224,14 +227,14 @@ test.describe('GM Dashboard - Authentication Flow', () => {
 
   test('should login with existing GM account', async ({ page }) => {
     // First register the user (ensure it exists)
-    await registerGM(page);
+    const testGM = await registerGM(page);
 
     // Logout to test login
     await page.getByRole('button', { name: /logout/i }).click();
     await expect(page).toHaveURL('/login');
 
     // Now login with same credentials
-    await loginGM(page);
+    await loginGM(page, testGM);
 
     // Should be on games list page (the main dashboard)
     await expect(page).toHaveURL('/games');
