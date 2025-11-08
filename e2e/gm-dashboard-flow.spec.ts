@@ -60,11 +60,24 @@ async function registerGM(page: Page) {
   await passwordFields[0].fill(TEST_GM.password);
   await passwordFields[1].fill(TEST_GM.password);
 
-  // Set up response listener BEFORE clicking submit
-  const responsePromise = page.waitForResponse(
-    response => response.url().includes('/auth/register'),
-    { timeout: 15000 }
-  );
+  // Log all network requests to debug API call issues
+  const apiCalls: string[] = [];
+  page.on('request', request => {
+    if (request.url().includes('/api/') || request.url().includes('/auth/')) {
+      apiCalls.push(`${request.method()} ${request.url()}`);
+    }
+  });
+
+  // Set up response listener BEFORE clicking submit (non-blocking)
+  let capturedResponse: any = null;
+  page.on('response', async response => {
+    if (response.url().includes('/auth/register')) {
+      const status = response.status();
+      const body = await response.json().catch(() => response.text().catch(() => 'Could not parse'));
+      capturedResponse = { status, body };
+      console.log(`[DIAGNOSTIC] Captured /auth/register response: ${status} ${JSON.stringify(body)}`);
+    }
+  });
 
   await page.click('button[type="submit"]');
 
@@ -81,17 +94,22 @@ async function registerGM(page: Page) {
     // Registration failed - get detailed error info
     const uiError = await page.locator('.bg-red-50, [class*="error"]').textContent();
 
-    let apiError = 'No API response';
-    try {
-      const response = await responsePromise;
-      const status = response.status();
-      const body = await response.json().catch(() => response.text().catch(() => 'Could not parse response'));
-      apiError = `API ${status}: ${typeof body === 'string' ? body : JSON.stringify(body)}`;
-    } catch (err) {
-      apiError = `Failed to capture API response: ${err}`;
+    // Give a moment for response listener to finish
+    await page.waitForTimeout(500);
+
+    let apiError = 'No API response captured';
+    if (capturedResponse) {
+      apiError = `API ${capturedResponse.status}: ${typeof capturedResponse.body === 'string' ? capturedResponse.body : JSON.stringify(capturedResponse.body)}`;
     }
 
-    throw new Error(`Registration failed. UI: "${uiError}". ${apiError}`);
+    // Log all API calls that were made
+    console.log(`[DIAGNOSTIC] API calls made during registration:`, apiCalls);
+    console.log(`[DIAGNOSTIC] Current URL: ${page.url()}`);
+
+    throw new Error(
+      `Registration failed. UI: "${uiError}". ${apiError}. ` +
+      `API calls made: ${apiCalls.join(', ') || 'none'}`
+    );
   }
 
   console.log(`[DIAGNOSTIC] ✓ Registration successful, redirected to ${page.url()}`);
