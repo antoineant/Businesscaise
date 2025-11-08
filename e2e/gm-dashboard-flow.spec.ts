@@ -62,20 +62,35 @@ async function registerGM(page: Page) {
 
   // Log all network requests to debug API call issues
   const apiCalls: string[] = [];
+  const apiResponses: string[] = [];
+
   page.on('request', request => {
     if (request.url().includes('/api/') || request.url().includes('/auth/')) {
       apiCalls.push(`${request.method()} ${request.url()}`);
+      console.log(`[DIAGNOSTIC] Request: ${request.method()} ${request.url()}`);
     }
   });
 
   // Set up response listener BEFORE clicking submit (non-blocking)
   let capturedResponse: any = null;
   page.on('response', async response => {
-    if (response.url().includes('/auth/register')) {
-      const status = response.status();
-      const body = await response.json().catch(() => response.text().catch(() => 'Could not parse'));
-      capturedResponse = { status, body };
-      console.log(`[DIAGNOSTIC] Captured /auth/register response: ${status} ${JSON.stringify(body)}`);
+    const url = response.url();
+    const status = response.status();
+
+    // Log ALL responses to see what we're getting
+    if (url.includes('/api/') || url.includes('/auth/')) {
+      apiResponses.push(`${status} ${url}`);
+      console.log(`[DIAGNOSTIC] Response: ${status} ${url}`);
+    }
+
+    if (url.includes('/auth/register')) {
+      try {
+        const body = await response.json().catch(() => response.text().catch(() => 'Could not parse'));
+        capturedResponse = { status, body };
+        console.log(`[DIAGNOSTIC] Captured /auth/register response: ${status} ${JSON.stringify(body)}`);
+      } catch (err) {
+        console.log(`[DIAGNOSTIC] Error parsing response: ${err}`);
+      }
     }
   });
 
@@ -102,13 +117,15 @@ async function registerGM(page: Page) {
       apiError = `API ${capturedResponse.status}: ${typeof capturedResponse.body === 'string' ? capturedResponse.body : JSON.stringify(capturedResponse.body)}`;
     }
 
-    // Log all API calls that were made
-    console.log(`[DIAGNOSTIC] API calls made during registration:`, apiCalls);
+    // Log all API calls and responses
+    console.log(`[DIAGNOSTIC] API calls made:`, apiCalls);
+    console.log(`[DIAGNOSTIC] API responses received:`, apiResponses);
     console.log(`[DIAGNOSTIC] Current URL: ${page.url()}`);
 
     throw new Error(
       `Registration failed. UI: "${uiError}". ${apiError}. ` +
-      `API calls made: ${apiCalls.join(', ') || 'none'}`
+      `Calls: ${apiCalls.join(', ') || 'none'}. ` +
+      `Responses: ${apiResponses.join(', ') || 'none'}`
     );
   }
 
