@@ -34,17 +34,32 @@ async function registerGM(page: Page) {
   await passwordFields[0].fill(TEST_GM.password);
   await passwordFields[1].fill(TEST_GM.password);
 
+  // Capture API response in background (non-blocking)
+  let apiError = '';
+  page.once('response', async (response) => {
+    if (response.url().includes('/auth/register') && !response.ok()) {
+      const body = await response.json().catch(() => ({}));
+      apiError = `API ${response.status()}: ${JSON.stringify(body)}`;
+    }
+  });
+
   await page.click('button[type="submit"]');
 
-  // Wait for EITHER success (redirect) OR error message (failure)
-  await Promise.race([
-    page.waitForURL('/games', { timeout: 10000 }),
-    page.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
-      .then(async () => {
-        const errorText = await page.locator('.bg-red-50, [class*="error"]').textContent();
-        throw new Error(`Registration failed: ${errorText}`);
-      })
-  ]);
+  // Wait for UI outcome (fast, reliable)
+  try {
+    await Promise.race([
+      page.waitForURL('/games', { timeout: 10000 }),
+      page.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
+        .then(() => Promise.reject(new Error('error_on_page')))
+    ]);
+  } catch (err: any) {
+    if (err.message === 'error_on_page') {
+      const uiError = await page.locator('.bg-red-50, [class*="error"]').textContent();
+      await page.waitForTimeout(100); // Let API listener finish
+      throw new Error(`Registration failed. UI: "${uiError}". ${apiError || 'No API error captured'}`);
+    }
+    throw err;
+  }
 }
 
 // Helper: Login as existing GM
