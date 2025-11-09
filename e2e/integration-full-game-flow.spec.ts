@@ -117,16 +117,17 @@ test.describe.serial('INTEGRATION: Full Game Lifecycle', () => {
     await page.click('button[type="submit"]');
     await page.waitForURL('http://localhost:3002/games');
 
-    // Navigate to game
-    await page.click(`text=${TEST_GAME.title}`);
-    await page.waitForURL(`http://localhost:3002/games/${gameId}`);
-
-    // Wait for game details page to load
-    await Promise.all([
+    // Navigate to game - set up all waiters BEFORE clicking
+    const urlPromise = page.waitForURL(`http://localhost:3002/games/${gameId}`);
+    const apiPromises = Promise.all([
       page.waitForResponse(response => response.url().includes(`/games/${gameId}`) && !response.url().includes('/sessions') && !response.url().includes('/teams') && response.status() === 200),
       page.waitForResponse(response => response.url().includes(`/games/${gameId}/sessions`) && response.status() === 200),
       page.waitForResponse(response => response.url().includes(`/games/${gameId}/teams`) && response.status() === 200),
     ]);
+
+    await page.click(`text=${TEST_GAME.title}`);
+    await urlPromise;
+    await apiPromises;
 
     // Start game
     await page.getByRole('button', { name: /start game/i }).click();
@@ -175,15 +176,17 @@ test.describe.serial('INTEGRATION: Full Game Lifecycle', () => {
     await page.click('button[type="submit"]');
     await page.waitForURL('http://localhost:3002/games');
 
-    await page.click(`text=${TEST_GAME.title}`);
-    await page.waitForURL(`http://localhost:3002/games/${gameId}`);
-
-    // Wait for game details page to load all data
-    await Promise.all([
+    // Set up all waiters BEFORE clicking
+    const urlPromise = page.waitForURL(`http://localhost:3002/games/${gameId}`);
+    const apiPromises = Promise.all([
       page.waitForResponse(response => response.url().includes(`/games/${gameId}`) && !response.url().includes('/sessions') && !response.url().includes('/teams') && response.status() === 200),
       page.waitForResponse(response => response.url().includes(`/games/${gameId}/sessions`) && response.status() === 200),
       page.waitForResponse(response => response.url().includes(`/games/${gameId}/teams`) && response.status() === 200),
     ]);
+
+    await page.click(`text=${TEST_GAME.title}`);
+    await urlPromise;
+    await apiPromises;
 
     // Verify team count in stats card
     await expect(page.getByTestId('teams-stat-card')).toContainText('3', { timeout: 5000 });
@@ -211,15 +214,17 @@ test.describe.serial('INTEGRATION: Full Game Lifecycle', () => {
     await page.click('button[type="submit"]');
     await page.waitForURL('http://localhost:3002/games');
 
-    await page.click(`text=${TEST_GAME.title}`);
-    await page.waitForURL(`http://localhost:3002/games/${gameId}`);
-
-    // Wait for game details page to load
-    await Promise.all([
+    // Set up all waiters BEFORE clicking
+    const urlPromise = page.waitForURL(`http://localhost:3002/games/${gameId}`);
+    const apiPromises = Promise.all([
       page.waitForResponse(response => response.url().includes(`/games/${gameId}`) && !response.url().includes('/sessions') && !response.url().includes('/teams') && response.status() === 200),
       page.waitForResponse(response => response.url().includes(`/games/${gameId}/sessions`) && response.status() === 200),
       page.waitForResponse(response => response.url().includes(`/games/${gameId}/teams`) && response.status() === 200),
     ]);
+
+    await page.click(`text=${TEST_GAME.title}`);
+    await urlPromise;
+    await apiPromises;
 
     // Unlock sessions 2 and 3
     const unlockButtons = await page.getByRole('button', { name: /unlock/i }).all();
@@ -270,15 +275,17 @@ test.describe.serial('INTEGRATION: Full Game Lifecycle', () => {
     await page.click('button[type="submit"]');
     await page.waitForURL('http://localhost:3002/games');
 
-    await page.click(`text=${TEST_GAME.title}`);
-    await page.waitForURL(`http://localhost:3002/games/${gameId}`);
-
-    // Wait for game details page to load
-    await Promise.all([
+    // Set up all waiters BEFORE clicking
+    const urlPromise = page.waitForURL(`http://localhost:3002/games/${gameId}`);
+    const apiPromises = Promise.all([
       page.waitForResponse(response => response.url().includes(`/games/${gameId}`) && !response.url().includes('/sessions') && !response.url().includes('/teams') && response.status() === 200),
       page.waitForResponse(response => response.url().includes(`/games/${gameId}/sessions`) && response.status() === 200),
       page.waitForResponse(response => response.url().includes(`/games/${gameId}/teams`) && response.status() === 200),
     ]);
+
+    await page.click(`text=${TEST_GAME.title}`);
+    await urlPromise;
+    await apiPromises;
 
     // Verify stats cards
     await expect(page.getByTestId('teams-stat-card')).toBeVisible();
