@@ -298,9 +298,11 @@ test.describe.serial('GM Dashboard Pages E2E', () => {
     // Wait for page to finish loading
     await page.waitForLoadState('networkidle');
 
-    // Ensure not in loading state
+    // Ensure not in loading or error state
     const loadingMessage = page.locator('text=Loading team details');
+    const errorMessage = page.locator('text=Failed to load team details, text=Team not found');
     await expect(loadingMessage).not.toBeVisible({ timeout: 1000 }).catch(() => {});
+    await expect(errorMessage).not.toBeVisible({ timeout: 1000 }).catch(() => {});
 
     // Verify team name in header
     await expect(page.getByRole('heading', { name: new RegExp(TEST_TEAMS[0].name, 'i'), level: 1 })).toBeVisible();
@@ -375,9 +377,11 @@ test.describe.serial('GM Dashboard Pages E2E', () => {
     // Wait for page to finish loading
     await page.waitForLoadState('networkidle');
 
-    // Ensure not in loading state
+    // Ensure not in loading or error state
     const loadingSessionMessage = page.locator('text=Loading session');
+    const errorSessionMessage = page.locator('text=Failed to load session, text=Session not found');
     await expect(loadingSessionMessage).not.toBeVisible({ timeout: 1000 }).catch(() => {});
+    await expect(errorSessionMessage).not.toBeVisible({ timeout: 1000 }).catch(() => {});
 
     // Verify page loaded
     await expect(page.getByRole('heading', { name: /edit session/i })).toBeVisible();
