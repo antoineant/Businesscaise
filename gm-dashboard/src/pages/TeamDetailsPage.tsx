@@ -38,7 +38,15 @@ export const TeamDetailsPage: React.FC = () => {
           gameAPI.getTeamHistory(gameId, teamId),
         ]);
 
-        setTeam(teamResponse.data.team);
+        // Transform API response to match frontend schema
+        const rawTeam = teamResponse.data.team;
+        const transformedTeam = {
+          ...rawTeam,
+          current_metrics: rawTeam.metrics || rawTeam.current_metrics,
+          total_score: rawTeam.overall_score || rawTeam.total_score,
+        };
+
+        setTeam(transformedTeam);
         setHistory(historyResponse.data.history || []);
       } catch (err: any) {
         setError(err.response?.data?.message || 'Failed to load team details');
