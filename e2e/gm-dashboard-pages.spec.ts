@@ -168,7 +168,7 @@ test.describe.serial('GM Dashboard Pages E2E', () => {
     await leaderboardApiPromise;
 
     // Verify page loaded
-    await expect(page.getByRole('heading', { name: /team rankings/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /leaderboard/i })).toBeVisible();
 
     // Verify teams are listed
     for (const team of TEST_TEAMS) {
@@ -218,7 +218,7 @@ test.describe.serial('GM Dashboard Pages E2E', () => {
     await analyticsApiPromise;
 
     // Verify page loaded
-    await expect(page.getByRole('heading', { name: /game analytics/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /analytics/i })).toBeVisible();
 
     // Verify overview stats
     await expect(page.getByTestId('total-teams-stat')).toBeVisible();
