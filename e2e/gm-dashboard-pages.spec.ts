@@ -42,7 +42,7 @@ async function createTeamsViaAPI(gameId: string): Promise<string[]> {
       body: JSON.stringify({
         game_id: gameId,
         team_name: team.name,
-        member_names: team.members,
+        members: team.members,  // Use "members" not "member_names"
       }),
     });
 
