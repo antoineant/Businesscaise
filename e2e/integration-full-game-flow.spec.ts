@@ -119,6 +119,7 @@ test.describe.serial('INTEGRATION: Full Game Lifecycle', () => {
 
     // Navigate to game
     await page.click(`text=${TEST_GAME.title}`);
+    await page.waitForURL(`http://localhost:3002/games/${gameId}`);
 
     // Wait for game details page to load
     await Promise.all([
@@ -175,6 +176,7 @@ test.describe.serial('INTEGRATION: Full Game Lifecycle', () => {
     await page.waitForURL('http://localhost:3002/games');
 
     await page.click(`text=${TEST_GAME.title}`);
+    await page.waitForURL(`http://localhost:3002/games/${gameId}`);
 
     // Wait for game details page to load all data
     await Promise.all([
@@ -210,6 +212,7 @@ test.describe.serial('INTEGRATION: Full Game Lifecycle', () => {
     await page.waitForURL('http://localhost:3002/games');
 
     await page.click(`text=${TEST_GAME.title}`);
+    await page.waitForURL(`http://localhost:3002/games/${gameId}`);
 
     // Wait for game details page to load
     await Promise.all([
@@ -268,6 +271,7 @@ test.describe.serial('INTEGRATION: Full Game Lifecycle', () => {
     await page.waitForURL('http://localhost:3002/games');
 
     await page.click(`text=${TEST_GAME.title}`);
+    await page.waitForURL(`http://localhost:3002/games/${gameId}`);
 
     // Wait for game details page to load
     await Promise.all([
