@@ -188,6 +188,15 @@ test.describe.serial('INTEGRATION: Full Game Lifecycle', () => {
     await urlPromise;
     await apiPromises;
 
+    // DEBUG: Verify URL and take screenshot
+    console.log('Current URL:', page.url());
+    await page.screenshot({ path: 'e2e-results/debug-step3-before-assertion.png', fullPage: true });
+
+    // Check if page is in error state
+    const errorText = await page.locator('text=Game not found').count();
+    const loadingText = await page.locator('text=Loading game').count();
+    console.log('Error state:', errorText, 'Loading state:', loadingText);
+
     // Verify team count in stats card
     await expect(page.getByTestId('teams-stat-card')).toContainText('3', { timeout: 5000 });
     console.log('✓ Teams visible in GM dashboard');
