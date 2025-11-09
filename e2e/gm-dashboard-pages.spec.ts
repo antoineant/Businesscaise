@@ -236,8 +236,8 @@ test.describe.serial('GM Dashboard Pages E2E', () => {
 
     // Verify overview stats
     await expect(page.getByTestId('total-teams-stat')).toBeVisible();
-    await expect(page.getByTestId('unlocked-sessions-stat')).toBeVisible();
-    await expect(page.getByTestId('average-score-stat')).toBeVisible();
+    await expect(page.getByTestId('completed-sessions-stat')).toBeVisible();
+    await expect(page.getByTestId('active-sessions-stat')).toBeVisible();
 
     // Verify average metrics section
     await expect(page.getByRole('heading', { name: /average metrics/i })).toBeVisible();
