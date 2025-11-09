@@ -298,20 +298,35 @@ test.describe.serial('GM Dashboard Pages E2E', () => {
     // Wait for page to finish loading
     await page.waitForLoadState('networkidle');
 
+    // Debug: Log page content
+    const pageContent = await page.content();
+    console.log('=== TEAM DETAILS PAGE HTML (first 500 chars) ===');
+    console.log(pageContent.substring(0, 500));
+
     // Check for error states
     const errorMessage = page.locator('text=Failed to load team details');
     const notFoundMessage = page.locator('text=Team not found');
     const isError = await errorMessage.or(notFoundMessage).isVisible();
 
     if (isError) {
-      // Take screenshot for debugging
+      console.log('ERROR: Page is in error state');
       await page.screenshot({ path: 'e2e-results/team-details-error.png', fullPage: true });
       throw new Error('Team details page is in error state');
     }
 
     // Ensure not in loading state
     const loadingMessage = page.locator('text=Loading team details');
+    const isLoading = await loadingMessage.isVisible();
+    console.log(`Loading state: ${isLoading}`);
     await expect(loadingMessage).not.toBeVisible({ timeout: 1000 }).catch(() => {});
+
+    // Debug: Check what headings exist
+    const allHeadings = await page.locator('h1, h2, h3').allTextContents();
+    console.log('All headings on page:', allHeadings);
+
+    // Debug: Try to find the team name anywhere on the page
+    const teamNameVisible = await page.getByText(TEST_TEAMS[0].name).isVisible();
+    console.log(`Team name "${TEST_TEAMS[0].name}" visible anywhere: ${teamNameVisible}`);
 
     // Verify team name in header
     await expect(page.getByRole('heading', { name: new RegExp(TEST_TEAMS[0].name, 'i'), level: 1 })).toBeVisible();
