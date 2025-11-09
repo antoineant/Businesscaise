@@ -476,15 +476,26 @@ test.describe.serial('GM Dashboard Pages E2E', () => {
     // Test Leaderboard back button
     await page.getByTestId('leaderboard-stat-card').click();
     await page.waitForURL(`http://localhost:3002/games/${gameId}/leaderboard`);
-    const backButton = page.locator('button').filter({ has: page.locator('svg') }).first();
-    await backButton.click();
+
+    // Wait for leaderboard page to load
+    await expect(page.getByRole('heading', { name: /leaderboard/i })).toBeVisible();
+
+    // Click back button (first button in the page, which is the back button with ArrowLeft icon)
+    const leaderboardBackButton = page.locator('button').first();
+    await leaderboardBackButton.click();
     await page.waitForURL(`http://localhost:3002/games/${gameId}`);
     await expect(page.getByRole('heading', { name: TEST_GAME.title })).toBeVisible();
 
     // Test Analytics back button
     await page.getByTestId('analytics-stat-card').click();
     await page.waitForURL(`http://localhost:3002/games/${gameId}/analytics`);
-    await page.locator('button').filter({ has: page.locator('svg') }).first().click();
+
+    // Wait for analytics page to load
+    await expect(page.getByRole('heading', { name: /analytics/i })).toBeVisible();
+
+    // Click back button
+    const analyticsBackButton = page.locator('button').first();
+    await analyticsBackButton.click();
     await page.waitForURL(`http://localhost:3002/games/${gameId}`);
     await expect(page.getByRole('heading', { name: TEST_GAME.title })).toBeVisible();
 
