@@ -293,10 +293,22 @@ test.describe.serial('GM Dashboard Pages E2E', () => {
     ]);
     await firstTeamHeading.click();
     await teamUrlPromise;
-    await teamApiPromises;
+    const [teamResponse, historyResponse] = await teamApiPromises;
+
+    // Debug: Log API responses
+    const teamData = await teamResponse.json();
+    const historyData = await historyResponse.json();
+    console.log('Team API response:', JSON.stringify(teamData, null, 2));
+    console.log('History API response:', JSON.stringify(historyData, null, 2));
 
     // Wait for page to finish loading
     await page.waitForLoadState('networkidle');
+
+    // Debug: Check current URL
+    console.log('Current URL:', page.url());
+
+    // Debug: Take screenshot to see what's on screen
+    await page.screenshot({ path: 'e2e-results/team-details-before-checks.png', fullPage: true });
 
     // Check for error states
     const errorMessage = page.locator('text=Failed to load team details');
@@ -311,7 +323,12 @@ test.describe.serial('GM Dashboard Pages E2E', () => {
 
     // Ensure not in loading state
     const loadingMessage = page.locator('text=Loading team details');
-    await expect(loadingMessage).not.toBeVisible({ timeout: 1000 }).catch(() => {});
+    const isLoading = await loadingMessage.isVisible();
+    console.log('Loading message visible:', isLoading);
+
+    // Debug: Check page content
+    const bodyText = await page.locator('body').textContent();
+    console.log('Page body text (first 200 chars):', bodyText?.substring(0, 200));
 
     // Wait for the page content to actually render by waiting for a guaranteed element
     await expect(page.getByTestId('team-score-card')).toBeVisible({ timeout: 10000 });
