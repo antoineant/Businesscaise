@@ -105,15 +105,25 @@ test.describe.serial('GM Dashboard Pages E2E', () => {
     await unlockPromise;
     await reloadPromises;
 
-    // Get session ID from the first session
-    const sessionsResponse = await page.evaluate(async (gId) => {
-      const res = await fetch(`http://localhost:3001/api/gm/games/${gId}/sessions`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
-      return res.json();
-    }, gameId);
-    sessionId = sessionsResponse.sessions[0].id;
+    // Get session ID from the first session by extracting from the edit button
+    // The edit button has the format: /games/:gameId/sessions/:sessionId/edit
+    const firstEditButton = page.locator('button[title="Edit session"]').first();
+    await expect(firstEditButton).toBeVisible();
+
+    // Click the button to navigate to edit page, then extract session ID from URL
+    const editUrlPattern = new RegExp(`/games/${gameId}/sessions/([a-f0-9-]+)/edit`);
+    await firstEditButton.click();
+    await page.waitForURL(editUrlPattern);
+
+    const currentUrl = page.url();
+    const match = currentUrl.match(editUrlPattern);
+    if (match) {
+      sessionId = match[1];
+    }
     console.log(`✓ First session unlocked: ${sessionId}`);
+
+    // Navigate back to game details
+    await page.goto(`http://localhost:3002/games/${gameId}`);
 
     // Create teams
     const teamIds = await createTeamsViaAPI(gameId);
