@@ -302,7 +302,7 @@ export const GameDetailsPage: React.FC = () => {
                   <p className="text-sm text-gray-600">{team.members.length} members</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-lg font-bold text-gray-900">{team.total_score.toFixed(1)}</p>
+                  <p className="text-lg font-bold text-gray-900">{(team.total_score ?? 0).toFixed(1)}</p>
                   <p className="text-sm text-gray-600">Score</p>
                 </div>
               </div>
