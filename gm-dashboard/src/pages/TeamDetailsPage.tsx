@@ -15,7 +15,7 @@ interface MetricsHistory {
     operations: number;
     customer_satisfaction: number;
   };
-  total_score: number;
+  total_score: number | string; // API may return string
   created_at: string;
 }
 
@@ -101,7 +101,7 @@ export const TeamDetailsPage: React.FC = () => {
             <div>
               <p className="text-sm text-gray-600">Overall Score</p>
               <p className="text-4xl font-bold text-primary-600">
-                {(team.total_score ?? 0).toFixed(1)}
+                {(parseFloat(String(team.total_score ?? 0))).toFixed(1)}
               </p>
             </div>
             <Award className="w-12 h-12 text-primary-600" />
@@ -198,7 +198,7 @@ export const TeamDetailsPage: React.FC = () => {
                     {new Date(entry.created_at).toLocaleTimeString()}
                   </span>
                   <span className="text-lg font-bold text-primary-600">
-                    {entry.total_score?.toFixed(1) || '0.0'}
+                    {(parseFloat(String(entry.total_score || 0))).toFixed(1)}
                   </span>
                 </div>
                 <div className="grid grid-cols-5 gap-2 text-center text-xs">

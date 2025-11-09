@@ -7,7 +7,7 @@ interface LeaderboardEntry {
   rank: number;
   team_id: string;
   team_name: string;
-  overall_score: number;
+  overall_score: number | string; // API returns string, handle both
   metrics?: {
     financial: number;
     hr: number;
@@ -134,7 +134,7 @@ export const LeaderboardPage: React.FC = () => {
                 </div>
                 <div className="text-right">
                   <p className="text-3xl font-bold text-primary-600" data-testid={`score-${entry.team_id}`}>
-                    {entry.overall_score?.toFixed(1) || '0.0'}
+                    {(parseFloat(String(entry.overall_score || 0))).toFixed(1)}
                   </p>
                   <p className="text-sm text-gray-600">Overall Score</p>
                 </div>
