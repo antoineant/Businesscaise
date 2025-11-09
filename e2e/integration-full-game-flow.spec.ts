@@ -166,8 +166,7 @@ test.describe.serial('INTEGRATION: Full Game Lifecycle', () => {
     await page.waitForTimeout(2000);
 
     // Verify team count in stats card
-    const teamsCard = page.locator('text=Teams').locator('..');
-    await expect(teamsCard).toContainText('3');
+    await expect(page.getByTestId('teams-stat-card')).toContainText('3');
     console.log('✓ Teams visible in GM dashboard');
 
     // Verify teams listed
@@ -232,12 +231,11 @@ test.describe.serial('INTEGRATION: Full Game Lifecycle', () => {
     await page.waitForURL(`http://localhost:3002/games/${gameId}`);
 
     // Verify stats cards
-    await expect(page.locator('text=Teams')).toBeVisible();
-    await expect(page.locator('text=Sessions')).toBeVisible();
+    await expect(page.getByTestId('teams-stat-card')).toBeVisible();
+    await expect(page.getByTestId('sessions-stat-card')).toBeVisible();
 
     // Verify team count
-    const teamsCard = page.locator('text=Teams').locator('..');
-    await expect(teamsCard).toContainText('3');
+    await expect(page.getByTestId('teams-stat-card')).toContainText('3');
 
     // Verify all teams listed with scores
     for (const team of TEST_TEAMS) {
