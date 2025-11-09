@@ -41,7 +41,7 @@ export interface Team {
   name: string;
   members: string[];
   current_metrics: Metrics;
-  total_score: number;
+  total_score: number | string; // API may return string
   rank?: number;
   created_at: string;
   updated_at: string;
