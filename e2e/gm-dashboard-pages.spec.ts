@@ -455,12 +455,18 @@ test.describe.serial('GM Dashboard Pages E2E', () => {
   test('TEST 5: Navigation back buttons work correctly', async ({ page }) => {
     console.log('>>> TEST 5: Navigation');
 
-    // Login and navigate to game
+    // Clear any stale state and start fresh
+    await page.goto('http://localhost:3002/');
+
+    // Login
     await page.goto('http://localhost:3002/login');
     await page.fill('input[type="email"]', GAME_MASTER.email);
     await page.fill('input[type="password"]', GAME_MASTER.password);
+
+    // Set up URL waiter BEFORE clicking submit
+    const loginUrlPromise = page.waitForURL('http://localhost:3002/games', { timeout: 10000 });
     await page.click('button[type="submit"]');
-    await page.waitForURL('http://localhost:3002/games');
+    await loginUrlPromise;
 
     // Navigate to game - set up waiters BEFORE clicking
     const urlPromise = page.waitForURL(`http://localhost:3002/games/${gameId}`);
