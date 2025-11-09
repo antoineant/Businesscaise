@@ -7,6 +7,10 @@ import { RegisterPage } from './pages/RegisterPage';
 import { GamesListPage } from './pages/GamesListPage';
 import { CreateGamePage } from './pages/CreateGamePage';
 import { GameDetailsPage } from './pages/GameDetailsPage';
+import { LeaderboardPage } from './pages/LeaderboardPage';
+import { AnalyticsPage } from './pages/AnalyticsPage';
+import { TeamDetailsPage } from './pages/TeamDetailsPage';
+import { SessionEditPage } from './pages/SessionEditPage';
 
 function App() {
   return (
@@ -54,6 +58,46 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <GameDetailsPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/games/:gameId/leaderboard"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <LeaderboardPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/games/:gameId/analytics"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <AnalyticsPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/games/:gameId/teams/:teamId"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <TeamDetailsPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/games/:gameId/sessions/:sessionId/edit"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <SessionEditPage />
                 </Layout>
               </ProtectedRoute>
             }
