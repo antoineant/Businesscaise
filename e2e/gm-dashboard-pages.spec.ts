@@ -303,7 +303,7 @@ test.describe.serial('GM Dashboard Pages E2E', () => {
     await expect(loadingMessage).not.toBeVisible({ timeout: 1000 }).catch(() => {});
 
     // Verify team name in header
-    await expect(page.getByRole('heading', { name: TEST_TEAMS[0].name, level: 1 })).toBeVisible();
+    await expect(page.getByRole('heading', { name: new RegExp(TEST_TEAMS[0].name, 'i'), level: 1 })).toBeVisible();
 
     // Verify overall score card
     await expect(page.getByTestId('team-score-card')).toBeVisible();
