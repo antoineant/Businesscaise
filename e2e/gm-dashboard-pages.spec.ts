@@ -295,6 +295,13 @@ test.describe.serial('GM Dashboard Pages E2E', () => {
     await teamUrlPromise;
     await teamApiPromises;
 
+    // Wait for page to finish loading
+    await page.waitForLoadState('networkidle');
+
+    // Ensure not in loading state
+    const loadingMessage = page.locator('text=Loading team details');
+    await expect(loadingMessage).not.toBeVisible({ timeout: 1000 }).catch(() => {});
+
     // Verify team name in header
     await expect(page.getByRole('heading', { name: TEST_TEAMS[0].name, level: 1 })).toBeVisible();
 
@@ -364,6 +371,13 @@ test.describe.serial('GM Dashboard Pages E2E', () => {
     await firstEditButton.click();
     await editUrlPromise;
     await editApiPromise;
+
+    // Wait for page to finish loading
+    await page.waitForLoadState('networkidle');
+
+    // Ensure not in loading state
+    const loadingSessionMessage = page.locator('text=Loading session');
+    await expect(loadingSessionMessage).not.toBeVisible({ timeout: 1000 }).catch(() => {});
 
     // Verify page loaded
     await expect(page.getByRole('heading', { name: /edit session/i })).toBeVisible();
