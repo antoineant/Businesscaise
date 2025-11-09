@@ -94,6 +94,8 @@ export const LeaderboardPage: React.FC = () => {
         <button
           onClick={() => navigate(`/games/${gameId}`)}
           className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          data-testid="back-button"
+          aria-label="Back to game details"
         >
           <ArrowLeft className="w-6 h-6 text-gray-600" />
         </button>
