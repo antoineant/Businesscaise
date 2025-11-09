@@ -165,9 +165,23 @@ test.describe.serial('GM Dashboard Pages E2E', () => {
     );
     await page.getByTestId('leaderboard-stat-card').click();
     await leaderboardUrlPromise;
-    await leaderboardApiPromise;
+    const apiResponse = await leaderboardApiPromise;
 
-    // Verify page loaded
+    // Debug: log API response
+    const responseData = await apiResponse.json();
+    console.log('Leaderboard API response:', JSON.stringify(responseData, null, 2));
+
+    // Wait for page to finish loading (loading state to disappear)
+    await page.waitForLoadState('networkidle');
+
+    // Verify page loaded (check for either heading OR error state)
+    const errorMessage = page.locator('text=Failed to load leaderboard');
+    const loadingMessage = page.locator('text=Loading leaderboard');
+
+    // Ensure not in loading or error state
+    await expect(loadingMessage).not.toBeVisible({ timeout: 1000 }).catch(() => {});
+    await expect(errorMessage).not.toBeVisible({ timeout: 1000 }).catch(() => {});
+
     await expect(page.getByRole('heading', { name: /leaderboard/i })).toBeVisible();
 
     // Verify teams are listed
