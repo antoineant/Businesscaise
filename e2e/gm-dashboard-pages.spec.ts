@@ -455,12 +455,13 @@ test.describe.serial('GM Dashboard Pages E2E', () => {
   test('TEST 5: Navigation back buttons work correctly', async ({ page }) => {
     console.log('>>> TEST 5: Navigation');
 
-    // Navigate directly to games page (already logged in from previous tests in serial suite)
-    await page.goto(`http://localhost:3002/games`);
+    // Login (session may have expired)
+    await page.goto('http://localhost:3002/login');
+    await page.fill('input[type="email"]', GAME_MASTER.email);
+    await page.fill('input[type="password"]', GAME_MASTER.password);
+    await page.click('button[type="submit"]');
+    await page.waitForURL('http://localhost:3002/games');
     await page.waitForLoadState('networkidle');
-
-    // Verify we're on the games page
-    await expect(page.getByRole('heading', { name: /games/i })).toBeVisible();
 
     // Navigate to game - set up waiters BEFORE clicking
     const urlPromise = page.waitForURL(`http://localhost:3002/games/${gameId}`);
