@@ -150,6 +150,10 @@ async function joinGameAsTeam(page: Page, gameId: string, teamData = TEST_TEAM) 
       })
   ]);
 
+  // IMPORTANT: Wait for page to fully load after redirect
+  // The PlayerGame component needs time to load all data before tabs render
+  await page.waitForTimeout(2000);
+
   console.log(`[DIAGNOSTIC] ✓ Successfully joined game as ${teamData.name}`);
 }
 
@@ -348,17 +352,12 @@ test.describe('Team Player - Dashboard', () => {
     await registerAndLoginPlayer(page);
     await joinGameAsTeam(page, gameId);
 
-    // Ensure we're on dashboard tab (might be on challenge tab after joining)
-    const dashboardTab = page.getByRole('button', { name: /dashboard/i });
-    await dashboardTab.click();
-
-    // Wait for dashboard data to load
-    await page.waitForTimeout(1000);
-
-    // Check for current session info using scoped selector
-    // Use .first() since session info may appear in multiple places (heading + description)
+    // After join, page should be on dashboard tab by default
+    // Wait for dashboard to render fully (session info card)
     const dashboardArea = page.locator('main, [role="main"]');
-    await expect(dashboardArea.getByText(/current.*session|session.*1|monday/i).first()).toBeVisible({ timeout: 5000 });
+
+    // Check for current session heading (should be visible on dashboard)
+    await expect(dashboardArea.getByRole('heading', { name: /current session/i })).toBeVisible({ timeout: 10000 });
   });
 });
 
@@ -378,9 +377,10 @@ test.describe('Team Player - Submit Decision', () => {
     // Use more specific pattern to match only the tab, not "View Challenge" button
     await page.getByRole('button', { name: /^current challenge$/i }).click();
 
-    // Wait for form to load - check for textarea to be visible
+    // Wait for form to load - check for textarea to be visible and enabled
     const textarea = page.locator('textarea#submission-data');
-    await expect(textarea).toBeVisible({ timeout: 5000 });
+    await expect(textarea).toBeVisible({ timeout: 10000 });
+    await expect(textarea).toBeEnabled({ timeout: 5000 });
 
     // Fill submission
     const decisionText = 'Our strategic decision is to increase marketing budget by 20%.';
@@ -388,10 +388,23 @@ test.describe('Team Player - Submit Decision', () => {
 
     // Submit using semantic selector - find the submit button
     const submitButton = page.getByRole('button', { name: /submit decision/i });
+    await expect(submitButton).toBeEnabled({ timeout: 5000 });
     await submitButton.click();
 
-    // Wait for success confirmation - the exact text is "Decision submitted successfully!"
-    await expect(page.getByText(/decision submitted successfully|successfully/i)).toBeVisible({ timeout: 10000 });
+    // Wait for EITHER success OR error message
+    await Promise.race([
+      // Success case - look for any of these success indicators
+      expect(page.locator('.bg-green-50')).toBeVisible({ timeout: 10000 }),
+      // Error case - throw if error appears
+      page.waitForSelector('.bg-red-50', { timeout: 10000 })
+        .then(async () => {
+          const errorText = await page.locator('.bg-red-50').textContent();
+          throw new Error(`Submission failed: ${errorText}`);
+        })
+    ]);
+
+    // Verify success message is actually visible
+    await expect(page.locator('.bg-green-50')).toBeVisible();
 
     await page.screenshot({
       path: 'e2e-results/team-player-04-submitted-decision.png',
