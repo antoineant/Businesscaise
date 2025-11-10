@@ -450,7 +450,9 @@ export default function PlayerGame() {
                       </div>
                       <div className="text-right">
                         <p className="text-2xl font-bold text-blue-600">
-                          {entry.overall_score?.toFixed(1) || '0.0'}
+                          {typeof entry.overall_score === 'number'
+                            ? entry.overall_score.toFixed(1)
+                            : entry.overall_score || '0.0'}
                         </p>
                       </div>
                     </div>
