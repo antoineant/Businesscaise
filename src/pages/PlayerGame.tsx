@@ -126,6 +126,10 @@ export default function PlayerGame() {
         teamAPI.getLeaderboard(tId),
       ]);
 
+      console.log('[PlayerGame] Dashboard data:', dashboard);
+      console.log('[PlayerGame] Current team:', currentTeam);
+      console.log('[PlayerGame] Leaderboard:', lb);
+
       setDashboardData(dashboard);
       setTeam(currentTeam);
       setLeaderboard(lb);
@@ -209,7 +213,7 @@ export default function PlayerGame() {
     return <JoinTeamModal gameId={gameId!} onJoin={handleJoinTeam} onCancel={() => navigate('/dashboard')} />;
   }
 
-  if (!team || !dashboardData) {
+  if (!team || !dashboardData || !dashboardData.game) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
