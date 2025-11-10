@@ -348,6 +348,13 @@ test.describe('Team Player - Dashboard', () => {
     await registerAndLoginPlayer(page);
     await joinGameAsTeam(page, gameId);
 
+    // Ensure we're on dashboard tab (might be on challenge tab after joining)
+    const dashboardTab = page.getByRole('button', { name: /dashboard/i });
+    await dashboardTab.click();
+
+    // Wait for dashboard data to load
+    await page.waitForTimeout(1000);
+
     // Check for current session info using scoped selector
     // Use .first() since session info may appear in multiple places (heading + description)
     const dashboardArea = page.locator('main, [role="main"]');
@@ -371,26 +378,20 @@ test.describe('Team Player - Submit Decision', () => {
     // Use more specific pattern to match only the tab, not "View Challenge" button
     await page.getByRole('button', { name: /^current challenge$/i }).click();
 
-    // Wait for form to load
-    await page.waitForTimeout(1000);
+    // Wait for form to load - check for textarea to be visible
+    const textarea = page.locator('textarea#submission-data');
+    await expect(textarea).toBeVisible({ timeout: 5000 });
 
-    // Fill submission using semantic selectors
+    // Fill submission
     const decisionText = 'Our strategic decision is to increase marketing budget by 20%.';
+    await textarea.fill(decisionText);
 
-    // Try textarea first, then input
-    const textArea = page.getByRole('textbox', { name: /decision|submission|response/i });
-    if (await textArea.count() > 0) {
-      await textArea.fill(decisionText);
-    } else {
-      // Fallback to any visible textarea
-      await page.locator('textarea').fill(decisionText);
-    }
+    // Submit using semantic selector - find the submit button
+    const submitButton = page.getByRole('button', { name: /submit decision/i });
+    await submitButton.click();
 
-    // Submit using semantic selector
-    await page.getByRole('button', { name: /submit/i }).click();
-
-    // Wait for success confirmation
-    await expect(page.getByText(/success|submitted|thank you|pending/i)).toBeVisible({ timeout: 10000 });
+    // Wait for success confirmation - the exact text is "Decision submitted successfully!"
+    await expect(page.getByText(/decision submitted successfully|successfully/i)).toBeVisible({ timeout: 10000 });
 
     await page.screenshot({
       path: 'e2e-results/team-player-04-submitted-decision.png',
