@@ -335,7 +335,8 @@ test.describe('Team Player - Dashboard', () => {
     await expect(metricsSection.getByText(/financial|marketing|sales|operations|hr/i).first()).toBeVisible({ timeout: 5000 });
 
     // Check for score display
-    await expect(page.getByText(/score|points/i)).toBeVisible();
+    // Use .first() since "score" appears multiple times ("Your Score", "Innovation Score", etc.)
+    await expect(page.getByText(/score|points/i).first()).toBeVisible();
 
     await page.screenshot({
       path: 'e2e-results/team-player-03-dashboard.png',
@@ -419,8 +420,9 @@ test.describe('Team Player - Leaderboard', () => {
     // Verify leaderboard heading using semantic selector
     await expect(page.getByRole('heading', { name: /leaderboard|ranking|standings/i })).toBeVisible({ timeout: 5000 });
 
-    // Should see team name in leaderboard
-    await expect(page.getByText(TEST_TEAM.name)).toBeVisible({ timeout: 5000 });
+    // Should see team name in leaderboard (scope to main content to avoid page header)
+    const leaderboardArea = page.locator('main, [role="main"]');
+    await expect(leaderboardArea.getByText(TEST_TEAM.name).first()).toBeVisible({ timeout: 5000 });
 
     await page.screenshot({
       path: 'e2e-results/team-player-05-leaderboard.png',
