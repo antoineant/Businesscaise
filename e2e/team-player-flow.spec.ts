@@ -30,7 +30,7 @@ const TEST_TEAM = {
   members: ['Alice Smith', 'Bob Johnson', 'Charlie Brown'],
 };
 
-// Helper: Register and login player
+// Helper: Register and login player (returns credentials for reuse)
 async function registerAndLoginPlayer(page: Page) {
   // Generate unique credentials for each registration (avoid conflicts)
   const playerData = {
@@ -258,21 +258,21 @@ test.describe('Team Player - Authentication', () => {
   });
 
   test('should login with player credentials', async ({ page }) => {
-    // Register first
-    await registerAndLoginPlayer(page);
+    // Register first and save credentials
+    const credentials = await registerAndLoginPlayer(page);
 
     // Logout using semantic selector
     await page.getByRole('button', { name: /logout|sign out/i }).click();
     await page.waitForURL(/.*login/, { timeout: 5000 });
 
-    // Login with semantic selectors (following best practices)
-    await page.getByLabel(/email/i).fill(TEST_PLAYER.email);
-    await page.getByLabel(/password/i).fill(TEST_PLAYER.password);
+    // Login with semantic selectors using the same credentials that were registered
+    await page.getByLabel(/email/i).fill(credentials.email);
+    await page.getByLabel(/password/i).fill(credentials.password);
     await page.getByRole('button', { name: /login|sign in/i }).click();
 
     // Verify redirect
     await page.waitForURL(/.*\/(dashboard|games)/, { timeout: 10000 });
-    await expect(page.getByText(TEST_PLAYER.name)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(credentials.name)).toBeVisible({ timeout: 5000 });
   });
 });
 
@@ -335,7 +335,8 @@ test.describe('Team Player - Dashboard', () => {
     await expect(metricsSection.getByText(/financial|marketing|sales|operations|hr/i).first()).toBeVisible({ timeout: 5000 });
 
     // Check for score display
-    await expect(page.getByText(/score|points/i)).toBeVisible();
+    // Use .first() since "score" appears multiple times ("Your Score", "Innovation Score", etc.)
+    await expect(page.getByText(/score|points/i).first()).toBeVisible();
 
     await page.screenshot({
       path: 'e2e-results/team-player-03-dashboard.png',
@@ -419,8 +420,9 @@ test.describe('Team Player - Leaderboard', () => {
     // Verify leaderboard heading using semantic selector
     await expect(page.getByRole('heading', { name: /leaderboard|ranking|standings/i })).toBeVisible({ timeout: 5000 });
 
-    // Should see team name in leaderboard
-    await expect(page.getByText(TEST_TEAM.name)).toBeVisible({ timeout: 5000 });
+    // Should see team name in leaderboard (scope to main content to avoid page header)
+    const leaderboardArea = page.locator('main, [role="main"]');
+    await expect(leaderboardArea.getByText(TEST_TEAM.name).first()).toBeVisible({ timeout: 5000 });
 
     await page.screenshot({
       path: 'e2e-results/team-player-05-leaderboard.png',
