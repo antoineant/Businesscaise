@@ -30,7 +30,7 @@ const TEST_TEAM = {
   members: ['Alice Smith', 'Bob Johnson', 'Charlie Brown'],
 };
 
-// Helper: Register and login player
+// Helper: Register and login player (returns credentials for reuse)
 async function registerAndLoginPlayer(page: Page) {
   // Generate unique credentials for each registration (avoid conflicts)
   const playerData = {
@@ -258,21 +258,21 @@ test.describe('Team Player - Authentication', () => {
   });
 
   test('should login with player credentials', async ({ page }) => {
-    // Register first
-    await registerAndLoginPlayer(page);
+    // Register first and save credentials
+    const credentials = await registerAndLoginPlayer(page);
 
     // Logout using semantic selector
     await page.getByRole('button', { name: /logout|sign out/i }).click();
     await page.waitForURL(/.*login/, { timeout: 5000 });
 
-    // Login with semantic selectors (following best practices)
-    await page.getByLabel(/email/i).fill(TEST_PLAYER.email);
-    await page.getByLabel(/password/i).fill(TEST_PLAYER.password);
+    // Login with semantic selectors using the same credentials that were registered
+    await page.getByLabel(/email/i).fill(credentials.email);
+    await page.getByLabel(/password/i).fill(credentials.password);
     await page.getByRole('button', { name: /login|sign in/i }).click();
 
     // Verify redirect
     await page.waitForURL(/.*\/(dashboard|games)/, { timeout: 10000 });
-    await expect(page.getByText(TEST_PLAYER.name)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(credentials.name)).toBeVisible({ timeout: 5000 });
   });
 });
 
