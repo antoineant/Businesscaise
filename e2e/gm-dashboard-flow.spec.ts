@@ -347,14 +347,25 @@ test.describe('GM Dashboard - Game Management Flow', () => {
     await expect(firstUnlockButton).toBeVisible();
 
     // Set up all response waiters BEFORE clicking (to avoid race conditions)
+    // Increased timeout to 30s for Firefox compatibility
     const unlockResponsePromise = page.waitForResponse(
-      response => response.url().includes('/sessions/') && response.url().includes('/unlock') && response.status() === 200
+      response => response.url().includes('/sessions/') && response.url().includes('/unlock') && response.status() === 200,
+      { timeout: 30000 }
     );
 
     const reloadPromises = Promise.all([
-      page.waitForResponse(response => response.url().includes(`/games/${gameId}`) && !response.url().includes('/sessions') && !response.url().includes('/teams') && response.status() === 200),
-      page.waitForResponse(response => response.url().includes(`/games/${gameId}/sessions`) && response.status() === 200),
-      page.waitForResponse(response => response.url().includes(`/games/${gameId}/teams`) && response.status() === 200),
+      page.waitForResponse(
+        response => response.url().includes(`/games/${gameId}`) && !response.url().includes('/sessions') && !response.url().includes('/teams') && response.status() === 200,
+        { timeout: 30000 }
+      ),
+      page.waitForResponse(
+        response => response.url().includes(`/games/${gameId}/sessions`) && response.status() === 200,
+        { timeout: 30000 }
+      ),
+      page.waitForResponse(
+        response => response.url().includes(`/games/${gameId}/teams`) && response.status() === 200,
+        { timeout: 30000 }
+      ),
     ]);
 
     // Click to unlock
@@ -363,11 +374,11 @@ test.describe('GM Dashboard - Game Management Flow', () => {
     // Wait for unlock to complete
     await unlockResponsePromise;
 
-    // Wait for all three reload API calls
+    // Wait for all three reload API calls (with extended timeout for Firefox)
     await reloadPromises;
 
     // Sessions count should update to 1/10
-    await expect(page.getByTestId('sessions-stat-card')).toContainText('1/10', { timeout: 5000 });
+    await expect(page.getByTestId('sessions-stat-card')).toContainText('1/10', { timeout: 10000 });
 
     // Take screenshot
     await page.screenshot({
