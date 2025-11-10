@@ -348,6 +348,7 @@ test.describe('GM Dashboard - Game Management Flow', () => {
 
     // Set up all response waiters BEFORE clicking (to avoid race conditions)
     // Increased timeout to 30s for Firefox compatibility
+    // Accept both 200 and 304 status codes (Firefox caches responses aggressively)
     const unlockResponsePromise = page.waitForResponse(
       response => response.url().includes('/sessions/') && response.url().includes('/unlock') && response.status() === 200,
       { timeout: 30000 }
@@ -355,15 +356,15 @@ test.describe('GM Dashboard - Game Management Flow', () => {
 
     const reloadPromises = Promise.all([
       page.waitForResponse(
-        response => response.url().includes(`/games/${gameId}`) && !response.url().includes('/sessions') && !response.url().includes('/teams') && response.status() === 200,
+        response => response.url().includes(`/games/${gameId}`) && !response.url().includes('/sessions') && !response.url().includes('/teams') && (response.status() === 200 || response.status() === 304),
         { timeout: 30000 }
       ),
       page.waitForResponse(
-        response => response.url().includes(`/games/${gameId}/sessions`) && response.status() === 200,
+        response => response.url().includes(`/games/${gameId}/sessions`) && (response.status() === 200 || response.status() === 304),
         { timeout: 30000 }
       ),
       page.waitForResponse(
-        response => response.url().includes(`/games/${gameId}/teams`) && response.status() === 200,
+        response => response.url().includes(`/games/${gameId}/teams`) && (response.status() === 200 || response.status() === 304),
         { timeout: 30000 }
       ),
     ]);
