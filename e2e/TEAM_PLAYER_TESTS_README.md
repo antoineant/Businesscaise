@@ -33,7 +33,71 @@ Tests the complete GM-to-Player workflow:
 
 ## Best Practices Applied
 
-Following `e2e/TESTING_BEST_PRACTICES.md`:
+Following `e2e/TESTING_BEST_PRACTICES.md` and lessons learned from `gm-dashboard-flow.spec.ts`:
+
+### ✅ Promise.race() Error Handling (Critical)
+```typescript
+// Wait for EITHER success OR error - fails fast with clear error message
+await Promise.race([
+  page.waitForURL(/.*dashboard/, { timeout: 10000 }),
+  page.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
+    .then(async () => {
+      const errorText = await page.locator('.bg-red-50, [class*="error"]').textContent();
+      throw new Error(
+        `Operation failed: ${errorText}. ` +
+        `API calls: ${apiCalls.join(', ') || 'none'}`
+      );
+    })
+]);
+```
+
+### ✅ Network Request/Response Tracking
+```typescript
+// Set up diagnostic logging for debugging
+const apiCalls: string[] = [];
+page.on('request', request => {
+  if (request.url().includes('/api/')) {
+    console.log(`[DIAGNOSTIC] Request: ${request.method()} ${request.url()}`);
+    apiCalls.push(`${request.method()} ${request.url()}`);
+  }
+});
+
+page.on('response', response => {
+  if (response.url().includes('/api/')) {
+    console.log(`[DIAGNOSTIC] Response: ${response.status()} ${response.url()}`);
+  }
+});
+```
+
+### ✅ Browser Console Monitoring
+```typescript
+// Capture frontend errors during test execution
+page.on('console', msg => {
+  if (msg.type() === 'error' || msg.type() === 'warning') {
+    console.log(`[DIAGNOSTIC] Browser ${msg.type()}: ${msg.text()}`);
+  }
+});
+```
+
+### ✅ networkidle for Initial Loads
+```typescript
+// Ensure page is fully loaded before interacting
+await page.goto('http://localhost:5173/?demo=false', { waitUntil: 'networkidle' });
+```
+
+### ✅ Helper Functions Return Values
+```typescript
+// Return credentials for reuse in logout/login tests
+async function registerAndLoginPlayer(page: Page) {
+  const playerData = {
+    name: 'E2E Test Player',
+    email: `player-${Date.now()}-${Math.random().toString(36).substring(7)}@businesscaise.com`,
+    password: 'PlayerTest123!',
+  };
+  // ... registration logic ...
+  return playerData; // Return for reuse
+}
+```
 
 ### ✅ Semantic Selectors
 ```typescript

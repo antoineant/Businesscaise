@@ -90,6 +90,25 @@ export default defineConfig({
     },
 
     // =============================================
+    // TEAM PLAYER TESTS (Port 5173)
+    // =============================================
+    {
+      name: 'team-player',
+      testMatch: /team-player-.*\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'http://localhost:5173',
+        launchOptions: {
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+          ],
+        },
+      },
+    },
+
+    // =============================================
     // FULL INTEGRATION TESTS (Multi-service)
     // =============================================
     {
@@ -120,6 +139,16 @@ export default defineConfig({
     {
       name: 'firefox-gm-dashboard',
       testMatch: /gm-dashboard-flow\.spec\.ts/,
+      use: { ...devices['Desktop Firefox'], baseURL: 'http://localhost:3002' },
+    },
+    {
+      name: 'firefox-team-player',
+      testMatch: /team-player-flow\.spec\.ts/,
+      use: { ...devices['Desktop Firefox'], baseURL: 'http://localhost:5173' },
+    },
+    {
+      name: 'firefox-integration',
+      testMatch: /integration-gm-player\.spec\.ts/,
       use: { ...devices['Desktop Firefox'], baseURL: 'http://localhost:3002' },
     },
 

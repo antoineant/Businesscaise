@@ -31,8 +31,36 @@ const TEST_TEAM = {
 };
 
 // Helper: Register and login player
-async function registerAndLoginPlayer(page: Page, playerData = TEST_PLAYER) {
-  await page.goto('http://localhost:5173/?demo=false');
+async function registerAndLoginPlayer(page: Page) {
+  // Generate unique credentials for each registration (avoid conflicts)
+  const playerData = {
+    name: 'E2E Test Player',
+    email: `player-${Date.now()}-${Math.random().toString(36).substring(7)}@businesscaise.com`,
+    password: 'PlayerTest123!',
+  };
+
+  await page.goto('http://localhost:5173/?demo=false', { waitUntil: 'networkidle' });
+
+  // Set up diagnostic logging
+  const apiCalls: string[] = [];
+  page.on('request', request => {
+    if (request.url().includes('/api/')) {
+      console.log(`[DIAGNOSTIC] Request: ${request.method()} ${request.url()}`);
+      apiCalls.push(`${request.method()} ${request.url()}`);
+    }
+  });
+
+  page.on('response', response => {
+    if (response.url().includes('/api/')) {
+      console.log(`[DIAGNOSTIC] Response: ${response.status()} ${response.url()}`);
+    }
+  });
+
+  page.on('console', msg => {
+    if (msg.type() === 'error' || msg.type() === 'warning') {
+      console.log(`[DIAGNOSTIC] Browser ${msg.type()}: ${msg.text()}`);
+    }
+  });
 
   // Navigate to register using semantic selector
   await page.getByRole('link', { name: /register/i }).click();
@@ -51,11 +79,28 @@ async function registerAndLoginPlayer(page: Page, playerData = TEST_PLAYER) {
 
   // Submit using semantic selector
   await page.getByRole('button', { name: /register|sign up|create account/i }).click();
-  await page.waitForURL(/.*\/(dashboard|games)/, { timeout: 10000 });
+
+  // Wait for EITHER success (redirect) OR error message (failure)
+  await Promise.race([
+    page.waitForURL(/.*\/(dashboard|games)/, { timeout: 10000 }),
+    page.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
+      .then(async () => {
+        const errorText = await page.locator('.bg-red-50, [class*="error"]').textContent();
+        throw new Error(
+          `Player registration failed: ${errorText}. ` +
+          `API calls: ${apiCalls.join(', ') || 'none'}`
+        );
+      })
+  ]);
+
+  console.log(`[DIAGNOSTIC] ✓ Player registered: ${playerData.email}`);
+  return playerData; // Return for reuse in tests
 }
 
 // Helper: Join game with game code
 async function joinGameAsTeam(page: Page, gameId: string, teamData = TEST_TEAM) {
+  console.log(`[DIAGNOSTIC] Joining game ${gameId} as team ${teamData.name}`);
+
   // Enter game code using placeholder selector
   await page.getByPlaceholder(/game code|enter game/i).fill(gameId);
   await page.getByRole('button', { name: /join game/i }).click();
@@ -83,13 +128,26 @@ async function joinGameAsTeam(page: Page, gameId: string, teamData = TEST_TEAM) 
 
   // Submit join form
   await page.getByRole('button', { name: /join/i, exact: false }).click();
-  await page.waitForURL(/.*\/game\//, { timeout: 10000 });
+
+  // Wait for EITHER success (redirect to game) OR error message
+  await Promise.race([
+    page.waitForURL(/.*\/game\//, { timeout: 10000 }),
+    page.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
+      .then(async () => {
+        const errorText = await page.locator('.bg-red-50, [class*="error"]').textContent();
+        throw new Error(`Failed to join game: ${errorText}`);
+      })
+  ]);
+
+  console.log(`[DIAGNOSTIC] ✓ Successfully joined game as ${teamData.name}`);
 }
 
 // Helper: Create game via API and return game ID
 async function createGameAsGM() {
   const GM_EMAIL = `gm-${Date.now()}@businesscaise.com`;
   const GM_PASSWORD = 'GMTest123!';
+
+  console.log(`[DIAGNOSTIC] Creating game as GM: ${GM_EMAIL}`);
 
   const response = await fetch('http://localhost:3001/api/auth/register', {
     method: 'POST',
@@ -102,9 +160,13 @@ async function createGameAsGM() {
     }),
   });
 
-  if (!response.ok) throw new Error('Failed to register GM');
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to register GM: ${response.status} ${errorText}`);
+  }
 
   const { token } = await response.json();
+  console.log(`[DIAGNOSTIC] ✓ GM registered successfully`);
 
   // Create game
   const gameResponse = await fetch('http://localhost:3001/api/gm/games', {
@@ -119,28 +181,51 @@ async function createGameAsGM() {
     }),
   });
 
-  if (!gameResponse.ok) throw new Error('Failed to create game');
+  if (!gameResponse.ok) {
+    const errorText = await gameResponse.text();
+    throw new Error(`Failed to create game: ${gameResponse.status} ${errorText}`);
+  }
 
   const gameData = await gameResponse.json();
   const gameId = gameData.game.id;
+  console.log(`[DIAGNOSTIC] ✓ Game created: ${gameId}`);
 
   // Start game
-  await fetch(`http://localhost:3001/api/gm/games/${gameId}/start`, {
+  const startResponse = await fetch(`http://localhost:3001/api/gm/games/${gameId}/start`, {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${token}` },
   });
+
+  if (!startResponse.ok) {
+    const errorText = await startResponse.text();
+    throw new Error(`Failed to start game: ${startResponse.status} ${errorText}`);
+  }
+  console.log(`[DIAGNOSTIC] ✓ Game started`);
 
   // Get and unlock first session
   const sessionsResponse = await fetch(`http://localhost:3001/api/gm/games/${gameId}/sessions`, {
     headers: { 'Authorization': `Bearer ${token}` },
   });
+
+  if (!sessionsResponse.ok) {
+    const errorText = await sessionsResponse.text();
+    throw new Error(`Failed to get sessions: ${sessionsResponse.status} ${errorText}`);
+  }
+
   const { sessions } = await sessionsResponse.json();
   const firstSessionId = sessions[0].id;
+  console.log(`[DIAGNOSTIC] ✓ Found first session: ${firstSessionId}`);
 
-  await fetch(`http://localhost:3001/api/gm/games/${gameId}/sessions/${firstSessionId}/unlock`, {
+  const unlockResponse = await fetch(`http://localhost:3001/api/gm/games/${gameId}/sessions/${firstSessionId}/unlock`, {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${token}` },
   });
+
+  if (!unlockResponse.ok) {
+    const errorText = await unlockResponse.text();
+    throw new Error(`Failed to unlock session: ${unlockResponse.status} ${errorText}`);
+  }
+  console.log(`[DIAGNOSTIC] ✓ First session unlocked`);
 
   return { gameId, gmToken: token };
 }

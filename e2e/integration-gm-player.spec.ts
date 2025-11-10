@@ -63,15 +63,48 @@ test.describe.serial('INTEGRATION: GM-to-Player Complete Workflow', () => {
   test('STEP 1: GM creates and starts game', async () => {
     console.log('>>> STEP 1: GM creates and starts game');
 
+    // Set up diagnostic logging for GM page
+    const gmApiCalls: string[] = [];
+    gmPage.on('request', request => {
+      if (request.url().includes('/api/')) {
+        console.log(`[GM DIAGNOSTIC] Request: ${request.method()} ${request.url()}`);
+        gmApiCalls.push(`${request.method()} ${request.url()}`);
+      }
+    });
+
+    gmPage.on('response', response => {
+      if (response.url().includes('/api/')) {
+        console.log(`[GM DIAGNOSTIC] Response: ${response.status()} ${response.url()}`);
+      }
+    });
+
+    gmPage.on('console', msg => {
+      if (msg.type() === 'error' || msg.type() === 'warning') {
+        console.log(`[GM DIAGNOSTIC] Browser ${msg.type()}: ${msg.text()}`);
+      }
+    });
+
     // Register GM
-    await gmPage.goto('http://localhost:3002/register');
+    await gmPage.goto('http://localhost:3002/register', { waitUntil: 'networkidle' });
     await gmPage.fill('input[type="text"]', GM_USER.name);
     await gmPage.fill('input[type="email"]', GM_USER.email);
     const passwordFields = await gmPage.locator('input[type="password"]').all();
     await passwordFields[0].fill(GM_USER.password);
     await passwordFields[1].fill(GM_USER.password);
     await gmPage.click('button[type="submit"]');
-    await gmPage.waitForURL('http://localhost:3002/games', { timeout: 10000 });
+
+    // Wait for EITHER success OR error
+    await Promise.race([
+      gmPage.waitForURL('http://localhost:3002/games', { timeout: 10000 }),
+      gmPage.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
+        .then(async () => {
+          const errorText = await gmPage.locator('.bg-red-50, [class*="error"]').textContent();
+          throw new Error(
+            `GM registration failed: ${errorText}. ` +
+            `API calls: ${gmApiCalls.join(', ') || 'none'}`
+          );
+        })
+    ]);
     console.log('✓ GM registered');
 
     // Create game
@@ -80,7 +113,16 @@ test.describe.serial('INTEGRATION: GM-to-Player Complete Workflow', () => {
     await gmPage.fill('input#title', TEST_GAME.title);
     await gmPage.fill('textarea#description', TEST_GAME.description);
     await gmPage.click('button[type="submit"]');
-    await gmPage.waitForURL(/http:\/\/localhost:3002\/games\/[a-f0-9-]+$/, { timeout: 10000 });
+
+    // Wait for EITHER success OR error
+    await Promise.race([
+      gmPage.waitForURL(/http:\/\/localhost:3002\/games\/[a-f0-9-]+$/, { timeout: 10000 }),
+      gmPage.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
+        .then(async () => {
+          const errorText = await gmPage.locator('.bg-red-50, [class*="error"]').textContent();
+          throw new Error(`Game creation failed: ${errorText}`);
+        })
+    ]);
 
     gameId = gmPage.url().match(/\/games\/([a-f0-9-]+)/)?.[1]!;
     expect(gameId).toBeTruthy();
@@ -137,9 +179,31 @@ test.describe.serial('INTEGRATION: GM-to-Player Complete Workflow', () => {
   test('STEP 3: Player registers and joins game', async () => {
     console.log('>>> STEP 3: Player registers and joins game');
 
+    // Set up diagnostic logging for Player page
+    const playerApiCalls: string[] = [];
+    playerPage.on('request', request => {
+      if (request.url().includes('/api/')) {
+        console.log(`[PLAYER DIAGNOSTIC] Request: ${request.method()} ${request.url()}`);
+        playerApiCalls.push(`${request.method()} ${request.url()}`);
+      }
+    });
+
+    playerPage.on('response', response => {
+      if (response.url().includes('/api/')) {
+        console.log(`[PLAYER DIAGNOSTIC] Response: ${response.status()} ${response.url()}`);
+      }
+    });
+
+    playerPage.on('console', msg => {
+      if (msg.type() === 'error' || msg.type() === 'warning') {
+        console.log(`[PLAYER DIAGNOSTIC] Browser ${msg.type()}: ${msg.text()}`);
+      }
+    });
+
     // Register player
-    await playerPage.goto('http://localhost:5173/?demo=false');
+    await playerPage.goto('http://localhost:5173/?demo=false', { waitUntil: 'networkidle' });
     await playerPage.click('a:has-text("Register")');
+    await playerPage.waitForURL(/.*register/);
     await playerPage.fill('input[name="name"], input[placeholder*="name" i]', PLAYER_USER.name);
     await playerPage.fill('input[type="email"]', PLAYER_USER.email);
 
@@ -150,7 +214,19 @@ test.describe.serial('INTEGRATION: GM-to-Player Complete Workflow', () => {
     }
 
     await playerPage.click('button[type="submit"]');
-    await playerPage.waitForURL(/.*\/(dashboard|games)/, { timeout: 10000 });
+
+    // Wait for EITHER success OR error
+    await Promise.race([
+      playerPage.waitForURL(/.*\/(dashboard|games)/, { timeout: 10000 }),
+      playerPage.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
+        .then(async () => {
+          const errorText = await playerPage.locator('.bg-red-50, [class*="error"]').textContent();
+          throw new Error(
+            `Player registration failed: ${errorText}. ` +
+            `API calls: ${playerApiCalls.join(', ') || 'none'}`
+          );
+        })
+    ]);
     console.log('✓ Player registered');
 
     // Join game with game code
@@ -178,7 +254,16 @@ test.describe.serial('INTEGRATION: GM-to-Player Complete Workflow', () => {
 
     // Submit join form
     await playerPage.click('button[type="submit"]:has-text("Join")');
-    await playerPage.waitForURL(/.*\/game\//, { timeout: 10000 });
+
+    // Wait for EITHER success OR error
+    await Promise.race([
+      playerPage.waitForURL(/.*\/game\//, { timeout: 10000 }),
+      playerPage.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
+        .then(async () => {
+          const errorText = await playerPage.locator('.bg-red-50, [class*="error"]').textContent();
+          throw new Error(`Failed to join game: ${errorText}`);
+        })
+    ]);
     console.log('✓ Player joined game');
 
     // Verify player sees dashboard
@@ -267,17 +352,25 @@ test.describe.serial('INTEGRATION: GM-to-Player Complete Workflow', () => {
     // Get submissions via API
     const gmToken = await gmPage.evaluate(() => localStorage.getItem('gm_token'));
 
+    console.log(`[DIAGNOSTIC] Fetching submissions for game ${gameId}`);
     const submissionsResponse = await fetch(`http://localhost:3001/api/gm/games/${gameId}/submissions`, {
       headers: {
         'Authorization': `Bearer ${gmToken}`,
       },
     });
 
+    if (!submissionsResponse.ok) {
+      const errorText = await submissionsResponse.text();
+      throw new Error(`Failed to get submissions: ${submissionsResponse.status} ${errorText}`);
+    }
+
     const { submissions } = await submissionsResponse.json();
+    console.log(`[DIAGNOSTIC] Found ${submissions.length} submissions`);
     const latestSubmission = submissions[submissions.length - 1];
     submissionId = latestSubmission?.id;
 
     if (submissionId) {
+      console.log(`[DIAGNOSTIC] Scoring submission ${submissionId}`);
       // Score via API
       const scoreResponse = await fetch(`http://localhost:3001/api/gm/submissions/${submissionId}/score`, {
         method: 'POST',
@@ -291,10 +384,14 @@ test.describe.serial('INTEGRATION: GM-to-Player Complete Workflow', () => {
         }),
       });
 
-      expect(scoreResponse.ok).toBeTruthy();
+      if (!scoreResponse.ok) {
+        const errorText = await scoreResponse.text();
+        throw new Error(`Failed to score submission: ${scoreResponse.status} ${errorText}`);
+      }
+
       console.log('✓ GM scored submission: 85/100');
     } else {
-      console.log('⚠ No submission found to score');
+      throw new Error('No submission found to score - player submission may have failed');
     }
 
     await gmPage.screenshot({
