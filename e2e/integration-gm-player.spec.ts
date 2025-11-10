@@ -236,7 +236,8 @@ test.describe.serial('INTEGRATION: GM-to-Player Complete Workflow', () => {
 
     // Fill team join form
     await expect(playerPage.locator('text=/join.*game/i')).toBeVisible({ timeout: 5000 });
-    await playerPage.fill('input[placeholder*="team name" i], input[type="text"]:visible', TEST_TEAM.name);
+    // Label isn't connected to input, so use direct selector for first required text input
+    await playerPage.locator('input[type="text"][required]').first().fill(TEST_TEAM.name);
 
     // Select color if available
     const colorButton = playerPage.locator(`button[style*="${TEST_TEAM.color}"]`).first();

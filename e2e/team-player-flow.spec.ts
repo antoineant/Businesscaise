@@ -109,8 +109,9 @@ async function joinGameAsTeam(page: Page, gameId: string, teamData = TEST_TEAM) 
   // Wait for team join modal
   await expect(page.getByRole('heading', { name: /join.*game/i })).toBeVisible({ timeout: 5000 });
 
-  // Fill team name using label (placeholder is "The Innovators", not "team name")
-  await page.getByLabel(/team name/i).fill(teamData.name);
+  // Fill team name - label isn't connected to input, so use direct selector
+  // The first required text input in the modal is the team name field
+  await page.locator('input[type="text"][required]').first().fill(teamData.name);
 
   // Select color if picker exists
   const colorButton = page.locator(`button[style*="${teamData.color}"]`);
