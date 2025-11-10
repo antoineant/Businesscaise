@@ -63,7 +63,8 @@ async function registerAndLoginPlayer(page: Page) {
   });
 
   // Navigate to register using semantic selector
-  await page.getByRole('link', { name: /register/i }).click();
+  // The login page has a "Sign up" link, not "Register"
+  await page.getByRole('link', { name: /sign up/i }).click();
   await page.waitForURL(/.*register/);
 
   // Fill form with semantic selectors (following best practices)
