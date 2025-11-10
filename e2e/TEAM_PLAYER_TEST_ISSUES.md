@@ -16,9 +16,22 @@ After running team player E2E tests, we identified and fixed several UI selector
 ### 2. Team Name Input Selector
 **Problem:** Tests used `getByPlaceholder(/team name/i)` but placeholder is "The Innovators"
 **Location:** `src/pages/PlayerGame.tsx:515`
-**Fix:** Changed to `getByLabel(/team name/i)` (label is "Team Name *")
+**Root Cause:** Label "Team Name *" is not connected to input via `htmlFor`/`id`
+**Fix:** Changed to `input[type="text"][required].first()` to target the first required text input
 **Files:**
-- `e2e/team-player-flow.spec.ts:113`
+- `e2e/team-player-flow.spec.ts:114`
+- `e2e/integration-gm-player.spec.ts:240`
+
+**Accessibility Note:** The form should be updated to connect labels to inputs:
+```tsx
+// Current (not accessible):
+<label className="...">Team Name *</label>
+<input type="text" required ... />
+
+// Recommended (accessible):
+<label htmlFor="teamName" className="...">Team Name *</label>
+<input id="teamName" type="text" required ... />
+```
 
 ## Outstanding Issues ⚠️
 
@@ -41,9 +54,10 @@ After running team player E2E tests, we identified and fixed several UI selector
 [DIAGNOSTIC] Browser error: Login failed: AxiosError
 ```
 
-### 2. Join Game Flow Success (Needs Verification)
-**Tests:** All join game tests now reach the team join modal successfully
-**Status:** Need to re-run tests to verify the label selector fix works
+### 2. Join Game Flow (Should Now Pass)
+**Tests:** All join game tests should now work with the direct selector fix
+**Status:** Need to re-run tests to verify the `input[type="text"][required].first()` selector works
+**Expected Result:** These 5 tests should now pass
 **Files:**
 - "should join game with game code"
 - "should display dashboard with metrics"
@@ -67,9 +81,12 @@ After running team player E2E tests, we identified and fixed several UI selector
 ## Recommendations
 
 1. **Fix backend login issue first** - This is blocking the login test
-2. **Re-run tests** after label selector fix to verify join game flow works
-3. **Add data-testid attributes** to critical form inputs for more stable selectors
-4. **Consider adding backend error logging** to diagnose 500 errors more easily
+2. **Re-run tests** after direct selector fix to verify join game flow works
+3. **Improve form accessibility** - Connect labels to inputs using `htmlFor`/`id`:
+   - Benefits: Better screen reader support, clickable labels, semantic selectors in tests
+   - Files: `PlayerGame.tsx` (JoinTeamModal), `Register.tsx`, `Login.tsx`
+4. **Add data-testid attributes** to critical form inputs for even more stable selectors
+5. **Consider adding backend error logging** to diagnose 500 errors more easily
 
 ## Form Selectors Reference
 
