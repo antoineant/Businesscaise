@@ -331,7 +331,8 @@ test.describe('Team Player - Dashboard', () => {
     const metricsSection = page.locator('main, [role="main"]');
 
     // Check for any metrics display within the main content
-    await expect(metricsSection.getByText(/financial|marketing|sales|operations|hr/i)).toBeVisible({ timeout: 5000 });
+    // Use .first() since metrics terms can appear multiple times (Best Practices: last resort for common terms)
+    await expect(metricsSection.getByText(/financial|marketing|sales|operations|hr/i).first()).toBeVisible({ timeout: 5000 });
 
     // Check for score display
     await expect(page.getByText(/score|points/i)).toBeVisible();
@@ -347,8 +348,9 @@ test.describe('Team Player - Dashboard', () => {
     await joinGameAsTeam(page, gameId);
 
     // Check for current session info using scoped selector
+    // Use .first() since session info may appear in multiple places (heading + description)
     const dashboardArea = page.locator('main, [role="main"]');
-    await expect(dashboardArea.getByText(/current.*session|session.*1|monday/i)).toBeVisible({ timeout: 5000 });
+    await expect(dashboardArea.getByText(/current.*session|session.*1|monday/i).first()).toBeVisible({ timeout: 5000 });
   });
 });
 
@@ -365,7 +367,8 @@ test.describe('Team Player - Submit Decision', () => {
     await joinGameAsTeam(page, gameId);
 
     // Navigate to Challenge tab using semantic selector
-    await page.getByRole('button', { name: /challenge|current challenge/i }).click();
+    // Use more specific pattern to match only the tab, not "View Challenge" button
+    await page.getByRole('button', { name: /^current challenge$/i }).click();
 
     // Wait for form to load
     await page.waitForTimeout(1000);

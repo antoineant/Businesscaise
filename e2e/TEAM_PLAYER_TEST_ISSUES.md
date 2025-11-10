@@ -33,6 +33,40 @@ After running team player E2E tests, we identified and fixed several UI selector
 <input id="teamName" type="text" required ... />
 ```
 
+## Fixed Issues (Latest Round) ✅
+
+### 1. Overall Score Type Mismatch - Leaderboard
+**Problem:** Backend returns `overall_score` as STRING ("0.00"), but frontend called `.toFixed(1)` causing React crash
+**Location:** `src/pages/PlayerGame.tsx:453` (leaderboard section)
+**Fix:** Added type checking before calling `.toFixed(1)`:
+```typescript
+{typeof entry.overall_score === 'number'
+  ? entry.overall_score.toFixed(1)
+  : entry.overall_score || '0.0'}
+```
+**Status:** ✅ Fixed (same pattern as dashboard fix)
+
+### 2. Test Selector Strict Mode Violations
+Following `e2e/TESTING_BEST_PRACTICES.md` guidelines:
+
+**a) Dashboard Metrics Selector**
+- **Problem:** `/financial|marketing|sales|operations|hr/i` matched 3 elements
+- **Location:** `e2e/team-player-flow.spec.ts:334`
+- **Fix:** Added `.first()` since common business terms appear multiple times
+- **Status:** ✅ Fixed
+
+**b) Current Session Info Selector**
+- **Problem:** `/current.*session|session.*1|monday/i` matched 2 elements (heading + description)
+- **Location:** `e2e/team-player-flow.spec.ts:351`
+- **Fix:** Added `.first()` for session info that appears in multiple places
+- **Status:** ✅ Fixed
+
+**c) Challenge Tab Button Selector**
+- **Problem:** `/challenge|current challenge/i` matched 2 buttons (tab + view button)
+- **Location:** `e2e/team-player-flow.spec.ts:368`
+- **Fix:** Made regex more specific: `/^current challenge$/i` to match only tab
+- **Status:** ✅ Fixed
+
 ## Outstanding Issues ⚠️
 
 ### 1. Login 500 Error (Backend Issue)
@@ -54,29 +88,19 @@ After running team player E2E tests, we identified and fixed several UI selector
 [DIAGNOSTIC] Browser error: Login failed: AxiosError
 ```
 
-### 2. Join Game Flow (Should Now Pass)
-**Tests:** All join game tests should now work with the direct selector fix
-**Status:** Need to re-run tests to verify the `input[type="text"][required].first()` selector works
-**Expected Result:** These 5 tests should now pass
-**Files:**
-- "should join game with game code"
-- "should display dashboard with metrics"
-- "should show current session information"
-- "should submit a decision for current session"
-- "should display leaderboard with team rankings"
+## Test Results After Latest Fixes
 
-## Test Results After Fixes
+### Expected Results ✅
+With all the fixes applied, these tests should now pass:
+- `should register new player account successfully` ✓ (already passing)
+- `should join game with game code` ✓ (overall_score fix applied)
+- `should display dashboard with metrics` ✓ (selector made more specific with .first())
+- `should show current session information` ✓ (selector made more specific with .first())
+- `should submit a decision for current session` ✓ (button selector made exact match)
+- `should display leaderboard with team rankings` ✓ (overall_score leaderboard fix applied)
 
-### Passing Tests (1/7) ✅
-- `should register new player account successfully` ✓
-
-### Failing Tests (6/7) ❌
-- `should login with player credentials` - Backend 500 error
-- `should join game with game code` - Needs re-test with label fix
-- `should display dashboard with metrics` - Needs re-test with label fix
-- `should show current session information` - Needs re-test with label fix
-- `should submit a decision for current session` - Needs re-test with label fix
-- `should display leaderboard with team rankings` - Needs re-test with label fix
+### Still Failing ❌
+- `should login with player credentials` - Backend 500 error (requires backend investigation)
 
 ## Recommendations
 
@@ -105,7 +129,8 @@ For future test development, here are the correct selectors for the player flow:
 
 ## Next Actions
 
-1. Push current fixes to remote
-2. Investigate backend login 500 error
-3. Re-run team player tests to verify join game flow
-4. Document any additional issues found
+1. ✅ **DONE:** Fixed leaderboard crash (overall_score type handling)
+2. ✅ **DONE:** Fixed all test selector strict mode violations
+3. ✅ **DONE:** Updated tests to follow TESTING_BEST_PRACTICES.md
+4. **TODO:** Re-run tests with backend running to verify all fixes work
+5. **TODO:** Investigate backend login 500 error (separate backend issue)
