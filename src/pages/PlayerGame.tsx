@@ -258,7 +258,9 @@ export default function PlayerGame() {
               <div className="text-right">
                 <div className="text-sm text-gray-600">Your Score</div>
                 <div className="text-2xl font-bold text-blue-600">
-                  {team?.overall_score?.toFixed(1) || '0.0'}
+                  {typeof team?.overall_score === 'number'
+                    ? team.overall_score.toFixed(1)
+                    : team?.overall_score || '0.0'}
                 </div>
               </div>
               <LanguageSelector />
