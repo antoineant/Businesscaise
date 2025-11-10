@@ -57,8 +57,17 @@ async function registerAndLoginPlayer(page: Page) {
   });
 
   page.on('console', msg => {
-    if (msg.type() === 'error' || msg.type() === 'warning') {
-      console.log(`[DIAGNOSTIC] Browser ${msg.type()}: ${msg.text()}`);
+    // Capture ALL console messages to see diagnostic logs from PlayerGame
+    const type = msg.type();
+    const text = msg.text();
+
+    // Always show PlayerGame diagnostic logs
+    if (text.includes('[PlayerGame]')) {
+      console.log(`[DIAGNOSTIC] Browser log: ${text}`);
+    }
+    // Show errors and warnings
+    else if (type === 'error' || type === 'warning') {
+      console.log(`[DIAGNOSTIC] Browser ${type}: ${text}`);
     }
   });
 
