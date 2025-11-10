@@ -5,6 +5,9 @@
 
 echo "🔧 Applying database migration 002..."
 echo ""
+echo "⚠️  Note: If you already ran this migration and still getting errors,"
+echo "   you need to re-run it because challenge_id type was updated."
+echo ""
 
 # Check if .env file exists
 if [ ! -f .env ]; then
