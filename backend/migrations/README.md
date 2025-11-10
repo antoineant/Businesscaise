@@ -1,6 +1,27 @@
 # Database Migrations
 
-## How to Apply Migrations
+## ⚡ **QUICK START** - Apply Migration 002
+
+**The easiest way:**
+
+```bash
+cd backend
+
+# Mac/Linux:
+./apply-migration.sh
+
+# Windows:
+apply-migration.bat
+```
+
+That's it! The script will:
+- ✅ Read your database credentials from `.env`
+- ✅ Apply the migration automatically
+- ✅ Show clear success/error messages
+
+---
+
+## How to Apply Migrations (Manual Methods)
 
 ### Option 1: Using psql (Recommended)
 
