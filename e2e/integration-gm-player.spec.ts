@@ -202,7 +202,8 @@ test.describe.serial('INTEGRATION: GM-to-Player Complete Workflow', () => {
 
     // Register player
     await playerPage.goto('http://localhost:5173/?demo=false', { waitUntil: 'networkidle' });
-    await playerPage.click('a:has-text("Register")');
+    // The login page displays "Sign up", not "Register"
+    await playerPage.click('a:has-text("Sign up")');
     await playerPage.waitForURL(/.*register/);
     await playerPage.fill('input[name="name"], input[placeholder*="name" i]', PLAYER_USER.name);
     await playerPage.fill('input[type="email"]', PLAYER_USER.email);
