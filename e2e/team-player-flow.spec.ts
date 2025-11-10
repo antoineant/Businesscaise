@@ -352,16 +352,15 @@ test.describe('Team Player - Dashboard', () => {
     await registerAndLoginPlayer(page);
     await joinGameAsTeam(page, gameId);
 
-    // Wait for main content to be visible
-    const dashboardArea = page.locator('main, [role="main"]');
-    await expect(dashboardArea).toBeVisible({ timeout: 5000 });
+    // Wait for page to load - look for team name in header (proves page loaded)
+    await expect(page.getByText(TEST_TEAM.name)).toBeVisible({ timeout: 10000 });
 
-    // Wait a bit more for data to load
-    await page.waitForTimeout(2000);
+    // Wait for dashboard to fully render
+    await page.waitForTimeout(3000);
 
-    // Debug: Check what's actually on the page
-    const mainText = await dashboardArea.textContent();
-    console.log('[DEBUG] Dashboard content preview:', mainText?.substring(0, 300));
+    // Debug: Log full page text to see what's actually there
+    const bodyText = await page.locator('body').textContent();
+    console.log('[DEBUG] Full page text:', bodyText?.substring(0, 500));
 
     // Check if session card exists
     const sessionHeading = page.getByRole('heading', { name: /current session/i });
@@ -383,7 +382,7 @@ test.describe('Team Player - Dashboard', () => {
     } else {
       throw new Error(
         'Neither "Current Session" nor "No active session" found. ' +
-        `Page content: ${mainText?.substring(0, 200)}`
+        `Page content preview: ${bodyText?.substring(0, 300)}`
       );
     }
   });

@@ -21,6 +21,10 @@ ALTER TABLE submissions
 -- Make challenge_id nullable (no longer requires FK)
 ALTER TABLE submissions ALTER COLUMN challenge_id DROP NOT NULL;
 
+-- Change challenge_id from UUID to TEXT to allow strings like "session-1"
+-- The code uses challenge_id for both real UUIDs and session identifiers
+ALTER TABLE submissions ALTER COLUMN challenge_id TYPE TEXT USING challenge_id::TEXT;
+
 -- Rename gm_score to keep compatibility if it exists
 DO $$
 BEGIN
