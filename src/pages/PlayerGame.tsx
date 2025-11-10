@@ -120,22 +120,26 @@ export default function PlayerGame() {
   const loadGameData = async (tId: string) => {
     try {
       setIsLoading(true);
+      console.log('[PlayerGame] Loading data for team:', tId);
+
       const [dashboard, currentTeam, lb] = await Promise.all([
         teamAPI.getDashboard(tId),
         teamAPI.getCurrentTeam(tId),
         teamAPI.getLeaderboard(tId),
       ]);
 
-      console.log('[PlayerGame] Dashboard data:', dashboard);
-      console.log('[PlayerGame] Current team:', currentTeam);
-      console.log('[PlayerGame] Leaderboard:', lb);
+      console.log('[PlayerGame] Dashboard data:', JSON.stringify(dashboard));
+      console.log('[PlayerGame] Current team:', JSON.stringify(currentTeam));
+      console.log('[PlayerGame] Leaderboard:', JSON.stringify(lb));
 
       setDashboardData(dashboard);
       setTeam(currentTeam);
       setLeaderboard(lb);
       setCurrentSession(dashboard.current_session);
+
+      console.log('[PlayerGame] State updated successfully');
     } catch (err: any) {
-      console.error('Failed to load game data:', err);
+      console.error('[PlayerGame] Failed to load game data:', err, err.message, err.stack);
 
       // If team not found (e.g., localStorage has stale data), clear it and show join modal
       if (err.message?.includes('Team not found') && gameId) {
@@ -229,6 +233,8 @@ export default function PlayerGame() {
     );
   }
 
+  console.log('[PlayerGame] Rendering with:', { team: !!team, dashboardData: !!dashboardData, game: !!dashboardData?.game });
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -243,8 +249,8 @@ export default function PlayerGame() {
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{dashboardData.game.title}</h1>
-                <p className="text-sm text-gray-600">Team: {team.name}</p>
+                <h1 className="text-2xl font-bold text-gray-900">{dashboardData?.game?.title || 'Loading...'}</h1>
+                <p className="text-sm text-gray-600">Team: {team?.name || 'Loading...'}</p>
               </div>
             </div>
 
@@ -252,7 +258,7 @@ export default function PlayerGame() {
               <div className="text-right">
                 <div className="text-sm text-gray-600">Your Score</div>
                 <div className="text-2xl font-bold text-blue-600">
-                  {team.overall_score?.toFixed(1) || '0.0'}
+                  {team?.overall_score?.toFixed(1) || '0.0'}
                 </div>
               </div>
               <LanguageSelector />
