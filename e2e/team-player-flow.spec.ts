@@ -193,6 +193,8 @@ async function joinGameAsTeam(page: Page, gameId: string, teamData = TEST_TEAM) 
   }
 
   console.log(`[DIAGNOSTIC] ✓ Successfully joined game as ${uniqueTeamData.name}`);
+
+  return uniqueTeamData; // Return actual team data for test verification
 }
 
 // Helper: Create game via API and return game ID
@@ -329,13 +331,13 @@ test.describe('Team Player - Join Game', () => {
 
   test('should join game with game code', async ({ page }) => {
     await registerAndLoginPlayer(page);
-    await joinGameAsTeam(page, gameId);
+    const teamData = await joinGameAsTeam(page, gameId);
 
     // Verify redirect to game page
     await expect(page).toHaveURL(/.*\/game\//);
 
-    // Verify team name visible
-    await expect(page.getByText(TEST_TEAM.name)).toBeVisible({ timeout: 5000 });
+    // Verify team name visible (use actual team name, not template)
+    await expect(page.getByText(teamData.name)).toBeVisible({ timeout: 5000 });
 
     // Verify dashboard tab exists using semantic selector
     await expect(page.getByRole('button', { name: /dashboard/i })).toBeVisible();
@@ -522,7 +524,7 @@ test.describe('Team Player - Leaderboard', () => {
 
   test('should display leaderboard with team rankings', async ({ page }) => {
     await registerAndLoginPlayer(page);
-    await joinGameAsTeam(page, gameId);
+    const teamData = await joinGameAsTeam(page, gameId);
 
     // Navigate to Leaderboard tab using semantic selector
     await page.getByRole('button', { name: /leaderboard/i }).click();
@@ -533,9 +535,9 @@ test.describe('Team Player - Leaderboard', () => {
     // Verify leaderboard heading using semantic selector
     await expect(page.getByRole('heading', { name: /leaderboard|ranking|standings/i })).toBeVisible({ timeout: 5000 });
 
-    // Should see team name in leaderboard (scope to main content to avoid page header)
+    // Should see team name in leaderboard (use actual team name, not template)
     const leaderboardArea = page.locator('main, [role="main"]');
-    await expect(leaderboardArea.getByText(TEST_TEAM.name).first()).toBeVisible({ timeout: 5000 });
+    await expect(leaderboardArea.getByText(teamData.name).first()).toBeVisible({ timeout: 5000 });
 
     await page.screenshot({
       path: 'e2e-results/team-player-05-leaderboard.png',
