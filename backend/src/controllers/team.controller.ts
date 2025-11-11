@@ -13,15 +13,21 @@ import * as socketHandler from '../socket/socket.handler';
 export const joinGame = asyncHandler(async (req: Request, res: Response) => {
   const { game_id, team_name, color, members } = req.body;
 
+  console.log(`[JOIN] Attempting to join game ${game_id} as team "${team_name}"`);
+
   // Check if game exists and is active
   const game = await GameModel.findById(game_id);
   if (!game) {
+    console.error(`[JOIN] Game not found: ${game_id}`);
     throw new AppError('Game not found', 404);
   }
 
   if (game.status !== 'active' && game.status !== 'setup') {
+    console.error(`[JOIN] Game ${game_id} has invalid status: ${game.status}`);
     throw new AppError('Game is not accepting new teams', 400);
   }
+
+  console.log(`[JOIN] Creating team in database...`);
 
   // Create team with default metrics
   const team = await TeamModel.create({
@@ -38,11 +44,14 @@ export const joinGame = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 
+  console.log(`[JOIN] Team created successfully: ${team.id}`);
+
   // Notify Game Master via WebSocket (non-blocking - don't let notification failures prevent join)
   try {
     socketHandler.notifyTeamJoined(game_id, team);
+    console.log(`[JOIN] GM notified successfully`);
   } catch (err) {
-    console.error('Failed to notify GM of team join:', err);
+    console.error('[JOIN] Failed to notify GM of team join:', err);
     // Continue anyway - notification failure shouldn't prevent team from joining
   }
 
