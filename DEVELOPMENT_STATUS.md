@@ -207,11 +207,12 @@
 | Team Player Frontend | ✅ Complete | 100% |
 | E2E Testing (GM) | ✅ Complete | 100% |
 | E2E Testing (Player) | ✅ Complete | 100% |
+| E2E Testing (Integration) | ✅ Complete | 100% |
 | Database Migrations | ✅ Complete | 100% |
 | Submission Scoring (GM) | ✅ Complete | 100% |
 | Storytelling System | ⏳ Pending | 0% |
 
-**Overall Progress: ~96%** (79/79 E2E tests passing, submission scoring complete, all core features operational)
+**Overall Progress: ~97%** (82/82 E2E tests passing, submission scoring complete with full E2E coverage, all core features operational)
 
 ---
 
@@ -236,13 +237,15 @@
 4. ✅ Add E2E tests for Team Player flow (COMPLETED - 7/7 passing)
 5. ✅ Fix database schema migration for submissions (COMPLETED)
 6. ✅ Configure test isolation to prevent race conditions (COMPLETED)
+7. ✅ Build submission scoring interface for GM (COMPLETED)
+8. ✅ Add E2E tests for submission scoring workflow (COMPLETED - 3/3 passing)
 
 ### Next Sprint
 1. Build narrative system (Phase 3)
 2. Enhance WebSocket real-time features
-3. Add submission scoring interface for GM
-4. Pilot school preparation materials
-5. Documentation and training guides
+3. Pilot school preparation materials
+4. Documentation and training guides
+5. Advanced scoring features (rubrics, PDF annotations)
 
 ---
 
@@ -523,4 +526,42 @@
 
 ---
 
+### Submission Scoring E2E Tests - All Passing! ✅
+
+**Test Suite: `integration-submission-scoring.spec.ts`** (Nov 11, 2025)
+
+**All 3 Tests Passing:**
+1. ✅ **should view submissions list and score a submission** - Full workflow from team submission to GM scoring
+2. ✅ **should filter submissions by status** - Test All/Pending/Scored filters
+3. ✅ **should update an existing score** - Re-score capability
+
+**Best Practices Applied:**
+- ✅ Semantic selectors (getByLabel, getByRole, getByPlaceholder)
+- ✅ ES module imports (chromium from '@playwright/test')
+- ✅ Proper error handling with Promise.race pattern
+- ✅ Smart waiting for actual conditions vs fixed timeouts
+- ✅ Multi-service orchestration (GM Dashboard + Team Frontend)
+- ✅ Strict mode compliance with .first() for duplicate elements
+- ✅ Navigate to Challenge tab before submission (required UX flow)
+
+**Test Flow:**
+1. GM registers and creates game ✓
+2. GM starts game and unlocks first session ✓
+3. Team registers and joins game ✓
+4. Team navigates to Challenge tab ✓
+5. Team submits decision ✓
+6. GM views submission in submissions list ✓
+7. GM clicks submission to view details ✓
+8. GM scores submission with feedback ✓
+9. Submission status updates to "scored" ✓
+
+**Technical Improvements:**
+- Multi-browser context support (separate browsers for GM and Team)
+- Proper cleanup with browser.close() in finally blocks
+- Follows patterns from existing test suites (gm-dashboard-flow, team-player-flow)
+- Integrated into test orchestration script (./run-e2e-tests.sh --integration)
+
+---
+
 **Status:** Phase 2+ Complete - Core gameplay and scoring operational! 🚀
+**E2E Test Coverage:** 82/82 tests passing (100%)
