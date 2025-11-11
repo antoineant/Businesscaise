@@ -11,7 +11,8 @@ import {
   Trophy,
   BarChart3,
   Edit,
-  Unlock
+  Unlock,
+  FileText
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -183,7 +184,7 @@ export const GameDetailsPage: React.FC = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <div className="card" data-testid="teams-stat-card">
           <div className="flex items-center justify-between">
             <div>
@@ -203,6 +204,16 @@ export const GameDetailsPage: React.FC = () => {
               </p>
             </div>
             <Calendar className="w-8 h-8 text-primary-600" />
+          </div>
+        </div>
+
+        <div className="card cursor-pointer hover:shadow-md transition-shadow" data-testid="submissions-stat-card" onClick={() => navigate(`/games/${gameId}/submissions`)}>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Submissions</p>
+              <p className="text-sm font-medium text-primary-600 mt-1">Review & Score →</p>
+            </div>
+            <FileText className="w-8 h-8 text-primary-600" />
           </div>
         </div>
 

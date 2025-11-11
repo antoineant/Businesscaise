@@ -83,12 +83,19 @@ export class SubmissionModel {
   }
 
   /**
-   * Find all submissions for a game
+   * Find all submissions for a game (with team and session details)
    */
-  static async findByGame(gameId: string): Promise<Submission[]> {
+  static async findByGame(gameId: string): Promise<any[]> {
     const result = await query(
-      `SELECT s.* FROM submissions s
+      `SELECT
+        s.*,
+        t.name as team_name,
+        t.game_id,
+        ses.session_number,
+        ses.title as session_title
+       FROM submissions s
        JOIN teams t ON s.team_id = t.id
+       JOIN sessions ses ON s.session_id = ses.id
        WHERE t.game_id = $1
        ORDER BY s.submitted_at DESC`,
       [gameId]
@@ -98,12 +105,19 @@ export class SubmissionModel {
   }
 
   /**
-   * Find submissions by status
+   * Find submissions by status (with team and session details)
    */
-  static async findByStatus(gameId: string, status: Submission['status']): Promise<Submission[]> {
+  static async findByStatus(gameId: string, status: Submission['status']): Promise<any[]> {
     const result = await query(
-      `SELECT s.* FROM submissions s
+      `SELECT
+        s.*,
+        t.name as team_name,
+        t.game_id,
+        ses.session_number,
+        ses.title as session_title
+       FROM submissions s
        JOIN teams t ON s.team_id = t.id
+       JOIN sessions ses ON s.session_id = ses.id
        WHERE t.game_id = $1 AND s.status = $2
        ORDER BY s.submitted_at DESC`,
       [gameId, status]
