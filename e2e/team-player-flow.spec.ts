@@ -137,50 +137,53 @@ async function joinGameAsTeam(page: Page, gameId: string, teamData = TEST_TEAM) 
     }
   }
 
+  // Wait for successful API response before clicking
+  const responsePromise = page.waitForResponse(
+    resp => resp.url().includes('/api/teams/join') && resp.status() === 201,
+    { timeout: 10000 }
+  );
+
   // Submit join form
   await page.getByRole('button', { name: /join/i, exact: false }).click();
 
-  // Wait for EITHER success (redirect to game) OR error message
-  await Promise.race([
-    page.waitForURL(/.*\/game\//, { timeout: 10000 }),
-    page.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
-      .then(async () => {
-        const errorText = await page.locator('.bg-red-50, [class*="error"]').textContent();
-        throw new Error(`Failed to join game: ${errorText}`);
-      })
-  ]);
-
-  console.log(`[DIAGNOSTIC] URL changed to game page: ${page.url()}`);
-
-  // Wait for PlayerGame component to load - look for ANY of these indicators
-  // This is more reliable than fixed timeout
+  // Wait for API to succeed
   try {
-    await Promise.race([
-      // Wait for team name to appear (best case - fully loaded)
-      page.getByText(teamData.name).waitFor({ timeout: 15000 }),
-      // OR wait for loading indicator to disappear
-      page.locator('text=Loading game...').waitFor({ state: 'hidden', timeout: 15000 }),
-      // OR wait for error message (worst case)
-      page.locator('.bg-red-50').waitFor({ timeout: 15000 })
-    ]);
-
-    // Give components a moment to fully render
-    await page.waitForTimeout(1000);
-
-    // Check if we're in an error state
+    await responsePromise;
+    console.log(`[DIAGNOSTIC] ✓ API response 201 - team joined successfully`);
+  } catch (e) {
+    // Check if there's an error message on the page
     const hasError = await page.locator('.bg-red-50').count();
     if (hasError > 0) {
       const errorText = await page.locator('.bg-red-50').textContent();
-      console.log(`[DIAGNOSTIC] ⚠️  Page loaded but shows error: ${errorText}`);
-    } else {
-      console.log(`[DIAGNOSTIC] ✓ Page loaded successfully`);
+      throw new Error(`Failed to join game: ${errorText}`);
     }
+    throw new Error('Failed to join game - no 201 response received');
+  }
 
-  } catch (e) {
-    console.log('[DIAGNOSTIC] ⚠️  Timeout waiting for page to load, capturing state...');
-    const bodyText = await page.locator('body').textContent();
-    console.log('[DIAGNOSTIC] Page content:', bodyText?.substring(0, 300));
-    throw new Error(`Page didn't load properly after joining game. Page shows: ${bodyText?.substring(0, 200)}`);
+  // Wait for URL to change to game page
+  await page.waitForURL(/.*\/game\//, { timeout: 5000 });
+  console.log(`[DIAGNOSTIC] URL changed to game page: ${page.url()}`);
+
+  // Wait for join modal to close (heading disappears)
+  await page.getByRole('heading', { name: /join game/i }).waitFor({
+    state: 'hidden',
+    timeout: 5000
+  });
+  console.log(`[DIAGNOSTIC] ✓ Join modal closed`);
+
+  // Wait for game page to load - dashboard tab only exists on game page, not in modal
+  await page.getByRole('button', { name: /dashboard/i }).waitFor({
+    timeout: 10000
+  });
+  console.log(`[DIAGNOSTIC] ✓ Dashboard tab loaded`);
+
+  // Check if we're in an error state
+  const hasError = await page.locator('.bg-red-50').count();
+  if (hasError > 0) {
+    const errorText = await page.locator('.bg-red-50').textContent();
+    console.log(`[DIAGNOSTIC] ⚠️  Page loaded but shows error: ${errorText}`);
+  } else {
+    console.log(`[DIAGNOSTIC] ✓ Page loaded successfully`);
   }
 
   console.log(`[DIAGNOSTIC] ✓ Successfully joined game as ${teamData.name}`);
