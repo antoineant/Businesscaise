@@ -92,6 +92,8 @@
 - ✅ Analytics page with game statistics
 - ✅ Team details page with metrics history
 - ✅ Session edit page
+- ✅ Submissions list page with status filters (All/Pending/Scored)
+- ✅ Submission details page with scoring interface
 - ✅ E2E testing with Playwright (72/72 tests passing across Chrome & Firefox)
 - ✅ Cross-browser testing (Chrome, Firefox, Mobile)
 - ✅ Fixed Firefox HTTP caching issues for reliable test results
@@ -159,10 +161,13 @@
    - ✅ Live metrics updates
    - ✅ Automatic data refresh after actions
 
-3. **Scoring Interface** ⏳ Phase 3
-   - ⏳ Manual scoring for PDFs
-   - ⏳ Rubric-based evaluation
-   - ⏳ Feedback system
+3. **Scoring Interface** ✅ Complete (Basic)
+   - ✅ Numeric score submission (0-100)
+   - ✅ Text feedback system
+   - ✅ Automatic team metrics updates
+   - ✅ Score history tracking
+   - ⏳ Rubric-based evaluation (Future enhancement)
+   - ⏳ PDF annotation tools (Future enhancement)
 
 ### Phase 3: Enhanced Storytelling (Week 5)
 1. **Narrative System**
@@ -203,9 +208,10 @@
 | E2E Testing (GM) | ✅ Complete | 100% |
 | E2E Testing (Player) | ✅ Complete | 100% |
 | Database Migrations | ✅ Complete | 100% |
+| Submission Scoring (GM) | ✅ Complete | 100% |
 | Storytelling System | ⏳ Pending | 0% |
 
-**Overall Progress: ~95%** (79/79 E2E tests passing across Chrome & Firefox, all database migrations applied)
+**Overall Progress: ~96%** (79/79 E2E tests passing, submission scoring complete, all core features operational)
 
 ---
 
@@ -267,7 +273,7 @@
 - ✅ GET /api/auth/me - Get current user info (protected)
 - ✅ POST /api/auth/logout - Logout user (client-side)
 
-### Game Master (16/20+ complete) ✅
+### Game Master (19/22 complete) ✅
 **Game CRUD (5/5):**
 - ✅ POST /api/gm/games - Create game with 10 auto-generated sessions
 - ✅ GET /api/gm/games - List all games for GM
@@ -294,10 +300,10 @@
 - ✅ GET /api/gm/games/:id/leaderboard - Get team rankings
 - ✅ GET /api/gm/games/:id/analytics - Get game statistics
 
-**Submissions (0/3):** ⚠️ Requires refactoring
-- ⏳ GET /api/gm/games/:id/submissions - List submissions
-- ⏳ GET /api/gm/submissions/:id - Get submission details
-- ⏳ POST /api/gm/submissions/:id/score - Score submission
+**Submissions (3/3):** ✅ Complete
+- ✅ GET /api/gm/games/:id/submissions - List submissions (with team & session details)
+- ✅ GET /api/gm/submissions/:id - Get submission details
+- ✅ POST /api/gm/submissions/:id/score - Score submission (auto-updates team metrics)
 
 **Narratives (0/2):** Phase 3
 - ⏳ POST /api/gm/games/:id/narratives - Create narrative
@@ -486,4 +492,35 @@
 
 ---
 
-**Status:** Phase 2 Complete - Ready for pilot deployment! 🚀
+### GM Submission Scoring Interface - Complete! 🎯
+
+**Implemented Features (Nov 11, 2025):**
+1. ✅ Submissions list page with status filtering (All/Pending/Scored)
+2. ✅ Submission details page with full context (team, session, data, files)
+3. ✅ Numeric scoring interface (0-100) with decimal precision
+4. ✅ Rich text feedback system
+5. ✅ Score update capability (can re-score submissions)
+6. ✅ Automatic team metrics updates after scoring
+7. ✅ WebSocket notifications to teams when scored
+8. ✅ Backend query enhancements (enriched submission data with joins)
+9. ✅ E2E tests for complete scoring workflow (3 test scenarios)
+
+**New Pages:**
+- SubmissionsPage.tsx - List and filter all game submissions
+- SubmissionDetailsPage.tsx - View and score individual submissions
+- Integrated into GameDetailsPage with "Submissions" card
+
+**Backend Improvements:**
+- Enhanced Submission.findByGame() with team_name, session_number, session_title
+- Enhanced Submission.findByStatus() with enriched data
+- All 3 scoring endpoints operational and tested
+
+**Test Coverage:**
+- ✓ View submissions list with filters
+- ✓ Score a pending submission
+- ✓ Update an existing score
+- ✓ Filter submissions by status
+
+---
+
+**Status:** Phase 2+ Complete - Core gameplay and scoring operational! 🚀
