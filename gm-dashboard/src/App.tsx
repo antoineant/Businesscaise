@@ -11,6 +11,8 @@ import { LeaderboardPage } from './pages/LeaderboardPage';
 import { AnalyticsPage } from './pages/AnalyticsPage';
 import { TeamDetailsPage } from './pages/TeamDetailsPage';
 import { SessionEditPage } from './pages/SessionEditPage';
+import { SubmissionsPage } from './pages/SubmissionsPage';
+import { SubmissionDetailsPage } from './pages/SubmissionDetailsPage';
 
 function App() {
   return (
@@ -98,6 +100,26 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <SessionEditPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/games/:gameId/submissions"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <SubmissionsPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/games/:gameId/submissions/:submissionId"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <SubmissionDetailsPage />
                 </Layout>
               </ProtectedRoute>
             }

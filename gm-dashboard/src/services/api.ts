@@ -93,4 +93,15 @@ export const gameAPI = {
   getAnalytics: (gameId: string) => api.get(`/gm/games/${gameId}/analytics`),
 };
 
+export const submissionAPI = {
+  getSubmissions: (gameId: string) => api.get(`/gm/games/${gameId}/submissions`),
+
+  getSubmissionDetails: (submissionId: string) => api.get(`/gm/submissions/${submissionId}`),
+
+  scoreSubmission: (submissionId: string, data: {
+    score: number;
+    feedback?: string;
+  }) => api.post(`/gm/submissions/${submissionId}/score`, data),
+};
+
 export default api;
