@@ -185,9 +185,14 @@ async function submitAsTeam(gameId: string) {
     await playerPage.waitForURL(/.*\/game\//, { timeout: 10000 });
     await playerPage.getByRole('button', { name: /dashboard/i }).waitFor({ timeout: 10000 });
 
-    // Submit Level 1 decision (beginner difficulty auto-selected by default)
-    // Wait for input form to load
-    await playerPage.waitForSelector('input[type="number"]', { timeout: 5000 });
+    // Navigate to Challenge tab (required to see submission form)
+    await playerPage.getByRole('button', { name: /current challenge/i }).click();
+
+    // Wait for form to load - check for textarea (generic submission) OR number inputs (level-specific)
+    await Promise.race([
+      playerPage.waitForSelector('textarea#submission-data', { timeout: 10000 }),
+      playerPage.waitForSelector('input[type="number"]', { timeout: 10000 })
+    ]);
 
     // Fill in decision inputs (loan amount and budget allocations)
     const numberInputs = await playerPage.locator('input[type="number"]').all();
@@ -197,13 +202,36 @@ async function submitAsTeam(gameId: string) {
       await numberInputs[2].fill('15000'); // Product
       await numberInputs[3].fill('12000'); // Operations
       await numberInputs[4].fill('13000'); // HR
+    } else {
+      // Fallback: use generic textarea if level-specific inputs don't exist
+      const textarea = playerPage.locator('textarea#submission-data');
+      if (await textarea.count() > 0) {
+        await textarea.fill('Strategic decision for Level 1: balanced budget allocation');
+      }
     }
 
-    // Submit decision and wait for success message
-    await playerPage.getByRole('button', { name: /submit/i }).click();
+    // Submit decision using semantic selector
+    const submitButton = playerPage.getByRole('button', { name: /submit decision/i });
+    await submitButton.click();
 
-    // Wait for success message to appear
-    await playerPage.locator('.bg-green-50').waitFor({ timeout: 5000 });
+    // Wait for EITHER success OR error message (better error handling)
+    await Promise.race([
+      // Success case
+      playerPage.waitForSelector('.bg-green-50', { timeout: 20000 }),
+      // Error case - throw with details
+      playerPage.waitForSelector('.bg-red-50', { timeout: 20000 })
+        .then(async () => {
+          const errorText = await playerPage.locator('.bg-red-50').textContent();
+          throw new Error(`Submission failed: ${errorText}`);
+        })
+    ]);
+
+    // Verify success
+    const hasSuccess = await playerPage.locator('.bg-green-50').count();
+    if (hasSuccess === 0) {
+      const errorText = await playerPage.locator('.bg-red-50').textContent();
+      throw new Error(`Submission error: ${errorText}`);
+    }
 
     return { testPlayer, testTeam };
   } finally {
