@@ -109,7 +109,13 @@ async function registerAndLoginPlayer(page: Page) {
 
 // Helper: Join game with game code
 async function joinGameAsTeam(page: Page, gameId: string, teamData = TEST_TEAM) {
-  console.log(`[DIAGNOSTIC] Joining game ${gameId} as team ${teamData.name}`);
+  // Generate unique team name for this join (prevents conflicts when multiple tests share same game)
+  const uniqueTeamData = {
+    ...teamData,
+    name: `${teamData.name.split(' ')[0]} ${teamData.name.split(' ')[1]} ${Date.now()}`
+  };
+
+  console.log(`[DIAGNOSTIC] Joining game ${gameId} as team ${uniqueTeamData.name}`);
 
   // Enter game code using placeholder selector
   await page.getByPlaceholder(/game code|enter game/i).fill(gameId);
@@ -120,10 +126,10 @@ async function joinGameAsTeam(page: Page, gameId: string, teamData = TEST_TEAM) 
 
   // Fill team name - label isn't connected to input, so use direct selector
   // The first required text input in the modal is the team name field
-  await page.locator('input[type="text"][required]').first().fill(teamData.name);
+  await page.locator('input[type="text"][required]').first().fill(uniqueTeamData.name);
 
   // Select color if picker exists
-  const colorButton = page.locator(`button[style*="${teamData.color}"]`);
+  const colorButton = page.locator(`button[style*="${uniqueTeamData.color}"]`);
   if (await colorButton.count() > 0) {
     await colorButton.first().click();
   }
@@ -131,7 +137,7 @@ async function joinGameAsTeam(page: Page, gameId: string, teamData = TEST_TEAM) 
   // Add team members
   const memberInput = page.getByPlaceholder(/member/i);
   if (await memberInput.count() > 0) {
-    for (const member of teamData.members) {
+    for (const member of uniqueTeamData.members) {
       await memberInput.fill(member);
       await page.getByRole('button', { name: /^add$/i }).click();
     }
@@ -186,7 +192,7 @@ async function joinGameAsTeam(page: Page, gameId: string, teamData = TEST_TEAM) 
     console.log(`[DIAGNOSTIC] ✓ Page loaded successfully`);
   }
 
-  console.log(`[DIAGNOSTIC] ✓ Successfully joined game as ${teamData.name}`);
+  console.log(`[DIAGNOSTIC] ✓ Successfully joined game as ${uniqueTeamData.name}`);
 }
 
 // Helper: Create game via API and return game ID
