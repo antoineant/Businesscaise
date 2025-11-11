@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page, chromium } from '@playwright/test';
 
 /**
  * E2E Tests for GM Submission Scoring
@@ -127,8 +127,7 @@ async function submitAsTeam(gameId: string) {
   const testPlayer = generateTestPlayer();
   const testTeam = generateTestTeam();
 
-  // Create new page context for team player
-  const { chromium } = require('@playwright/test');
+  // Create new page context for team player (ES module syntax - chromium imported at top)
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext();
   const playerPage = await context.newPage();
