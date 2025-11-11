@@ -123,8 +123,10 @@ export default function SubmissionForm({
       setSubmissionData('');
       setFileUrls([]);
 
-      // Call the completion callback
-      onSubmissionComplete?.();
+      // Call the completion callback after a delay so success message is visible
+      setTimeout(() => {
+        onSubmissionComplete?.();
+      }, 2000);
     } catch (err: any) {
       setError(err.response?.data?.error?.message || 'Failed to submit decision');
     } finally {

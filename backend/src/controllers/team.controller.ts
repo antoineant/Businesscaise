@@ -38,8 +38,13 @@ export const joinGame = asyncHandler(async (req: Request, res: Response) => {
     },
   });
 
-  // Notify Game Master via WebSocket
-  socketHandler.notifyTeamJoined(game_id, team);
+  // Notify Game Master via WebSocket (non-blocking - don't let notification failures prevent join)
+  try {
+    socketHandler.notifyTeamJoined(game_id, team);
+  } catch (err) {
+    console.error('Failed to notify GM of team join:', err);
+    // Continue anyway - notification failure shouldn't prevent team from joining
+  }
 
   res.status(201).json({
     message: 'Team joined game successfully',
