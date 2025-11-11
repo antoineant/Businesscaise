@@ -150,7 +150,7 @@ export default defineConfig({
     },
     {
       name: 'firefox-integration',
-      testMatch: /integration-gm-player\.spec\.ts/,
+      testMatch: /integration-(gm-player|submission-scoring)\.spec\.ts/,
       use: { ...devices['Desktop Firefox'], baseURL: 'http://localhost:3002' },
     },
 
