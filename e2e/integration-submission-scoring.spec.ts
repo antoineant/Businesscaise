@@ -35,17 +35,28 @@ const generateTestTeam = () => ({
 async function setupGM(page: Page) {
   const testGM = generateTestGM();
 
-  // Register
+  // Register using semantic selectors (best practice)
   await page.goto('http://localhost:3002/register');
-  await page.fill('input[type="text"], input#name', testGM.name);
-  await page.fill('input[type="email"], input#email', testGM.email);
+  await page.waitForLoadState('networkidle');
+
+  await page.getByLabel(/name/i).fill(testGM.name);
+  await page.getByLabel(/email/i).fill(testGM.email);
+
   const passwordFields = await page.locator('input[type="password"]').all();
   await passwordFields[0].fill(testGM.password);
   await passwordFields[1].fill(testGM.password);
-  await page.click('button[type="submit"]');
 
-  // Wait for redirect to dashboard
-  await page.waitForURL('/games', { timeout: 10000 });
+  await page.getByRole('button', { name: /register|create account/i }).click();
+
+  // Wait for redirect to dashboard OR error
+  await Promise.race([
+    page.waitForURL('/games', { timeout: 10000 }),
+    page.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
+      .then(async () => {
+        const errorText = await page.locator('.bg-red-50, [class*="error"]').textContent();
+        throw new Error(`Registration failed: ${errorText}`);
+      })
+  ]);
 
   return testGM;
 }
@@ -54,19 +65,39 @@ async function setupGM(page: Page) {
 async function createGame(page: Page) {
   const testGame = generateTestGame();
 
-  await page.goto('http://localhost:3002/games/create');
-  await page.fill('input#title', testGame.title);
-  await page.fill('textarea#description', testGame.description);
-  await page.fill('input#start_date', testGame.startDate);
-  await page.fill('input#end_date', testGame.endDate);
-  await page.click('button[type="submit"]');
+  // Navigate to create game page
+  await page.goto('http://localhost:3002/games');
+  await page.waitForLoadState('networkidle');
 
-  // Wait for redirect to game details
-  await page.waitForURL(/\/games\/[a-f0-9-]+$/, { timeout: 10000 });
+  await page.getByRole('button', { name: /create game/i }).click();
+  await page.waitForURL('/games/create', { timeout: 10000 });
+
+  // Fill form using semantic selectors (best practice - accessible & robust)
+  await page.getByLabel(/game title/i).fill(testGame.title);
+  await page.getByLabel(/description/i).fill(testGame.description);
+  await page.getByLabel(/start.*date/i).fill(testGame.startDate);
+  await page.getByLabel(/end.*date/i).fill(testGame.endDate);
+
+  // Submit form
+  await page.getByRole('button', { name: /create game/i }).click();
+
+  // Wait for redirect to game details OR error
+  await Promise.race([
+    page.waitForURL(/\/games\/[a-f0-9-]+$/, { timeout: 10000 }),
+    page.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
+      .then(async () => {
+        const errorText = await page.locator('.bg-red-50, [class*="error"]').textContent();
+        throw new Error(`Game creation failed: ${errorText}`);
+      })
+  ]);
 
   // Extract game ID from URL
   const url = page.url();
-  const gameId = url.split('/games/')[1];
+  const gameId = url.match(/\/games\/([a-f0-9-]+)/)?.[1];
+
+  if (!gameId) {
+    throw new Error('Failed to extract game ID from URL: ' + url);
+  }
 
   return { ...testGame, id: gameId };
 }
@@ -74,95 +105,106 @@ async function createGame(page: Page) {
 // Helper: Start game and unlock first session
 async function startGameAndUnlockSession(page: Page, gameId: string) {
   await page.goto(`http://localhost:3002/games/${gameId}`);
+  await page.waitForLoadState('networkidle');
 
-  // Start game
-  await page.click('button:has-text("Start Game")');
-  await page.waitForTimeout(1000);
+  // Start game using semantic selector
+  await page.getByRole('button', { name: /start game/i }).click();
+
+  // Wait for game status to change (button should change from "Start" to "Pause")
+  await page.waitForSelector('button:has-text("Pause Game")', { timeout: 5000 });
 
   // Unlock first session
-  const unlockButtons = await page.locator('button:has-text("Unlock")').all();
+  const unlockButtons = await page.getByRole('button', { name: /unlock/i }).all();
   if (unlockButtons.length > 0) {
     await unlockButtons[0].click();
-    await page.waitForTimeout(1000);
+    // Wait for unlock to complete (button should disappear or change)
+    await page.waitForTimeout(500); // Small delay for API call
   }
 }
 
-// Helper: Register player and join game as team
+// Helper: Register player and join game as team, then submit decision
 async function submitAsTeam(gameId: string) {
   const testPlayer = generateTestPlayer();
   const testTeam = generateTestTeam();
 
   // Create new page context for team player
   const { chromium } = require('@playwright/test');
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext();
   const playerPage = await context.newPage();
 
   try {
-    // Register player
+    // Register player using semantic selectors (best practice)
     await playerPage.goto('http://localhost:5173/register');
-    await playerPage.fill('input[type="text"], input#name', testPlayer.name);
-    await playerPage.fill('input[type="email"], input#email', testPlayer.email);
-    const passwordFields = await playerPage.locator('input[type="password"]').all();
-    await passwordFields[0].fill(testPlayer.password);
-    await passwordFields[1].fill(testPlayer.password);
+    await playerPage.waitForLoadState('networkidle');
 
-    // Select Player role (if radio button exists)
-    const playerRadio = playerPage.locator('label:has-text("Player")');
-    if (await playerRadio.count() > 0) {
-      await playerRadio.click();
+    await playerPage.getByLabel(/name/i).fill(testPlayer.name);
+    await playerPage.getByLabel(/email/i).fill(testPlayer.email);
+    await playerPage.getByLabel(/^password$/i).fill(testPlayer.password);
+
+    // Handle confirm password if exists
+    const confirmPasswordInput = playerPage.getByLabel(/confirm.*password/i);
+    if (await confirmPasswordInput.count() > 0) {
+      await confirmPasswordInput.fill(testPlayer.password);
     }
 
-    await playerPage.click('button[type="submit"]');
-    await playerPage.waitForURL(/.*/, { timeout: 10000 });
+    await playerPage.getByRole('button', { name: /register|sign up|create account/i }).click();
 
-    // Join game
+    // Wait for redirect OR error
+    await Promise.race([
+      playerPage.waitForURL(/.*\/(dashboard|games)/, { timeout: 10000 }),
+      playerPage.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
+        .then(async () => {
+          const errorText = await playerPage.locator('.bg-red-50, [class*="error"]').textContent();
+          throw new Error(`Player registration failed: ${errorText}`);
+        })
+    ]);
+
+    // Navigate to join page
     await playerPage.goto('http://localhost:5173/join');
-    await playerPage.fill('input[placeholder*="game code"], input[placeholder*="Game Code"]', gameId);
-    await playerPage.click('button:has-text("Next")');
-    await playerPage.waitForTimeout(1000);
+    await playerPage.waitForLoadState('networkidle');
 
-    // Fill team details
-    await playerPage.fill('input[placeholder*="team name"], input[placeholder*="Team Name"]', testTeam.name);
-    await playerPage.fill('input[placeholder*="school"], input[placeholder*="School"]', testTeam.school);
+    // Enter game code using semantic selector
+    await playerPage.getByPlaceholder(/game code|enter game/i).fill(gameId);
+    await playerPage.getByRole('button', { name: /join game/i }).click();
 
-    // Select difficulty if available
-    const difficultySelect = playerPage.locator('select, [role="combobox"]');
-    if (await difficultySelect.count() > 0) {
-      await difficultySelect.first().selectOption(testTeam.difficulty);
-    }
+    // Wait for team join modal
+    await playerPage.getByRole('heading', { name: /join.*game/i }).waitFor({ timeout: 5000 });
+
+    // Fill team name - first required text input in modal
+    await playerPage.locator('input[type="text"][required]').first().fill(testTeam.name);
 
     // Submit join form and wait for success
     const responsePromise = playerPage.waitForResponse(
       resp => resp.url().includes('/api/teams/join') && resp.status() === 201,
       { timeout: 10000 }
     );
-    await playerPage.click('button[type="submit"]:has-text("Join")');
+    await playerPage.getByRole('button', { name: /join/i, exact: false }).click();
     await responsePromise;
 
     // Wait for game page to load
     await playerPage.waitForURL(/.*\/game\//, { timeout: 10000 });
-    await playerPage.waitForTimeout(2000);
+    await playerPage.getByRole('button', { name: /dashboard/i }).waitFor({ timeout: 10000 });
 
-    // For beginner difficulty, submit Level 1 decision
-    if (testTeam.difficulty === 'beginner') {
-      // Wait for input form to load
-      await playerPage.waitForSelector('input[type="number"]', { timeout: 5000 });
+    // Submit Level 1 decision (beginner difficulty auto-selected by default)
+    // Wait for input form to load
+    await playerPage.waitForSelector('input[type="number"]', { timeout: 5000 });
 
-      // Fill in decision inputs (loan amount and budget allocations)
-      const numberInputs = await playerPage.locator('input[type="number"]').all();
-      if (numberInputs.length >= 5) {
-        await numberInputs[0].fill('50000'); // Loan amount
-        await numberInputs[1].fill('10000'); // Marketing
-        await numberInputs[2].fill('15000'); // Product
-        await numberInputs[3].fill('12000'); // Operations
-        await numberInputs[4].fill('13000'); // HR
-      }
-
-      // Submit decision
-      await playerPage.click('button:has-text("Submit")');
-      await playerPage.waitForTimeout(2000);
+    // Fill in decision inputs (loan amount and budget allocations)
+    const numberInputs = await playerPage.locator('input[type="number"]').all();
+    if (numberInputs.length >= 5) {
+      await numberInputs[0].fill('50000'); // Loan amount
+      await numberInputs[1].fill('10000'); // Marketing
+      await numberInputs[2].fill('15000'); // Product
+      await numberInputs[3].fill('12000'); // Operations
+      await numberInputs[4].fill('13000'); // HR
     }
+
+    // Submit decision and wait for success message
+    await playerPage.getByRole('button', { name: /submit/i }).click();
+
+    // Wait for success message to appear
+    await playerPage.locator('.bg-green-50').waitFor({ timeout: 5000 });
 
     return { testPlayer, testTeam };
   } finally {
