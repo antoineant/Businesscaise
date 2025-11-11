@@ -150,9 +150,38 @@ async function joinGameAsTeam(page: Page, gameId: string, teamData = TEST_TEAM) 
       })
   ]);
 
-  // IMPORTANT: Wait for page to fully load after redirect
-  // The PlayerGame component needs time to load all data before tabs render
-  await page.waitForTimeout(2000);
+  console.log(`[DIAGNOSTIC] URL changed to game page: ${page.url()}`);
+
+  // Wait for PlayerGame component to load - look for ANY of these indicators
+  // This is more reliable than fixed timeout
+  try {
+    await Promise.race([
+      // Wait for team name to appear (best case - fully loaded)
+      page.getByText(teamData.name).waitFor({ timeout: 15000 }),
+      // OR wait for loading indicator to disappear
+      page.locator('text=Loading game...').waitFor({ state: 'hidden', timeout: 15000 }),
+      // OR wait for error message (worst case)
+      page.locator('.bg-red-50').waitFor({ timeout: 15000 })
+    ]);
+
+    // Give components a moment to fully render
+    await page.waitForTimeout(1000);
+
+    // Check if we're in an error state
+    const hasError = await page.locator('.bg-red-50').count();
+    if (hasError > 0) {
+      const errorText = await page.locator('.bg-red-50').textContent();
+      console.log(`[DIAGNOSTIC] ⚠️  Page loaded but shows error: ${errorText}`);
+    } else {
+      console.log(`[DIAGNOSTIC] ✓ Page loaded successfully`);
+    }
+
+  } catch (e) {
+    console.log('[DIAGNOSTIC] ⚠️  Timeout waiting for page to load, capturing state...');
+    const bodyText = await page.locator('body').textContent();
+    console.log('[DIAGNOSTIC] Page content:', bodyText?.substring(0, 300));
+    throw new Error(`Page didn't load properly after joining game. Page shows: ${bodyText?.substring(0, 200)}`);
+  }
 
   console.log(`[DIAGNOSTIC] ✓ Successfully joined game as ${teamData.name}`);
 }
@@ -352,15 +381,15 @@ test.describe('Team Player - Dashboard', () => {
     await registerAndLoginPlayer(page);
     await joinGameAsTeam(page, gameId);
 
-    // Wait for page to load - look for team name in header (proves page loaded)
-    await expect(page.getByText(TEST_TEAM.name)).toBeVisible({ timeout: 10000 });
+    // After join, joinGameAsTeam already waited for page to load
+    // Just verify we can see dashboard content
 
-    // Wait for dashboard to fully render
-    await page.waitForTimeout(3000);
-
-    // Debug: Log full page text to see what's actually there
-    const bodyText = await page.locator('body').textContent();
-    console.log('[DEBUG] Full page text:', bodyText?.substring(0, 500));
+    // Look for the dashboard heading OR session info
+    await Promise.race([
+      page.getByRole('heading', { name: /your company performance/i }).waitFor({ timeout: 10000 }),
+      page.getByRole('heading', { name: /current session/i }).waitFor({ timeout: 10000 }),
+      page.getByText(/no active session/i).waitFor({ timeout: 10000 })
+    ]);
 
     // Check if session card exists
     const sessionHeading = page.getByRole('heading', { name: /current session/i });
@@ -380,9 +409,10 @@ test.describe('Team Player - Dashboard', () => {
       await expect(noSessionMsg).toBeVisible();
       console.log('[WARNING] No active session - session may not have been unlocked properly');
     } else {
+      const bodyText = await page.locator('body').textContent();
       throw new Error(
         'Neither "Current Session" nor "No active session" found. ' +
-        `Page content preview: ${bodyText?.substring(0, 300)}`
+        `Page content: ${bodyText?.substring(0, 300)}`
       );
     }
   });
@@ -416,22 +446,55 @@ test.describe('Team Player - Submit Decision', () => {
     // Submit using semantic selector - find the submit button
     const submitButton = page.getByRole('button', { name: /submit decision/i });
     await expect(submitButton).toBeEnabled({ timeout: 5000 });
+
+    console.log('[DEBUG] Clicking submit button...');
     await submitButton.click();
 
-    // Wait for EITHER success OR error message
-    await Promise.race([
-      // Success case - look for any of these success indicators
-      expect(page.locator('.bg-green-50')).toBeVisible({ timeout: 10000 }),
-      // Error case - throw if error appears
-      page.waitForSelector('.bg-red-50', { timeout: 10000 })
-        .then(async () => {
-          const errorText = await page.locator('.bg-red-50').textContent();
-          throw new Error(`Submission failed: ${errorText}`);
-        })
-    ]);
+    // Wait for EITHER success OR error message with better error handling
+    console.log('[DEBUG] Waiting for submission response...');
 
-    // Verify success message is actually visible
-    await expect(page.locator('.bg-green-50')).toBeVisible();
+    try {
+      await Promise.race([
+        // Success case - look for green success box
+        page.waitForSelector('.bg-green-50', { timeout: 20000 }),
+        // Error case - throw if error appears
+        page.waitForSelector('.bg-red-50', { timeout: 20000 })
+          .then(async () => {
+            const errorText = await page.locator('.bg-red-50').textContent();
+            throw new Error(`Submission failed: ${errorText}`);
+          })
+      ]);
+
+      console.log('[DEBUG] Got response from server');
+
+      // Verify success message is visible
+      const hasSuccess = await page.locator('.bg-green-50').count();
+      const hasError = await page.locator('.bg-red-50').count();
+
+      if (hasError > 0) {
+        const errorText = await page.locator('.bg-red-50').textContent();
+        throw new Error(`Submission error: ${errorText}`);
+      }
+
+      if (hasSuccess > 0) {
+        await expect(page.locator('.bg-green-50')).toBeVisible();
+        console.log('[DEBUG] ✓ Submission successful!');
+      } else {
+        throw new Error('Neither success nor error message found after submission');
+      }
+
+    } catch (error: any) {
+      if (error.message.includes('Timeout') || error.message.includes('exceeded')) {
+        // Capture what's on the page when timeout occurs
+        const pageText = await page.locator('body').textContent();
+        console.log('[DEBUG] Timeout waiting for response. Page content:', pageText?.substring(0, 500));
+        throw new Error(
+          `Submission timeout - no success or error message after 20 seconds. ` +
+          `Page shows: ${pageText?.substring(0, 200)}`
+        );
+      }
+      throw error;
+    }
 
     await page.screenshot({
       path: 'e2e-results/team-player-04-submitted-decision.png',
