@@ -288,7 +288,7 @@ test.describe('GM Submission Scoring', () => {
 
     // Verify submission details page loads
     await expect(page.getByRole('heading', { name: /submission details/i })).toBeVisible();
-    await expect(page.getByText(testTeam.name)).toBeVisible();
+    await expect(page.getByText(testTeam.name).first()).toBeVisible();
 
     // 7. Score the submission
     console.log('[TEST] Scoring submission...');
