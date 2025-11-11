@@ -14,9 +14,14 @@
 #   ./run-e2e-tests.sh              # Run all tests
 #   ./run-e2e-tests.sh --gm-only    # Run only GM Dashboard tests
 #   ./run-e2e-tests.sh --team-only  # Run only Team Frontend tests
-#   ./run-e2e-tests.sh --integration # Run only integration tests
+#   ./run-e2e-tests.sh --integration # Run only integration tests (includes submission scoring)
 #   ./run-e2e-tests.sh --headed      # Run tests in headed mode (see browser)
 #   ./run-e2e-tests.sh --ui          # Run tests in UI mode
+#
+# Test Suites:
+#   - GM Dashboard: Game creation, session management, team monitoring, analytics
+#   - Team Frontend: Player registration, game join, decision submission
+#   - Integration: Multi-service workflows (GM-Player interaction, submission scoring)
 ################################################################################
 
 set -e  # Exit on error
@@ -223,7 +228,8 @@ main() {
   fi
 
   # Start Team Frontend (if needed)
-  if [ "$TEST_MODE" = "all" ] || [ "$TEST_MODE" = "team" ]; then
+  # Note: Integration tests require Team Frontend for submission scoring workflow
+  if [ "$TEST_MODE" = "all" ] || [ "$TEST_MODE" = "team" ] || [ "$TEST_MODE" = "integration" ]; then
     echo "Starting Team Frontend (port 5173)..."
     npm run dev > logs/team-frontend-e2e.log 2>&1 &
     TEAM_FRONTEND_PID=$!
