@@ -101,9 +101,6 @@ async function createGameWithScenarioAndPods(token: string) {
 async function registerAndLoginGM(page: Page) {
   const testGM = generateTestGM();
 
-  // Start from home page like working tests
-  await page.goto('http://localhost:5173/?demo=false', { waitUntil: 'networkidle' });
-
   // Set up diagnostic logging
   page.on('console', msg => {
     if (msg.type() === 'error' || msg.type() === 'warning') {
@@ -111,29 +108,19 @@ async function registerAndLoginGM(page: Page) {
     }
   });
 
-  // Navigate to register page
-  await page.getByRole('link', { name: /sign up/i }).click();
-  await page.waitForURL(/.*register/);
+  // Navigate directly to GM Dashboard register page (like working tests)
+  await page.goto('http://localhost:3002/register', { waitUntil: 'networkidle' });
 
-  // Fill registration form using semantic selectors like working tests
-  await page.getByLabel(/name/i).fill(testGM.name);
-  await page.getByLabel(/email/i).fill(testGM.email);
+  // Fill registration form (GM Dashboard has dedicated registration, no role selection needed)
+  await page.fill('input[type="text"]', testGM.name);
+  await page.fill('input[type="email"]', testGM.email);
+  const passwordFields = await page.locator('input[type="password"]').all();
+  await passwordFields[0].fill(testGM.password);
+  await passwordFields[1].fill(testGM.password);
+  await page.click('button[type="submit"]');
 
-  // Select Game Master role (click label element like other working tests)
-  await page.click('label:has-text("Game Master")');
-
-  // Fill passwords
-  await page.getByLabel(/^password$/i).fill(testGM.password);
-  const confirmPassword = page.getByLabel(/confirm.*password/i);
-  if (await confirmPassword.count() > 0) {
-    await confirmPassword.fill(testGM.password);
-  }
-
-  // Submit form
-  await page.getByRole('button', { name: /create account|register|sign up/i }).click();
-
-  // Wait for redirect to games or dashboard
-  await page.waitForURL(/.*\/(dashboard|games)/, { timeout: 10000 });
+  // Wait for redirect to games list
+  await page.waitForURL('http://localhost:3002/games', { timeout: 10000 });
 
   console.log(`[DIAGNOSTIC] ✓ GM registered and logged in: ${testGM.email}`);
   return testGM;
@@ -200,7 +187,7 @@ test.describe('Phase 3: Scenario Customization - GM View', () => {
 
     // Navigate to create game (use .first() to handle empty state button)
     await page.getByRole('button', { name: /create.*game/i }).first().click();
-    await page.waitForURL('/games/create');
+    await page.waitForURL('http://localhost:3002/games/create');
 
     // Fill basic info
     await page.getByLabel(/title/i).fill(`Scenario Test ${Date.now()}`);
@@ -225,7 +212,7 @@ test.describe('Phase 3: Scenario Customization - GM View', () => {
     await page.getByRole('button', { name: /create.*game/i }).click();
 
     // Wait for redirect to game details
-    await page.waitForURL(/\/games\/[a-f0-9-]+/, { timeout: 10000 });
+    await page.waitForURL(/http:\/\/localhost:3002\/games\/[a-f0-9-]+$/, { timeout: 10000 });
 
     // Verify scenario info is displayed
     await expect(page.getByText(/startup/i)).toBeVisible();
@@ -248,18 +235,18 @@ test.describe('Phase 3: Scenario Customization - GM View', () => {
     const { gameId } = await createGameWithScenarioAndPods(gm.token);
 
     // Login GM in UI
-    await page.goto('/login');
+    await page.goto('http://localhost:3002/login');
     await page.fill('input[type="email"]', gm.email);
     await page.fill('input[type="password"]', gm.password);
     await page.click('button[type="submit"]');
-    await page.waitForURL('/games', { timeout: 10000 });
+    await page.waitForURL('http://localhost:3002/games', { timeout: 10000 });
 
     // Navigate to game details
-    await page.goto(`/games/${gameId}`);
+    await page.goto(`http://localhost:3002/games/${gameId}`);
 
     // Navigate to pod management
     await page.getByText(/pod.*management/i).click();
-    await page.waitForURL(/\/games\/.*\/pods/, { timeout: 5000 });
+    await page.waitForURL(/http:\/\/localhost:3002\/games\/.*\/pods/, { timeout: 5000 });
 
     // Verify pod management page elements
     await expect(page.getByRole('heading', { name: /pod.*management/i })).toBeVisible();
@@ -433,14 +420,14 @@ test.describe('Phase 3: Edge Cases', () => {
     await registerAndLoginGM(page);
 
     await page.getByRole('button', { name: /create.*game/i }).first().click();
-    await page.waitForURL('/games/create');
+    await page.waitForURL('http://localhost:3002/games/create');
 
     await page.getByLabel(/title/i).fill(`No Scenario ${Date.now()}`);
 
     // Don't select archetype or industry - create immediately
     await page.getByRole('button', { name: /create.*game/i }).click();
 
-    await page.waitForURL(/\/games\/[a-f0-9-]+/, { timeout: 10000 });
+    await page.waitForURL(/http:\/\/localhost:3002\/games\/[a-f0-9-]+$/, { timeout: 10000 });
 
     // Should still work
     await expect(page.getByRole('heading', { name: /no scenario/i })).toBeVisible();
@@ -452,7 +439,7 @@ test.describe('Phase 3: Edge Cases', () => {
     await registerAndLoginGM(page);
 
     await page.getByRole('button', { name: /create.*game/i }).first().click();
-    await page.waitForURL('/games/create');
+    await page.waitForURL('http://localhost:3002/games/create');
 
     await page.getByLabel(/title/i).fill(`No Pods ${Date.now()}`);
 
@@ -464,7 +451,7 @@ test.describe('Phase 3: Edge Cases', () => {
 
     await page.getByRole('button', { name: /create.*game/i }).click();
 
-    await page.waitForURL(/\/games\/[a-f0-9-]+/, { timeout: 10000 });
+    await page.waitForURL(/http:\/\/localhost:3002\/games\/[a-f0-9-]+$/, { timeout: 10000 });
 
     // Pod management should NOT be visible
     const podManagement = page.getByText(/pod.*management/i);
