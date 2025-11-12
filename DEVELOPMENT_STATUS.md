@@ -186,7 +186,18 @@
    - **Status:** Design complete (COMPANY_SCENARIO_CUSTOMIZATION_DESIGN.md)
    - **Estimated Effort:** 85-107 hours over 4 weeks
 
-3. **Results System**
+3. **Pod Competition & Category Awards** 🏆 Design Complete
+   - Hybrid competition system for large classes (8+ teams)
+   - Pod leaderboards (teams compete in groups of 4)
+   - Global leaderboard (overall standings visible)
+   - 6 category rankings (Financial Excellence, Operations Leader, Marketing Champion, Best Employer, Customer Favorite, Overall Champion)
+   - Multiple paths to success (pod winners + category leaders)
+   - GM-controlled pod assignment (random, manual, balanced)
+   - Pod-aware narratives and rivalries
+   - **Status:** Design complete (POD_COMPETITION_SYSTEM_DESIGN.md)
+   - **Estimated Effort:** 70-90 hours over 4 weeks
+
+4. **Results System**
    - Automated results calculation
    - Comparative analytics
    - Narrative reports
@@ -222,9 +233,10 @@
 | Submission Scoring (GM) | ✅ Complete | 100% |
 | Storytelling System | 📝 Design | 5% |
 | Scenario Customization | 📝 Design | 5% |
+| Pod Competition System | 📝 Design | 5% |
 
 **Overall Progress: ~97%** (82/82 E2E tests passing, submission scoring complete with full E2E coverage, all core features operational)
-**Phase 3 Progress:** 10% (designs complete for narrative system and scenario customization)
+**Phase 3 Progress:** 15% (designs complete for narrative system, scenario customization, and pod competition)
 
 ---
 
@@ -399,6 +411,7 @@
 - ✅ Setup instructions
 - ✅ Narrative System Implementation Plan (NARRATIVE_SYSTEM_IMPLEMENTATION_PLAN.md)
 - ✅ Company Scenario Customization Design (COMPANY_SCENARIO_CUSTOMIZATION_DESIGN.md)
+- ✅ Pod Competition & Category Awards System Design (POD_COMPETITION_SYSTEM_DESIGN.md)
 - ⏳ API documentation (Swagger)
 - ⏳ GM user guide
 - ⏳ Team user guide
@@ -645,12 +658,82 @@
 - Flexibility for different course types (startup vs. turnaround courses)
 - Fair team comparison (all face same conditions)
 
+#### 3. Pod Competition & Category Awards System ✅
+**File:** `POD_COMPETITION_SYSTEM_DESIGN.md` (1,270 lines)
+
+**Control Model:** GM-Controlled Hybrid Competition
+
+**Problem Solved:**
+- With large classes (32 students = 8 teams), leaderboards get crowded
+- Most teams cluster in the middle (scores 60-75)
+- Only 1 winner, reduced competitive engagement
+- Difficult to differentiate performance
+
+**Solution:**
+- **Pod Competition** - Teams compete primarily within small pods (4 teams)
+- **Category Awards** - 6 ways to "win" (Financial, Operations, Marketing, HR, Customer, Overall)
+- **Global View** - Still see all teams for context
+
+**Pod Competition Features:**
+- GM controls pod settings (enable/disable, pod size, assignment method)
+- 3 assignment methods: Random (fair), Manual (GM assigns), Balanced (skill-based, future)
+- Recommended pod size: 4 teams
+- Works for 4-40+ teams
+- Teams see pod leaderboard as primary view
+- Global leaderboard available as secondary view
+
+**Category Awards (6 Categories):**
+1. 💰 **Financial Excellence** - Highest financial metric
+2. ⚙️ **Operations Leader** - Best operations score
+3. 📣 **Marketing Champion** - Highest marketing score
+4. 👥 **Best Employer** - Top HR/employee satisfaction
+5. 😊 **Customer Favorite** - Best customer satisfaction
+6. 🏆 **Overall Champion** - Highest overall score
+
+**Scope:** Each category has rankings for BOTH pod and global levels
+
+**Database Schema:**
+- 1 new table: `category_rankings` (tracks historical category leaders)
+- Optional table: `pods` (metadata)
+- Games table additions: `enable_pods`, `pod_size`, `pod_assignment_method`, `enable_category_awards`
+- Teams table additions: `pod_id`, `pod_name`
+
+**API Endpoints:**
+- Pod management: Assign pods, view pod leaderboards, move teams
+- Category rankings: Get leaders, get team rankings, snapshot rankings
+- Enhanced leaderboard: Scope filtering (pod/global), category filtering
+
+**Frontend Components:**
+- GM Dashboard: Pod assignment interface, category leader boards, pod-specific analytics
+- Team Player: Pod leaderboard (primary), global leaderboard (secondary), category rankings display with badges
+
+**Narrative Integration:**
+- Pod-aware morning briefings ("You're #2 in Pod Alpha...")
+- Pod rivalry narratives ("Your pod rival Team X just...")
+- Category achievement notifications ("🥇 You're now the Financial Leader!")
+
+**Benefits:**
+- 🎯 Focused competition (3 rivals vs. 7+)
+- 🏆 Multiple success stories (pod winners + category leaders)
+- 📊 Better differentiation (easier to rank in pods)
+- 🎓 Highlights specific skill development
+- ⚖️ Fair comparison (all play same game)
+- 📈 Scales to any class size
+
+**Implementation Timeline:** 4 weeks (70-90 hours)
+- Week 1: Backend (database, APIs, pod logic)
+- Week 2: GM Dashboard UI (pod management, category views)
+- Week 3: Team Player UI (pod/global/category tabs)
+- Week 4: Narrative integration + testing
+
 **Next Steps for Phase 3:**
-1. Review and approve scenario customization design
-2. Begin implementation of scenario system (database + backend)
-3. Parallel implementation of narrative system
-4. Integration of scenario-aware narrative templates
-5. E2E testing of scenario workflows
+1. Review and approve pod competition design
+2. Review and approve scenario customization design
+3. Begin implementation of pod system (database + backend)
+4. Parallel implementation of scenario system
+5. Parallel implementation of narrative system
+6. Integration of scenario-aware + pod-aware narrative templates
+7. E2E testing of all Phase 3 workflows
 
 ---
 
