@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { body, query, param } from 'express-validator';
 import { validate } from '../middleware/validation.middleware';
-import { authenticateToken } from '../middleware/auth.middleware';
+import { authenticate } from '../middleware/auth.middleware';
 import * as podController from '../controllers/pod.controller';
 
 const router = Router();
@@ -21,7 +21,7 @@ const router = Router();
  */
 router.post(
   '/games/:gameId/pods/assign',
-  authenticateToken,
+  authenticate,
   [
     param('gameId').isUUID().withMessage('Invalid game ID'),
   ],
@@ -35,7 +35,7 @@ router.post(
  */
 router.get(
   '/games/:gameId/pods',
-  authenticateToken,
+  authenticate,
   [
     param('gameId').isUUID().withMessage('Invalid game ID'),
   ],
@@ -49,7 +49,7 @@ router.get(
  */
 router.get(
   '/games/:gameId/pods/:podId/leaderboard',
-  authenticateToken,
+  authenticate,
   [
     param('gameId').isUUID().withMessage('Invalid game ID'),
     param('podId').notEmpty().withMessage('Pod ID is required'),
@@ -64,7 +64,7 @@ router.get(
  */
 router.put(
   '/games/:gameId/teams/:teamId/pod',
-  authenticateToken,
+  authenticate,
   [
     param('gameId').isUUID().withMessage('Invalid game ID'),
     param('teamId').isUUID().withMessage('Invalid team ID'),
@@ -85,7 +85,7 @@ router.put(
  */
 router.get(
   '/games/:gameId/categories',
-  authenticateToken,
+  authenticate,
   [
     param('gameId').isUUID().withMessage('Invalid game ID'),
     query('session_id').optional().isUUID().withMessage('Invalid session ID'),
@@ -100,7 +100,7 @@ router.get(
  */
 router.get(
   '/games/:gameId/categories/:category',
-  authenticateToken,
+  authenticate,
   [
     param('gameId').isUUID().withMessage('Invalid game ID'),
     param('category').isIn(['financial', 'operations', 'marketing', 'hr', 'customer_satisfaction', 'overall'])
@@ -119,7 +119,7 @@ router.get(
  */
 router.get(
   '/games/:gameId/teams/:teamId/categories',
-  authenticateToken,
+  authenticate,
   [
     param('gameId').isUUID().withMessage('Invalid game ID'),
     param('teamId').isUUID().withMessage('Invalid team ID'),
@@ -135,7 +135,7 @@ router.get(
  */
 router.post(
   '/games/:gameId/categories/snapshot',
-  authenticateToken,
+  authenticate,
   [
     param('gameId').isUUID().withMessage('Invalid game ID'),
     body('session_id').isUUID().withMessage('Session ID is required'),
@@ -150,7 +150,7 @@ router.post(
  */
 router.get(
   '/games/:gameId/sessions/:sessionId/categories',
-  authenticateToken,
+  authenticate,
   [
     param('gameId').isUUID().withMessage('Invalid game ID'),
     param('sessionId').isUUID().withMessage('Invalid session ID'),
