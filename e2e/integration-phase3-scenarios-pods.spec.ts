@@ -119,8 +119,8 @@ async function registerAndLoginGM(page: Page) {
   await page.getByLabel(/name/i).fill(testGM.name);
   await page.getByLabel(/email/i).fill(testGM.email);
 
-  // Select Game Master role (click visible text label, not hidden radio input)
-  await page.getByText(/^Game Master$/i).click();
+  // Select Game Master role (click label element like other working tests)
+  await page.click('label:has-text("Game Master")');
 
   // Fill passwords
   await page.getByLabel(/^password$/i).fill(testGM.password);
@@ -198,8 +198,8 @@ test.describe('Phase 3: Scenario Customization - GM View', () => {
     // Register and login
     await registerAndLoginGM(page);
 
-    // Navigate to create game
-    await page.getByRole('button', { name: /create.*game/i }).click();
+    // Navigate to create game (use .first() to handle empty state button)
+    await page.getByRole('button', { name: /create.*game/i }).first().click();
     await page.waitForURL('/games/create');
 
     // Fill basic info
@@ -432,7 +432,7 @@ test.describe('Phase 3: Edge Cases', () => {
   test('GM can create game without scenario', async ({ page }) => {
     await registerAndLoginGM(page);
 
-    await page.getByRole('button', { name: /create.*game/i }).click();
+    await page.getByRole('button', { name: /create.*game/i }).first().click();
     await page.waitForURL('/games/create');
 
     await page.getByLabel(/title/i).fill(`No Scenario ${Date.now()}`);
@@ -451,7 +451,7 @@ test.describe('Phase 3: Edge Cases', () => {
   test('GM can create game without pods', async ({ page }) => {
     await registerAndLoginGM(page);
 
-    await page.getByRole('button', { name: /create.*game/i }).click();
+    await page.getByRole('button', { name: /create.*game/i }).first().click();
     await page.waitForURL('/games/create');
 
     await page.getByLabel(/title/i).fill(`No Pods ${Date.now()}`);
