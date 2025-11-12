@@ -119,8 +119,8 @@ async function registerAndLoginGM(page: Page) {
   await page.getByLabel(/name/i).fill(testGM.name);
   await page.getByLabel(/email/i).fill(testGM.email);
 
-  // Select Game Master role
-  await page.getByRole('radio', { name: /game master/i }).click();
+  // Select Game Master role (click visible text label, not hidden radio input)
+  await page.getByText(/^Game Master$/i).click();
 
   // Fill passwords
   await page.getByLabel(/^password$/i).fill(testGM.password);
