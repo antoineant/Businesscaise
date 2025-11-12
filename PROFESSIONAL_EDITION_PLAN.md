@@ -357,6 +357,68 @@ businesscaise/
 
 ---
 
+### Phase 4.5: Company Scenario Customization (Week 7)
+**Goal:** Context-aware simulation with industry-specific narratives
+**Status:** 📝 Design Complete (COMPANY_SCENARIO_CUSTOMIZATION_DESIGN.md)
+
+**Tasks:**
+1. **Backend (Week 1):** Database schema, models, API endpoints
+   - Create company_archetypes and industry_types tables
+   - Seed 5 archetypes and 8 industry types
+   - Add scenario columns to games table
+   - Update game creation endpoint to accept archetype/industry
+   - Create scenario preview endpoint
+   - Update team join logic to initialize with archetype metrics
+
+2. **GM Dashboard UI (Week 2):** Scenario selection interface
+   - Update CreateGamePage with scenario settings section
+   - Build ScenarioPreview component
+   - Add archetype and industry dropdown selectors
+   - Add optional company name and product customization
+   - Update GameDetailsPage to show game scenario
+   - Add scenario badges and cards
+
+3. **Team Player UI (Week 2):** Scenario display
+   - Create public game info endpoint
+   - Update JoinGamePage to show scenario (read-only)
+   - Update PlayerGame dashboard with scenario context
+   - Add company name and scenario badges to header
+
+4. **Narrative Integration (Week 3):** Scenario-aware templates
+   - Create 25+ scenario-specific narrative templates
+   - Update NarrativeService with template selection logic
+   - Implement variable substitution ({{company_name}}, {{product}})
+   - Create industry-specific NPC definitions
+   - Test all archetype × industry combinations
+
+5. **Testing & Polish (Week 4):** E2E tests and documentation
+   - Unit tests for scenario logic
+   - E2E tests for GM scenario selection
+   - E2E tests for team joining with scenario
+   - Test 10+ archetype/industry combinations
+   - GM documentation (how to choose scenarios)
+
+**Deliverables:**
+- ⏳ GM selects company archetype and industry when creating game
+- ⏳ 5 company archetypes (startup, product launch, turnaround, scale-up, innovation)
+- ⏳ 8 industry types (SaaS, e-commerce, food, healthcare, services, education, manufacturing, custom)
+- ⏳ Teams inherit scenario from game (no selection)
+- ⏳ Starting metrics vary by archetype
+- ⏳ Narratives adapt to scenario with 50+ templates
+- ⏳ Industry-specific NPCs and challenges
+- ⏳ Optional company name and product customization
+- ⏳ E2E tests for complete scenario workflow
+
+**Design Highlights:**
+- **GM-Controlled:** Like a traditional RPG, GM orchestrates entire scenario
+- **Fair Comparison:** All teams face same conditions within a game
+- **Flexibility:** GM creates different games for different scenarios
+- **Educational Impact:** Better alignment with course objectives (startup course vs. turnaround course)
+
+**Estimated Effort:** 85-107 hours over 4 weeks
+
+---
+
 ### Phase 5: Analytics & Reporting (Week 7)
 **Goal:** Comprehensive assessment tools
 

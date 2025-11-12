@@ -169,14 +169,24 @@
    - ⏳ Rubric-based evaluation (Future enhancement)
    - ⏳ PDF annotation tools (Future enhancement)
 
-### Phase 3: Enhanced Storytelling (Week 5)
-1. **Narrative System**
+### Phase 3: Enhanced Storytelling & Scenario System (Weeks 5-6)
+1. **Narrative System** 📝 Design Complete
    - Morning briefing generator
    - News feed
    - Email notifications
    - Character/NPC management
+   - **Status:** Implementation plan created (NARRATIVE_SYSTEM_IMPLEMENTATION_PLAN.md)
 
-2. **Results System**
+2. **Company Scenario Customization** 🎯 Design Complete
+   - GM-controlled company archetypes (5 types: startup, product launch, turnaround, scale-up, innovation)
+   - Industry selection (8 types: SaaS, e-commerce, food, healthcare, services, education, manufacturing, custom)
+   - Scenario-aware narrative templates
+   - Industry-specific NPCs and challenges
+   - Archetype-based starting metrics and conditions
+   - **Status:** Design complete (COMPANY_SCENARIO_CUSTOMIZATION_DESIGN.md)
+   - **Estimated Effort:** 85-107 hours over 4 weeks
+
+3. **Results System**
    - Automated results calculation
    - Comparative analytics
    - Narrative reports
@@ -210,9 +220,11 @@
 | E2E Testing (Integration) | ✅ Complete | 100% |
 | Database Migrations | ✅ Complete | 100% |
 | Submission Scoring (GM) | ✅ Complete | 100% |
-| Storytelling System | ⏳ Pending | 0% |
+| Storytelling System | 📝 Design | 5% |
+| Scenario Customization | 📝 Design | 5% |
 
 **Overall Progress: ~97%** (82/82 E2E tests passing, submission scoring complete with full E2E coverage, all core features operational)
+**Phase 3 Progress:** 10% (designs complete for narrative system and scenario customization)
 
 ---
 
@@ -385,6 +397,8 @@
 - ✅ Development plan
 - ✅ Backend README
 - ✅ Setup instructions
+- ✅ Narrative System Implementation Plan (NARRATIVE_SYSTEM_IMPLEMENTATION_PLAN.md)
+- ✅ Company Scenario Customization Design (COMPANY_SCENARIO_CUSTOMIZATION_DESIGN.md)
 - ⏳ API documentation (Swagger)
 - ⏳ GM user guide
 - ⏳ Team user guide
@@ -563,5 +577,83 @@
 
 ---
 
+### Phase 3 Design Work - Complete! 📐
+
+**Completed Designs (Nov 12, 2025):**
+
+#### 1. Narrative/Storytelling System Implementation Plan ✅
+**File:** `NARRATIVE_SYSTEM_IMPLEMENTATION_PLAN.md` (1,079 lines)
+
+**Contents:**
+- 4 narrative types: Morning Briefings, News Feed, Email System, GM Events
+- Complete database schema (already implemented in current schema)
+- 12 API endpoints specified
+- Frontend components for GM Dashboard and Team Player
+- Auto-generation engine with template system
+- NPC character system
+- Sample narrative content and templates
+- 4-week implementation timeline (~120 hours)
+
+**Key Features:**
+- Morning briefings triggered automatically at session start
+- Dynamic news feed based on team performance
+- Personalized email system with NPC characters
+- GM-triggered custom events for dramatic moments
+- Template variables for dynamic content generation
+
+#### 2. Company Scenario Customization Design ✅
+**File:** `COMPANY_SCENARIO_CUSTOMIZATION_DESIGN.md` (1,576 lines)
+
+**Control Model:** GM-Controlled (like traditional RPG)
+
+**Contents:**
+- 5 Company Archetypes:
+  - Early-Stage Startup (low metrics, limited cash, high risk)
+  - Product Launch (medium metrics, more resources, brand management)
+  - Turnaround/Revival (crisis mode, low morale, high pressure)
+  - Scale-Up/Hyper-Growth (strong financials, operations challenges)
+  - Innovation/R&D Focus (balanced metrics, long-term tension)
+
+- 8 Industry Types:
+  - Tech SaaS (subscriptions, MRR, churn)
+  - E-Commerce/Retail (inventory, logistics, suppliers)
+  - Food & Beverage (restaurants, food products, compliance)
+  - Healthcare/Wellness (regulations, outcomes, insurance)
+  - Professional Services (consulting, agencies, utilization)
+  - Education/EdTech (learning platforms, engagement)
+  - Manufacturing/Hardware (supply chain, quality control)
+  - Custom/Open-Ended (GM-defined)
+
+- Database Schema: 2 new tables (company_archetypes, industry_types), 4 new columns on games table
+- API Endpoints: Reference data, scenario preview, enhanced game creation
+- Frontend Components: GM scenario selection, team scenario display (read-only)
+- Narrative Integration: 50+ scenario-specific templates
+- NPC Customization: Industry-appropriate characters
+- 4-week implementation plan (85-107 hours)
+
+**Design Philosophy:**
+- GM decides everything (archetype + industry) when creating game
+- All teams in a game play the same scenario (fair comparison)
+- Teams inherit scenario from game (no selection)
+- GM can create multiple games for different scenarios
+- System adapts narratives, NPCs, and challenges to scenario
+
+**Benefits:**
+- Higher engagement through real industry context
+- Better learning alignment with course objectives
+- More realistic challenges (SaaS vs. restaurant vs. healthcare)
+- Flexibility for different course types (startup vs. turnaround courses)
+- Fair team comparison (all face same conditions)
+
+**Next Steps for Phase 3:**
+1. Review and approve scenario customization design
+2. Begin implementation of scenario system (database + backend)
+3. Parallel implementation of narrative system
+4. Integration of scenario-aware narrative templates
+5. E2E testing of scenario workflows
+
+---
+
 **Status:** Phase 2+ Complete - Core gameplay and scoring operational! 🚀
 **E2E Test Coverage:** 82/82 tests passing (100%)
+**Phase 3 Status:** Design phase complete, ready for implementation
