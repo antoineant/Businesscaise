@@ -177,36 +177,38 @@
    - Character/NPC management
    - **Status:** Implementation plan created (NARRATIVE_SYSTEM_IMPLEMENTATION_PLAN.md)
 
-2. **Company Scenario Customization** 🚀 In Progress (Week 1-2 Complete)
+2. **Company Scenario Customization** 🚀 In Progress (Week 1-3 Complete)
    - ✅ Backend database migration (company_archetypes, industry_types tables)
    - ✅ Backend models (ArchetypeModel, IndustryModel)
    - ✅ Backend API endpoints (archetypes, industries, preview)
    - ✅ Enhanced GameModel with scenario fields
    - ✅ Updated GM game creation controller
-   - ✅ Frontend ScenarioSelector component
+   - ✅ Frontend ScenarioSelector component (GM Dashboard)
    - ✅ Frontend API integration (scenarioAPI)
    - ✅ Frontend TypeScript types
    - ✅ Integrated into CreateGamePage with full UI
-   - ⏳ Team player scenario display (Week 3)
+   - ✅ Team player scenario display (ScenarioInfoCard component)
+   - ✅ Integrated into PlayerGame dashboard tab
    - ⏳ Narrative integration (Weeks 5-6)
-   - **Status:** Backend complete, Frontend GM UI complete (Week 1-2 of 4)
-   - **Progress:** 60% (Backend + GM Dashboard complete)
+   - **Status:** Backend complete, Frontend complete (both GM and Team Player)
+   - **Progress:** 80% (Backend + GM Dashboard + Team Player complete)
 
-3. **Pod Competition & Category Awards** 🚀 In Progress (Week 1-2 Complete)
+3. **Pod Competition & Category Awards** 🚀 In Progress (Week 1-3 Complete)
    - ✅ Backend database migration (pods, category_rankings tables)
    - ✅ Backend models enhanced (TeamModel with pod methods, GameModel with pod fields)
    - ✅ Backend service layer (pod.service.ts, category.service.ts)
    - ✅ Backend API endpoints (pod management, category rankings - 9 endpoints)
    - ✅ Team API endpoints (pod info, pod leaderboard, category rankings)
-   - ✅ Frontend pod configuration UI in CreateGamePage
-   - ✅ Frontend category awards UI
+   - ✅ Frontend pod configuration UI in CreateGamePage (GM)
+   - ✅ Frontend category awards UI (GM)
    - ✅ Frontend API integration (podAPI with 9 endpoints)
    - ✅ Frontend TypeScript types
-   - ⏳ GM pod management dashboard (Week 2 Days 4-7)
-   - ⏳ Team player pod/category displays (Week 3)
+   - ✅ GM pod management dashboard (PodManagementPage, CategoryLeaderboard)
+   - ✅ Team player pod/category displays (PodLeaderboardCard, CategoryRankingsCard)
+   - ✅ Integrated into PlayerGame (dashboard + leaderboard tabs)
    - ⏳ Narrative integration (Weeks 5-6)
-   - **Status:** Backend complete, Frontend game creation complete (Week 1-2 of 4)
-   - **Progress:** 60% (Backend + Game Creation UI complete)
+   - **Status:** Backend complete, Frontend complete (both GM and Team Player)
+   - **Progress:** 80% (Backend + GM Dashboard + Team Player complete)
 
 4. **Results System**
    - Automated results calculation
@@ -243,11 +245,11 @@
 | Database Migrations | ✅ Complete | 100% |
 | Submission Scoring (GM) | ✅ Complete | 100% |
 | Storytelling System | 📝 Design | 5% |
-| Scenario Customization | 🚀 In Progress | 60% |
-| Pod Competition System | 🚀 In Progress | 60% |
+| Scenario Customization | 🚀 In Progress | 80% |
+| Pod Competition System | 🚀 In Progress | 80% |
 
 **Overall Progress: ~98%** (82/82 E2E tests passing, submission scoring complete with full E2E coverage, all core features operational)
-**Phase 3 Progress:** 42% (Week 1 backend complete, Week 2 Days 1-3 frontend complete for scenario customization and pod competition)
+**Phase 3 Progress:** 55% (Weeks 1-3 complete: Backend + GM Dashboard + Team Player UI for scenario customization and pod competition)
 
 ---
 

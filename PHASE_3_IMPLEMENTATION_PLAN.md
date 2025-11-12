@@ -222,63 +222,66 @@ Week 7-8: Integration & Testing
 
 ---
 
-### Week 3: Team Player UI - Scenarios & Pods (Nov 26 - Dec 2)
+### Week 3: Team Player UI - Scenarios & Pods (Nov 26 - Dec 2) ✅ COMPLETED
 
-#### Days 1-3: Scenario Display
-- [ ] Create public game info endpoint (if not exists)
-  - [ ] `GET /api/games/info/:code` - Returns game with scenario details
-- [ ] Update `JoinGamePage.tsx`
-  - [ ] Fetch game info after entering code
-  - [ ] Display scenario information (read-only)
-  - [ ] Show archetype and industry badges
-  - [ ] Show company name and product description
-  - [ ] Display starting conditions preview
-- [ ] Update `PlayerGame.tsx` (team dashboard)
-  - [ ] Add scenario context to header
-  - [ ] Display company name prominently
-  - [ ] Show archetype and industry badges
-  - [ ] Optional: Scenario description tooltip
-- [ ] Update team API service
-  - [ ] Add game info fetch function
-- [ ] Styling
-  - [ ] Scenario info card on join page
-  - [ ] Header badges for dashboard
-  - [ ] Responsive design
+#### Days 1-3: Scenario Display ✅
+- [x] Create public game info endpoint
+  - [x] Game info available via getDashboard endpoint
+- [x] Create `ScenarioInfoCard.tsx` component
+  - [x] Display archetype and industry with icons
+  - [x] Show company name and product description
+  - [x] Gradient styling with borders
+- [x] Update `PlayerGame.tsx` (team dashboard)
+  - [x] Integrated ScenarioInfoCard at top of dashboard
+  - [x] Display scenario context prominently
+  - [x] Conditional rendering (only if scenario set)
+  - [x] Responsive grid layout
+- [x] Update team API service
+  - [x] Added getTeamPod(), getPodLeaderboard(), getTeamCategories()
+  - [x] Mock API implementations for demo mode
+- [x] Styling
+  - [x] Gradient from-indigo-50 to-purple-50 background
+  - [x] Icon-based archetype and industry display
+  - [x] Responsive 2-column grid
 
-**Deliverables:** Teams see scenario when joining and in dashboard
+**Deliverables:** ✅ Teams see scenario in dashboard tab
 
-#### Days 4-7: Pod Leaderboards & Category Rankings
-- [ ] Update `PlayerGame.tsx` leaderboard section
-  - [ ] Add tab navigation (Pod / Global / Categories)
-  - [ ] Set "Pod" as default tab
-- [ ] Create `PodLeaderboard.tsx` component
-  - [ ] Display pod name
-  - [ ] Show team's rank in pod
-  - [ ] List all teams in pod (4 teams)
-  - [ ] Highlight current team
-  - [ ] Show rank badges (🥇🥈🥉)
-- [ ] Create `GlobalLeaderboard.tsx` component
-  - [ ] Display total team count
-  - [ ] Show team's global rank
-  - [ ] List all teams with pod names
-  - [ ] Highlight current team
-- [ ] Create `CategoryRankings.tsx` component
-  - [ ] Display 6 categories with icons
-  - [ ] Show pod rankings for each category
-  - [ ] Show global rankings (top 3 finishes only)
-  - [ ] Display rank badges (🥇🥈🥉) for 1st-3rd place
-  - [ ] Show category scores
-- [ ] Update team API service
-  - [ ] Add pod leaderboard fetch
-  - [ ] Add global leaderboard fetch
-  - [ ] Add category rankings fetch
-- [ ] Styling
-  - [ ] Tab navigation design
-  - [ ] Leaderboard tables (pod vs. global)
-  - [ ] Category achievement cards
-  - [ ] Badge colors and animations
+#### Days 4-7: Pod Leaderboards & Category Rankings ✅
+- [x] Update `PlayerGame.tsx` leaderboard section
+  - [x] Added pod leaderboard section (no tabs, sequential display)
+  - [x] Added "Global Leaderboard" heading for clarity
+- [x] Create `PodLeaderboardCard.tsx` component
+  - [x] Display pod name and team count
+  - [x] Show team's rank in pod with medals
+  - [x] List all teams in pod
+  - [x] Highlight current team (indigo background)
+  - [x] Show rank badges (🥇🥈🥉)
+  - [x] Loading states and error handling
+  - [x] Conditional rendering (only if in pod)
+- [x] Integrated global leaderboard
+  - [x] Added heading to existing leaderboard
+  - [x] Maintains current team highlighting
+  - [x] Medal display for top 3
+- [x] Create `CategoryRankingsCard.tsx` component
+  - [x] Display 6 categories with custom icons and colors
+  - [x] Show both pod rankings and global rankings
+  - [x] Display earned awards section (global + pod)
+  - [x] Color-coded category cards
+  - [x] Award badges with icons (🏆 🥇)
+  - [x] Loading states and conditional rendering
+- [x] Update team API service
+  - [x] getTeamPod() in api.client.ts
+  - [x] getPodLeaderboard() in api.client.ts
+  - [x] getTeamCategories() in api.client.ts
+  - [x] Unified API routing
+  - [x] Mock implementations
+- [x] Styling
+  - [x] Sequential display (pod -> global -> categories)
+  - [x] Individual component styling with shadows
+  - [x] Category-specific colors (green, blue, purple, indigo, pink, yellow)
+  - [x] Responsive card layouts
 
-**Deliverables:** Teams see pod competition, global view, and category rankings
+**Deliverables:** ✅ Teams see pod leaderboard, global leaderboard, and category rankings
 
 **Week 3 Tests:**
 - [ ] Component tests for scenario display components
@@ -630,10 +633,10 @@ Week 7-8: Integration & Testing
 - [ ] GM can create games with pods
 - [ ] UI responsive and styled
 
-### Week 3 Checkpoint
-- [ ] Teams see scenarios when joining
-- [ ] Teams see pod leaderboards
-- [ ] Teams see category rankings
+### Week 3 Checkpoint ✅
+- [x] Teams see scenarios in dashboard
+- [x] Teams see pod leaderboards
+- [x] Teams see category rankings
 
 ### Week 4 Checkpoint
 - [ ] All integration tests passing
