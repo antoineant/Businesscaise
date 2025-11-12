@@ -57,110 +57,124 @@ Week 7-8: Integration & Testing
 
 ## 📅 Detailed Timeline
 
-### Week 1: Backend Foundation (Nov 12-18)
+### Week 1: Backend Foundation (Nov 12-18) ✅ COMPLETED
 
-#### Days 1-2: Scenario System Database & Models
-- [ ] Create database migration
-  - [ ] `company_archetypes` table
-  - [ ] `industry_types` table
-  - [ ] Add columns to `games` table (archetype_id, industry_id, company_name, product_description)
-- [ ] Seed data for archetypes and industries
-  - [ ] 5 archetypes with starting metrics
-  - [ ] 8 industry types with examples
-- [ ] Create models
-  - [ ] `ArchetypeModel.ts`
-  - [ ] `IndustryModel.ts`
-- [ ] Update `GameModel.ts` to include scenario fields
+#### Days 1-2: Scenario System Database & Models ✅
+- [x] Create database migration
+  - [x] `company_archetypes` table
+  - [x] `industry_types` table
+  - [x] Add columns to `games` table (archetype_id, industry_id, company_name, product_description)
+- [x] Seed data for archetypes and industries
+  - [x] 5 archetypes with starting metrics
+  - [x] 8 industry types with examples
+- [x] Create models
+  - [x] `ArchetypeModel.ts`
+  - [x] `IndustryModel.ts`
+- [x] Update `GameModel.ts` to include scenario fields
 
-**Deliverables:** Database schema complete, seed data loaded
+**Deliverables:** ✅ Database schema complete, seed data loaded
 
-#### Days 3-4: Scenario System API Endpoints
-- [ ] Reference data endpoints
-  - [ ] `GET /api/archetypes` - List all archetypes
-  - [ ] `GET /api/industries` - List all industries
-  - [ ] `GET /api/scenarios/preview` - Preview scenario combination
-- [ ] Update game creation
-  - [ ] Modify `POST /api/gm/games` to accept scenario fields
-  - [ ] Validation for required scenario fields
-- [ ] Update game info endpoints
-  - [ ] Add scenario data to game responses
-  - [ ] Create public endpoint `GET /api/games/info/:code` for team join flow
-- [ ] Update team join logic
+#### Days 3-4: Scenario System API Endpoints ✅
+- [x] Reference data endpoints
+  - [x] `GET /api/scenarios/archetypes` - List all archetypes
+  - [x] `GET /api/scenarios/industries` - List all industries
+  - [x] `GET /api/scenarios/preview` - Preview scenario combination
+- [x] Update game creation
+  - [x] Modify `POST /api/gm/games` to accept scenario fields
+  - [x] Validation for required scenario fields
+- [x] Update game info endpoints
+  - [x] Add scenario data to game responses
+- [ ] Update team join logic (TODO: Week 3)
   - [ ] Initialize team with archetype starting metrics
   - [ ] Apply archetype starting cash
 
-**Deliverables:** Scenario API endpoints functional, teams initialize with archetype metrics
+**Deliverables:** ✅ Scenario API endpoints functional
 
-#### Days 5-7: Pod System Database & API
-- [ ] Create database migration
-  - [ ] `category_rankings` table
-  - [ ] Optional `pods` table
-  - [ ] Add columns to `games` table (enable_pods, pod_size, pod_assignment_method, enable_category_awards)
-  - [ ] Add columns to `teams` table (pod_id, pod_name)
-- [ ] Create pod assignment logic
-  - [ ] Random assignment algorithm
-  - [ ] Manual assignment support
-  - [ ] Validation (pod size, team count)
-- [ ] Create category ranking service
-  - [ ] Calculate rankings by category (financial, operations, marketing, hr, customer, overall)
-  - [ ] Calculate rankings by scope (pod, global)
-  - [ ] Snapshot rankings at session end
-- [ ] Build pod management API endpoints
-  - [ ] `GET /api/gm/games/:gameId/pods` - List all pods
-  - [ ] `POST /api/gm/games/:gameId/pods/assign-random` - Random assignment
-  - [ ] `PUT /api/gm/games/:gameId/teams/:teamId/pod` - Manual assignment
-  - [ ] `GET /api/gm/games/:gameId/leaderboard?scope=pod&pod_id=X` - Pod leaderboard
-- [ ] Build category ranking API endpoints
-  - [ ] `GET /api/gm/games/:gameId/category-leaders?scope=X&pod_id=Y` - Category leaders
-  - [ ] `POST /api/gm/games/:gameId/sessions/:sessionId/snapshot-rankings` - Snapshot
-- [ ] Update team leaderboard endpoints
-  - [ ] `GET /api/teams/:teamId/leaderboard?scope=pod` - Pod leaderboard
-  - [ ] `GET /api/teams/:teamId/leaderboard?scope=global` - Global leaderboard
-  - [ ] `GET /api/teams/:teamId/category-rankings` - Category rankings
+#### Days 5-7: Pod System Database & API ✅
+- [x] Create database migration
+  - [x] `category_rankings` table
+  - [x] Optional `pods` table
+  - [x] Add columns to `games` table (enable_pods, pod_size, pod_assignment_method, enable_category_awards)
+  - [x] Add columns to `teams` table (pod_id, pod_name)
+- [x] Create pod assignment logic
+  - [x] Random assignment algorithm
+  - [x] Manual assignment support
+  - [x] Validation (pod size, team count)
+- [x] Create category ranking service
+  - [x] Calculate rankings by category (financial, operations, marketing, hr, customer, overall)
+  - [x] Calculate rankings by scope (pod, global)
+  - [x] Snapshot rankings at session end
+- [x] Build pod management API endpoints (9 endpoints total)
+  - [x] `POST /api/gm/games/:gameId/pods/assign` - Assign pods
+  - [x] `GET /api/gm/games/:gameId/pods` - List all pods
+  - [x] `GET /api/gm/games/:gameId/pods/:podId/leaderboard` - Pod leaderboard
+  - [x] `PUT /api/gm/games/:gameId/teams/:teamId/pod` - Manual assignment
+- [x] Build category ranking API endpoints
+  - [x] `GET /api/gm/games/:gameId/categories` - Category leaders summary
+  - [x] `GET /api/gm/games/:gameId/categories/:category` - Category leaderboard
+  - [x] `GET /api/gm/games/:gameId/teams/:teamId/categories` - Team category rankings
+  - [x] `POST /api/gm/games/:gameId/categories/snapshot` - Snapshot rankings
+  - [x] `GET /api/gm/games/:gameId/sessions/:sessionId/categories` - Historical rankings
+- [x] Update team leaderboard endpoints
+  - [x] `GET /api/teams/:teamId/pod` - Team's pod info
+  - [x] `GET /api/teams/:teamId/pod/leaderboard` - Pod leaderboard
+  - [x] `GET /api/teams/:teamId/categories` - Team category rankings
 
-**Deliverables:** Pod system API complete, category calculations working
+**Deliverables:** ✅ Pod system API complete, category calculations working
 
 **Week 1 Tests:**
-- [ ] Unit tests for archetype/industry models
-- [ ] Unit tests for scenario preview logic
-- [ ] Unit tests for team initialization with archetype metrics
-- [ ] Unit tests for pod assignment algorithms
-- [ ] Unit tests for category ranking calculations
-- [ ] Integration tests for API endpoints
+- [ ] Unit tests for archetype/industry models (TODO: Week 7-8)
+- [ ] Unit tests for scenario preview logic (TODO: Week 7-8)
+- [ ] Unit tests for team initialization with archetype metrics (TODO: Week 7-8)
+- [ ] Unit tests for pod assignment algorithms (TODO: Week 7-8)
+- [ ] Unit tests for category ranking calculations (TODO: Week 7-8)
+- [ ] Integration tests for API endpoints (TODO: Week 7-8)
 
 **Estimated Time:** 35-40 hours
+**Actual Time:** Week 1 completed
 
 ---
 
-### Week 2: GM Dashboard UI - Scenarios & Pods (Nov 19-25)
+### Week 2: GM Dashboard UI - Scenarios & Pods (Nov 19-25) 🚀 In Progress
 
-#### Days 1-3: Scenario Selection Interface
-- [ ] Update `CreateGamePage.tsx`
-  - [ ] Add scenario settings section
-  - [ ] Archetype dropdown selector
-  - [ ] Industry dropdown selector
-  - [ ] Scenario preview component
-  - [ ] Optional company name input
-  - [ ] Optional product description input
-- [ ] Create `ScenarioPreview.tsx` component
-  - [ ] Display archetype details
-  - [ ] Display industry details
-  - [ ] Show starting conditions
-  - [ ] Show focus areas
-- [ ] Update `GameDetailsPage.tsx`
+#### Days 1-3: Scenario Selection Interface ✅ COMPLETED
+- [x] Update `CreateGamePage.tsx`
+  - [x] Add scenario settings section
+  - [x] Archetype selection grid (5 archetypes with interactive cards)
+  - [x] Industry selection grid (8 industries with interactive cards)
+  - [x] Integrated scenario preview component
+  - [x] Optional company name input
+  - [x] Optional product description input
+  - [x] Pod competition configuration section
+  - [x] Category awards configuration section
+- [x] Create `ScenarioSelector.tsx` component (comprehensive)
+  - [x] Display archetype details with icons
+  - [x] Display industry details with icons
+  - [x] Show starting conditions (cash, team size, difficulty)
+  - [x] Show focus areas
+  - [x] Show example products
+  - [x] Real-time preview updates
+  - [x] Beautiful gradient UI with responsive grid layout
+- [ ] Update `GameDetailsPage.tsx` (TODO: Days 4-7)
   - [ ] Display game scenario in header/banner
   - [ ] Show archetype and industry badges
   - [ ] Display company name if set
-- [ ] Update `api.ts` service
-  - [ ] Add archetype/industry fetch functions
-  - [ ] Add scenario preview function
-  - [ ] Update game creation to include scenario fields
-- [ ] Styling
-  - [ ] Scenario badges (with icons)
-  - [ ] Preview card design
-  - [ ] Responsive layout
+- [x] Update `api.ts` service
+  - [x] Add scenarioAPI with getArchetypes, getIndustries, getPreview
+  - [x] Add podAPI with 9 pod management endpoints
+  - [x] Update game creation to include scenario fields
+  - [x] Update game creation to include pod fields
+- [x] Update types/index.ts
+  - [x] Add Archetype, Industry, ScenarioPreview interfaces
+  - [x] Add PodInfo, CategoryRanking, CategoryLeader, TeamCategoryRankings interfaces
+- [x] Styling
+  - [x] Scenario badges (with icons 🚀💰📦🔄📈💡)
+  - [x] Preview card design with gradient backgrounds
+  - [x] Responsive grid layout (mobile + desktop)
+  - [x] Visual hierarchy with sections
+  - [x] Interactive hover states
 
-**Deliverables:** GM can select and preview scenarios during game creation
+**Deliverables:** ✅ GM can select and preview scenarios during game creation with full pod configuration
 
 #### Days 4-7: Pod Management Interface
 - [ ] Update `CreateGamePage.tsx`
