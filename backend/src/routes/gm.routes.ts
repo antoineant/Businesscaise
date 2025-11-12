@@ -18,6 +18,11 @@ router.post('/games',
     body('title').notEmpty().withMessage('Title is required'),
     body('description').optional().isString(),
     body('settings').optional().isObject(),
+    // Scenario customization fields
+    body('archetype_id').optional().isString(),
+    body('industry_id').optional().isString(),
+    body('company_name').optional().isString(),
+    body('product_description').optional().isString(),
   ],
   validate,
   gmController.createGame
