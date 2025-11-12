@@ -136,6 +136,15 @@ export const unifiedTeamAPI = {
   getLeaderboard: async (teamId: string) => {
     return demoMode.isEnabled() ? mockTeamAPI.getLeaderboard(teamId) : realTeamAPI.getLeaderboard(teamId);
   },
+  getTeamPod: async (teamId: string) => {
+    return demoMode.isEnabled() ? mockTeamAPI.getTeamPod(teamId) : realTeamAPI.getTeamPod(teamId);
+  },
+  getPodLeaderboard: async (teamId: string) => {
+    return demoMode.isEnabled() ? mockTeamAPI.getPodLeaderboard(teamId) : realTeamAPI.getPodLeaderboard(teamId);
+  },
+  getTeamCategories: async (teamId: string) => {
+    return demoMode.isEnabled() ? mockTeamAPI.getTeamCategories(teamId) : realTeamAPI.getTeamCategories(teamId);
+  },
 };
 
 // Unified Upload API

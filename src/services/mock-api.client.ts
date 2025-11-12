@@ -188,6 +188,33 @@ export const mockTeamAPI = {
     await delay();
     return mockDataStore.getTeamLeaderboard(teamId);
   },
+
+  getTeamPod: async (teamId: string) => {
+    await delay();
+    return {
+      in_pod: false,
+      pod_id: null,
+      pod_name: null,
+    };
+  },
+
+  getPodLeaderboard: async (teamId: string) => {
+    await delay();
+    return {
+      pod_id: null,
+      pod_name: null,
+      leaderboard: [],
+    };
+  },
+
+  getTeamCategories: async (teamId: string) => {
+    await delay();
+    return {
+      enabled: false,
+      rankings: [],
+      awards: { global_awards: [], pod_awards: [] },
+    };
+  },
 };
 
 // Mock Upload API
