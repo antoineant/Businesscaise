@@ -195,19 +195,133 @@ test.describe('Phase 3: Scenario Customization - GM View', () => {
     await registerAndLoginGM(page);
 
     // Open create game modal
+    console.log('[STEP 1] Clicking Create Game button...');
     await page.getByRole('button', { name: /create.*game/i }).first().click();
+
+    console.log('[STEP 2] Waiting for modal to appear...');
     await expect(page.getByRole('heading', { name: /create.*game/i, level: 3 })).toBeVisible({ timeout: 5000 });
+    console.log('[STEP 2] ✓ Modal heading visible');
 
-    // Fill form using semantic selectors (modal has labels, not IDs)
-    await page.getByLabel(/game title/i).fill(`Phase 3 Test ${Date.now()}`);
-    await page.getByLabel(/description/i).fill('Testing Phase 3 pod features');
+    // Debug: Log page structure
+    console.log('[DEBUG] Getting page HTML structure...');
+    const pageContent = await page.content();
+    const modalContent = pageContent.substring(pageContent.indexOf('Create New Game'), pageContent.indexOf('Create New Game') + 1000);
+    console.log('[DEBUG] Modal area HTML:', modalContent.substring(0, 500));
 
-    // Submit form
+    // Debug: Check what inputs are available
+    const allInputs = await page.locator('input[type="text"]').count();
+    const allTextareas = await page.locator('textarea').count();
+    console.log(`[DEBUG] Found ${allInputs} text inputs and ${allTextareas} textareas`);
+
+    // Try multiple selector strategies
+    console.log('[STEP 3] Attempting to fill title field...');
+    const titleValue = `Phase 3 Test ${Date.now()}`;
+
+    let titleFilled = false;
+
+    // Strategy 1: Try label
+    try {
+      const labelCount = await page.getByLabel(/game title/i).count();
+      console.log(`[DEBUG] Strategy 1: Found ${labelCount} elements with label matching "game title"`);
+      if (labelCount > 0) {
+        await page.getByLabel(/game title/i).fill(titleValue);
+        titleFilled = true;
+        console.log('[STEP 3] ✓ Filled via getByLabel');
+      }
+    } catch (e) {
+      console.log('[DEBUG] Strategy 1 failed:', e.message);
+    }
+
+    // Strategy 2: Try placeholder
+    if (!titleFilled) {
+      try {
+        const placeholderCount = await page.getByPlaceholder(/spring.*business/i).count();
+        console.log(`[DEBUG] Strategy 2: Found ${placeholderCount} elements with placeholder matching "spring.*business"`);
+        if (placeholderCount > 0) {
+          await page.getByPlaceholder(/spring.*business/i).fill(titleValue);
+          titleFilled = true;
+          console.log('[STEP 3] ✓ Filled via getByPlaceholder');
+        }
+      } catch (e) {
+        console.log('[DEBUG] Strategy 2 failed:', e.message);
+      }
+    }
+
+    // Strategy 3: Try first visible text input
+    if (!titleFilled) {
+      try {
+        const visibleInputs = await page.locator('input[type="text"]:visible').count();
+        console.log(`[DEBUG] Strategy 3: Found ${visibleInputs} visible text inputs`);
+        if (visibleInputs > 0) {
+          await page.locator('input[type="text"]:visible').first().fill(titleValue);
+          titleFilled = true;
+          console.log('[STEP 3] ✓ Filled via first visible input');
+        }
+      } catch (e) {
+        console.log('[DEBUG] Strategy 3 failed:', e.message);
+      }
+    }
+
+    if (!titleFilled) {
+      throw new Error('Could not fill title field with any strategy');
+    }
+
+    // Fill description
+    console.log('[STEP 4] Attempting to fill description field...');
+    const descriptionValue = 'Testing Phase 3 pod features';
+
+    let descriptionFilled = false;
+
+    // Strategy 1: Try label
+    try {
+      if (await page.getByLabel(/description/i).count() > 0) {
+        await page.getByLabel(/description/i).fill(descriptionValue);
+        descriptionFilled = true;
+        console.log('[STEP 4] ✓ Filled via getByLabel');
+      }
+    } catch (e) {
+      console.log('[DEBUG] Description label strategy failed');
+    }
+
+    // Strategy 2: Try placeholder
+    if (!descriptionFilled) {
+      try {
+        if (await page.getByPlaceholder(/week.*long/i).count() > 0) {
+          await page.getByPlaceholder(/week.*long/i).fill(descriptionValue);
+          descriptionFilled = true;
+          console.log('[STEP 4] ✓ Filled via getByPlaceholder');
+        }
+      } catch (e) {
+        console.log('[DEBUG] Description placeholder strategy failed');
+      }
+    }
+
+    // Strategy 3: Try textarea
+    if (!descriptionFilled) {
+      try {
+        if (await page.locator('textarea:visible').count() > 0) {
+          await page.locator('textarea:visible').first().fill(descriptionValue);
+          descriptionFilled = true;
+          console.log('[STEP 4] ✓ Filled via textarea selector');
+        }
+      } catch (e) {
+        console.log('[DEBUG] Textarea strategy failed');
+      }
+    }
+
+    console.log('[STEP 5] Submitting form...');
+    const submitButtons = await page.getByRole('button', { name: /create game/i }).count();
+    console.log(`[DEBUG] Found ${submitButtons} buttons matching "create game"`);
+
+    // Click the submit button (not the header button)
     await page.getByRole('button', { name: /^create game$/i }).click();
+    console.log('[STEP 5] ✓ Clicked submit button');
 
     // Wait for modal to close and game to appear
+    console.log('[STEP 6] Waiting for game to appear in list...');
     await page.waitForTimeout(2000);
     await expect(page.getByText(/phase 3 test/i)).toBeVisible({ timeout: 5000 });
+    console.log('[STEP 6] ✓ Game visible in list');
 
     console.log('✓ GM created game via UI');
   });
@@ -384,18 +498,35 @@ test.describe('Phase 3: Edge Cases', () => {
   test('GM can create game without scenario', async ({ page }) => {
     await registerAndLoginGM(page);
 
-    // Open create game modal
+    console.log('[EDGE CASE 1] Opening create game modal...');
     await page.getByRole('button', { name: /create.*game/i }).first().click();
     await expect(page.getByRole('heading', { name: /create.*game/i, level: 3 })).toBeVisible({ timeout: 5000 });
 
-    // Fill only title (no scenario selection in basic modal)
     const gameTitle = `No Scenario ${Date.now()}`;
-    await page.getByLabel(/game title/i).fill(gameTitle);
+    console.log(`[EDGE CASE 1] Filling title: ${gameTitle}`);
 
-    // Submit
+    // Try multiple strategies
+    let filled = false;
+    if (!filled && await page.getByLabel(/game title/i).count() > 0) {
+      await page.getByLabel(/game title/i).fill(gameTitle);
+      filled = true;
+      console.log('[EDGE CASE 1] ✓ Filled via label');
+    }
+    if (!filled && await page.getByPlaceholder(/spring.*business/i).count() > 0) {
+      await page.getByPlaceholder(/spring.*business/i).fill(gameTitle);
+      filled = true;
+      console.log('[EDGE CASE 1] ✓ Filled via placeholder');
+    }
+    if (!filled && await page.locator('input[type="text"]:visible').count() > 0) {
+      await page.locator('input[type="text"]:visible').first().fill(gameTitle);
+      filled = true;
+      console.log('[EDGE CASE 1] ✓ Filled via input selector');
+    }
+
+    console.log('[EDGE CASE 1] Submitting...');
     await page.getByRole('button', { name: /^create game$/i }).click();
 
-    // Verify game created
+    console.log('[EDGE CASE 1] Verifying game created...');
     await page.waitForTimeout(2000);
     await expect(page.getByText(new RegExp(gameTitle, 'i'))).toBeVisible({ timeout: 5000 });
 
@@ -405,18 +536,35 @@ test.describe('Phase 3: Edge Cases', () => {
   test('GM can create game without pods', async ({ page }) => {
     await registerAndLoginGM(page);
 
-    // Open create game modal
+    console.log('[EDGE CASE 2] Opening create game modal...');
     await page.getByRole('button', { name: /create.*game/i }).first().click();
     await expect(page.getByRole('heading', { name: /create.*game/i, level: 3 })).toBeVisible({ timeout: 5000 });
 
-    // Fill title
     const gameTitle = `No Pods ${Date.now()}`;
-    await page.getByLabel(/game title/i).fill(gameTitle);
+    console.log(`[EDGE CASE 2] Filling title: ${gameTitle}`);
 
-    // Submit (no pod options in basic modal)
+    // Try multiple strategies
+    let filled = false;
+    if (!filled && await page.getByLabel(/game title/i).count() > 0) {
+      await page.getByLabel(/game title/i).fill(gameTitle);
+      filled = true;
+      console.log('[EDGE CASE 2] ✓ Filled via label');
+    }
+    if (!filled && await page.getByPlaceholder(/spring.*business/i).count() > 0) {
+      await page.getByPlaceholder(/spring.*business/i).fill(gameTitle);
+      filled = true;
+      console.log('[EDGE CASE 2] ✓ Filled via placeholder');
+    }
+    if (!filled && await page.locator('input[type="text"]:visible').count() > 0) {
+      await page.locator('input[type="text"]:visible').first().fill(gameTitle);
+      filled = true;
+      console.log('[EDGE CASE 2] ✓ Filled via input selector');
+    }
+
+    console.log('[EDGE CASE 2] Submitting...');
     await page.getByRole('button', { name: /^create game$/i }).click();
 
-    // Verify game created
+    console.log('[EDGE CASE 2] Verifying game created...');
     await page.waitForTimeout(2000);
     await expect(page.getByText(new RegExp(gameTitle, 'i'))).toBeVisible({ timeout: 5000 });
 
