@@ -3,6 +3,7 @@ import { GameModel } from '../models/Game.model';
 import { TeamModel } from '../models/Team.model';
 import { SessionModel } from '../models/Session.model';
 import { SubmissionModel } from '../models/Submission.model';
+import { ArchetypeModel } from '../models/Archetype.model';
 import { AppError, asyncHandler } from '../middleware/errorHandler.middleware';
 import * as socketHandler from '../socket/socket.handler';
 import * as podService from '../services/pod.service';
@@ -31,19 +32,39 @@ export const joinGame = asyncHandler(async (req: Request, res: Response) => {
 
   console.log(`[JOIN] Creating team in database...`);
 
-  // Create team with default metrics
+  // Determine starting metrics (scenario-aware or default)
+  let startingMetrics = {
+    financial: 50,
+    hr: 50,
+    market_communication: 50,
+    operations: 50,
+    customer_satisfaction: 50,
+  };
+
+  // If game has an archetype, use archetype starting metrics
+  if (game.archetype_id) {
+    console.log(`[JOIN] Game has archetype ${game.archetype_id}, fetching starting metrics...`);
+    const archetype = await ArchetypeModel.findById(game.archetype_id);
+
+    if (archetype && archetype.starting_metrics) {
+      console.log(`[JOIN] Applying archetype "${archetype.name}" starting metrics`);
+      startingMetrics = {
+        financial: archetype.starting_metrics.financial,
+        hr: archetype.starting_metrics.hr,
+        market_communication: archetype.starting_metrics.marketing, // Map marketing -> market_communication
+        operations: archetype.starting_metrics.operations,
+        customer_satisfaction: archetype.starting_metrics.customer_satisfaction,
+      };
+    }
+  }
+
+  // Create team with scenario-aware or default metrics
   const team = await TeamModel.create({
     game_id,
     name: team_name,
     color: color || '#3B82F6',
     members: members || [],
-    metrics: {
-      financial: 50,
-      hr: 50,
-      market_communication: 50,
-      operations: 50,
-      customer_satisfaction: 50,
-    },
+    metrics: startingMetrics,
   });
 
   console.log(`[JOIN] Team created successfully: ${team.id}`);
