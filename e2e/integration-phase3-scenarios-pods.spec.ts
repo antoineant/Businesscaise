@@ -101,7 +101,8 @@ async function createGameWithScenarioAndPods(token: string) {
 async function registerAndLoginGM(page: Page) {
   const testGM = generateTestGM();
 
-  await page.goto('/register', { waitUntil: 'networkidle' });
+  // Start from home page like working tests
+  await page.goto('http://localhost:5173/?demo=false', { waitUntil: 'networkidle' });
 
   // Set up diagnostic logging
   page.on('console', msg => {
@@ -110,28 +111,29 @@ async function registerAndLoginGM(page: Page) {
     }
   });
 
-  // Wait for page to load
-  await page.waitForLoadState('domcontentloaded');
+  // Navigate to register page
+  await page.getByRole('link', { name: /sign up/i }).click();
+  await page.waitForURL(/.*register/);
 
-  // Fill registration form with semantic selectors
-  await page.fill('input[type="text"], input#name', testGM.name);
-  await page.fill('input[type="email"], input#email', testGM.email);
-  const passwordFields = await page.locator('input[type="password"]').all();
-  await passwordFields[0].fill(testGM.password);
-  await passwordFields[1].fill(testGM.password);
+  // Fill registration form using semantic selectors like working tests
+  await page.getByLabel(/name/i).fill(testGM.name);
+  await page.getByLabel(/email/i).fill(testGM.email);
 
-  await page.click('button[type="submit"]');
+  // Select Game Master role
+  await page.getByRole('radio', { name: /game master/i }).click();
 
-  // Wait for success or error
-  await Promise.race([
-    page.waitForURL('/dashboard', { timeout: 10000 }),
-    page.waitForURL('/games', { timeout: 10000 }),
-    page.waitForSelector('.bg-red-50, [class*="error"]', { timeout: 10000 })
-      .then(async () => {
-        const errorText = await page.locator('.bg-red-50, [class*="error"]').textContent();
-        throw new Error(`GM registration failed: ${errorText}`);
-      })
-  ]);
+  // Fill passwords
+  await page.getByLabel(/^password$/i).fill(testGM.password);
+  const confirmPassword = page.getByLabel(/confirm.*password/i);
+  if (await confirmPassword.count() > 0) {
+    await confirmPassword.fill(testGM.password);
+  }
+
+  // Submit form
+  await page.getByRole('button', { name: /create account|register|sign up/i }).click();
+
+  // Wait for redirect to games or dashboard
+  await page.waitForURL(/.*\/(dashboard|games)/, { timeout: 10000 });
 
   console.log(`[DIAGNOSTIC] ✓ GM registered and logged in: ${testGM.email}`);
   return testGM;
