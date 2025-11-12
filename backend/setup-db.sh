@@ -96,18 +96,27 @@ echo -e "${GREEN}✓ Database created${NC}"
 # Run migrations
 echo ""
 echo "Running database migrations..."
-MIGRATION_FILE="$(dirname "$0")/migrations/001_initial_schema.sql"
+MIGRATIONS_DIR="$(dirname "$0")/migrations"
 
-if [ ! -f "$MIGRATION_FILE" ]; then
-    echo -e "${RED}✗ Migration file not found: $MIGRATION_FILE${NC}"
+if [ ! -d "$MIGRATIONS_DIR" ]; then
+    echo -e "${RED}✗ Migrations directory not found: $MIGRATIONS_DIR${NC}"
     exit 1
 fi
 
-psql -U "$DB_USER" -d "$DB_NAME" -f "$MIGRATION_FILE" || {
-    echo -e "${RED}✗ Failed to run migrations${NC}"
-    exit 1
-}
-echo -e "${GREEN}✓ Migrations completed${NC}"
+# Apply all migration files in order
+for MIGRATION_FILE in "$MIGRATIONS_DIR"/*.sql; do
+    if [ -f "$MIGRATION_FILE" ]; then
+        MIGRATION_NAME=$(basename "$MIGRATION_FILE")
+        echo "Applying $MIGRATION_NAME..."
+        psql -U "$DB_USER" -d "$DB_NAME" -f "$MIGRATION_FILE" || {
+            echo -e "${RED}✗ Failed to run migration: $MIGRATION_NAME${NC}"
+            exit 1
+        }
+        echo -e "${GREEN}✓ $MIGRATION_NAME applied${NC}"
+    fi
+done
+
+echo -e "${GREEN}✓ All migrations completed${NC}"
 
 # Verify tables were created
 echo ""
