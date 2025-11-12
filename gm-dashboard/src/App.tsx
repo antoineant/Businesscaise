@@ -13,6 +13,7 @@ import { TeamDetailsPage } from './pages/TeamDetailsPage';
 import { SessionEditPage } from './pages/SessionEditPage';
 import { SubmissionsPage } from './pages/SubmissionsPage';
 import { SubmissionDetailsPage } from './pages/SubmissionDetailsPage';
+import { PodManagementPage } from './pages/PodManagementPage';
 
 function App() {
   return (
@@ -80,6 +81,16 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <AnalyticsPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/games/:gameId/pods"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <PodManagementPage />
                 </Layout>
               </ProtectedRoute>
             }

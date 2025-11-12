@@ -14,6 +14,11 @@ export interface Game {
   status: 'setup' | 'active' | 'paused' | 'completed';
   start_date?: string;
   end_date?: string;
+  // Pod competition fields
+  enable_pods: boolean;
+  pod_size: number;
+  pod_assignment_method: 'random' | 'manual' | 'balanced';
+  enable_category_awards: boolean;
   created_at: string;
   updated_at: string;
 }

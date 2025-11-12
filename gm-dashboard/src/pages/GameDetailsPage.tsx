@@ -12,9 +12,11 @@ import {
   BarChart3,
   Edit,
   Unlock,
-  FileText
+  FileText,
+  Layers
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { CategoryLeaderboard } from '../components/CategoryLeaderboard';
 
 export const GameDetailsPage: React.FC = () => {
   const { gameId } = useParams<{ gameId: string }>();
@@ -184,7 +186,7 @@ export const GameDetailsPage: React.FC = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className={`grid grid-cols-1 md:grid-cols-${game.enable_pods ? '6' : '5'} gap-4`}>
         <div className="card" data-testid="teams-stat-card">
           <div className="flex items-center justify-between">
             <div>
@@ -236,6 +238,18 @@ export const GameDetailsPage: React.FC = () => {
             <BarChart3 className="w-8 h-8 text-primary-600" />
           </div>
         </div>
+
+        {game.enable_pods && (
+          <div className="card cursor-pointer hover:shadow-md transition-shadow bg-gradient-to-br from-indigo-50 to-purple-50" data-testid="pods-stat-card" onClick={() => navigate(`/games/${gameId}/pods`)}>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-indigo-700 font-medium">Pod Management</p>
+                <p className="text-sm font-medium text-indigo-600 mt-1">Manage Pods →</p>
+              </div>
+              <Layers className="w-8 h-8 text-indigo-600" />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Sessions */}
@@ -326,6 +340,13 @@ export const GameDetailsPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Category Awards */}
+      {game.enable_category_awards && teams.length > 0 && (
+        <div className="card">
+          <CategoryLeaderboard gameId={gameId!} />
+        </div>
+      )}
     </div>
   );
 };
