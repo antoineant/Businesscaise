@@ -5,6 +5,8 @@ import { SessionModel } from '../models/Session.model';
 import { SubmissionModel } from '../models/Submission.model';
 import { AppError, asyncHandler } from '../middleware/errorHandler.middleware';
 import * as socketHandler from '../socket/socket.handler';
+import * as podService from '../services/pod.service';
+import * as categoryService from '../services/category.service';
 
 /**
  * Join a game (create team)
@@ -308,5 +310,114 @@ export const getLeaderboard = asyncHandler(async (req: Request, res: Response) =
 
   res.json({
     leaderboard,
+  });
+});
+
+/**
+ * Get team's pod information
+ * GET /api/teams/:teamId/pod
+ */
+export const getTeamPod = asyncHandler(async (req: Request, res: Response) => {
+  const { teamId } = req.params;
+
+  const team = await TeamModel.findById(teamId);
+  if (!team) {
+    throw new AppError('Team not found', 404);
+  }
+
+  if (!team.pod_id) {
+    return res.json({
+      in_pod: false,
+      pod_id: null,
+      pod_name: null,
+    });
+  }
+
+  // Get all teams in the same pod
+  const podTeams = await TeamModel.findByPod(team.game_id, team.pod_id);
+
+  res.json({
+    in_pod: true,
+    pod_id: team.pod_id,
+    pod_name: team.pod_name,
+    team_count: podTeams.length,
+    teams: podTeams.map(t => ({
+      team_id: t.id,
+      team_name: t.name,
+      overall_score: t.overall_score,
+      is_current_team: t.id === teamId,
+    })),
+  });
+});
+
+/**
+ * Get pod leaderboard for team's pod
+ * GET /api/teams/:teamId/pod/leaderboard
+ */
+export const getPodLeaderboard = asyncHandler(async (req: Request, res: Response) => {
+  const { teamId } = req.params;
+
+  const team = await TeamModel.findById(teamId);
+  if (!team) {
+    throw new AppError('Team not found', 404);
+  }
+
+  if (!team.pod_id) {
+    throw new AppError('Team is not assigned to a pod', 400);
+  }
+
+  const teams = await podService.getPodLeaderboard(team.game_id, team.pod_id);
+
+  // Create leaderboard with rankings
+  const leaderboard = teams.map((t, index) => ({
+    rank: index + 1,
+    team_id: t.id,
+    team_name: t.name,
+    overall_score: t.overall_score,
+    is_current_team: t.id === teamId,
+  }));
+
+  res.json({
+    pod_id: team.pod_id,
+    pod_name: team.pod_name,
+    leaderboard,
+  });
+});
+
+/**
+ * Get team's category rankings
+ * GET /api/teams/:teamId/categories
+ */
+export const getTeamCategories = asyncHandler(async (req: Request, res: Response) => {
+  const { teamId } = req.params;
+
+  const team = await TeamModel.findById(teamId);
+  if (!team) {
+    throw new AppError('Team not found', 404);
+  }
+
+  const game = await GameModel.findById(team.game_id);
+  if (!game) {
+    throw new AppError('Game not found', 404);
+  }
+
+  if (!game.enable_category_awards) {
+    return res.json({
+      enabled: false,
+      rankings: [],
+      awards: { global_awards: [], pod_awards: [] },
+    });
+  }
+
+  // Get team's rankings in all categories
+  const rankings = await categoryService.getTeamCategoryRankings(team.game_id, teamId, null);
+
+  // Get team's awards (categories where they're #1)
+  const awards = await categoryService.getTeamAwards(team.game_id, teamId, null);
+
+  res.json({
+    enabled: true,
+    ...rankings,
+    awards,
   });
 });

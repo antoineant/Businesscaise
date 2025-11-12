@@ -15,6 +15,7 @@ import gmRoutes from './routes/gm.routes';
 import teamRoutes from './routes/team.routes';
 import uploadRoutes from './routes/upload.routes';
 import scenarioRoutes from './routes/scenario.routes';
+import podRoutes from './routes/pod.routes';
 
 // Import socket handler
 import { initializeSocket } from './socket/socket.handler';
@@ -72,6 +73,7 @@ app.use('/api/gm', gmRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/scenarios', scenarioRoutes);
+app.use('/api/gm', podRoutes); // Pod and category routes (GM-protected)
 
 // Initialize WebSocket handlers
 initializeSocket(io);

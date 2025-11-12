@@ -8,6 +8,9 @@ export interface Team {
   members: any[];
   metrics: any;
   overall_score: number;
+  // Pod competition fields
+  pod_id: string | null;
+  pod_name: string | null;
   created_at: Date;
   updated_at: Date;
 }
@@ -130,5 +133,41 @@ export class TeamModel {
     );
 
     return result.rows;
+  }
+
+  /**
+   * Find teams by pod
+   */
+  static async findByPod(gameId: string, podId: string): Promise<Team[]> {
+    const result = await query(
+      'SELECT * FROM teams WHERE game_id = $1 AND pod_id = $2 ORDER BY overall_score DESC',
+      [gameId, podId]
+    );
+
+    return result.rows;
+  }
+
+  /**
+   * Update team pod assignment
+   */
+  static async updatePod(teamId: string, podId: string, podName: string): Promise<Team | null> {
+    const result = await query(
+      'UPDATE teams SET pod_id = $1, pod_name = $2 WHERE id = $3 RETURNING *',
+      [podId, podName, teamId]
+    );
+
+    return result.rows[0] || null;
+  }
+
+  /**
+   * Count teams in a pod
+   */
+  static async countTeamsInPod(gameId: string, podId: string): Promise<number> {
+    const result = await query(
+      'SELECT COUNT(*) as count FROM teams WHERE game_id = $1 AND pod_id = $2',
+      [gameId, podId]
+    );
+
+    return parseInt(result.rows[0]?.count || '0');
   }
 }
