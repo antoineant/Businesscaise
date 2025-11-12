@@ -339,6 +339,21 @@ export const teamAPI = {
     const response = await apiClient.get(`/teams/${teamId}/leaderboard`);
     return response.data.leaderboard;
   },
+
+  getTeamPod: async (teamId: string) => {
+    const response = await apiClient.get(`/teams/${teamId}/pod`);
+    return response.data;
+  },
+
+  getPodLeaderboard: async (teamId: string) => {
+    const response = await apiClient.get(`/teams/${teamId}/pod/leaderboard`);
+    return response.data;
+  },
+
+  getTeamCategories: async (teamId: string) => {
+    const response = await apiClient.get(`/teams/${teamId}/categories`);
+    return response.data;
+  },
 };
 
 // File Upload API

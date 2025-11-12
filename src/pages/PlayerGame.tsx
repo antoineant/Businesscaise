@@ -7,6 +7,9 @@ import { ArrowLeft, Users, TrendingUp, FileText, Trophy, AlertCircle } from 'luc
 import LanguageSelector from '../components/LanguageSelector';
 import DepartmentDashboard from '../components/DepartmentDashboard';
 import SubmissionForm from '../components/SubmissionForm';
+import { ScenarioInfoCard } from '../components/ScenarioInfoCard';
+import { PodLeaderboardCard } from '../components/PodLeaderboardCard';
+import { CategoryRankingsCard } from '../components/CategoryRankingsCard';
 import { DepartmentMetrics } from '../types/game';
 import { demoMode } from '../services/demo-mode';
 
@@ -320,10 +323,25 @@ export default function PlayerGame() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {activeTab === 'dashboard' && (
           <div className="space-y-6">
+            {/* Scenario Info */}
+            {dashboardData.game && (
+              <ScenarioInfoCard
+                archetype={dashboardData.game.archetype}
+                industry={dashboardData.game.industry}
+                companyName={dashboardData.game.company_name}
+                productDescription={dashboardData.game.product_description}
+              />
+            )}
+
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Your Company Performance</h2>
               <DepartmentDashboard metrics={convertToDepartmentMetrics(team.metrics)} />
             </div>
+
+            {/* Category Rankings */}
+            {teamId && (
+              <CategoryRankingsCard teamId={teamId} />
+            )}
 
             {/* Current Session Info */}
             {currentSession ? (
@@ -420,8 +438,17 @@ export default function PlayerGame() {
         {activeTab === 'leaderboard' && (
           <div className="space-y-6">
             <h2 className="text-2xl font-bold text-gray-900">Leaderboard</h2>
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-              {leaderboard.length === 0 ? (
+
+            {/* Pod Leaderboard */}
+            {teamId && (
+              <PodLeaderboardCard teamId={teamId} />
+            )}
+
+            {/* Global Leaderboard */}
+            <div>
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Global Leaderboard</h3>
+              <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+                {leaderboard.length === 0 ? (
                 <div className="p-12 text-center">
                   <Trophy className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                   <p className="text-gray-600">No scores yet. Complete challenges to see rankings!</p>
@@ -459,6 +486,7 @@ export default function PlayerGame() {
                   ))}
                 </div>
               )}
+              </div>
             </div>
           </div>
         )}

@@ -47,6 +47,14 @@ export const gameAPI = {
     description?: string;
     start_date?: string;
     end_date?: string;
+    archetype_id?: string;
+    industry_id?: string;
+    company_name?: string;
+    product_description?: string;
+    enable_pods?: boolean;
+    pod_size?: number;
+    pod_assignment_method?: 'random' | 'manual' | 'balanced';
+    enable_category_awards?: boolean;
   }) => api.post('/gm/games', data),
 
   getGames: () => api.get('/gm/games'),
@@ -102,6 +110,54 @@ export const submissionAPI = {
     score: number;
     feedback?: string;
   }) => api.post(`/gm/submissions/${submissionId}/score`, data),
+};
+
+export const scenarioAPI = {
+  getArchetypes: () => api.get('/scenarios/archetypes'),
+
+  getIndustries: () => api.get('/scenarios/industries'),
+
+  getPreview: (archetypeId: string, industryId: string) =>
+    api.get(`/scenarios/preview?archetype=${archetypeId}&industry=${industryId}`),
+};
+
+export const podAPI = {
+  assignPods: (gameId: string) => api.post(`/gm/games/${gameId}/pods/assign`),
+
+  getGamePods: (gameId: string) => api.get(`/gm/games/${gameId}/pods`),
+
+  getPodLeaderboard: (gameId: string, podId: string) =>
+    api.get(`/gm/games/${gameId}/pods/${podId}/leaderboard`),
+
+  assignTeamToPod: (gameId: string, teamId: string, data: {
+    pod_id: string;
+    pod_name: string;
+  }) => api.put(`/gm/games/${gameId}/teams/${teamId}/pod`, data),
+
+  getCategoryRankings: (gameId: string, sessionId?: string) =>
+    api.get(`/gm/games/${gameId}/categories`, {
+      params: sessionId ? { session_id: sessionId } : undefined
+    }),
+
+  getCategoryLeaderboard: (gameId: string, category: string, params?: {
+    scope?: 'pod' | 'global';
+    pod_id?: string;
+    session_id?: string;
+  }) => api.get(`/gm/games/${gameId}/categories/${category}`, { params }),
+
+  getTeamCategoryRankings: (gameId: string, teamId: string, sessionId?: string) =>
+    api.get(`/gm/games/${gameId}/teams/${teamId}/categories`, {
+      params: sessionId ? { session_id: sessionId } : undefined
+    }),
+
+  snapshotCategoryRankings: (gameId: string, sessionId: string) =>
+    api.post(`/gm/games/${gameId}/categories/snapshot`, { session_id: sessionId }),
+
+  getHistoricalCategoryRankings: (gameId: string, sessionId: string, params?: {
+    category?: string;
+    scope?: 'pod' | 'global';
+    pod_id?: string;
+  }) => api.get(`/gm/games/${gameId}/sessions/${sessionId}/categories`, { params }),
 };
 
 export default api;

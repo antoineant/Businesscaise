@@ -14,6 +14,11 @@ export interface Game {
   status: 'setup' | 'active' | 'paused' | 'completed';
   start_date?: string;
   end_date?: string;
+  // Pod competition fields
+  enable_pods: boolean;
+  pod_size: number;
+  pod_assignment_method: 'random' | 'manual' | 'balanced';
+  enable_category_awards: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -90,4 +95,110 @@ export interface Analytics {
 export interface GameWithDetails extends Game {
   sessions?: Session[];
   teams?: Team[];
+}
+
+// Scenario Customization Types
+export interface Archetype {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  starting_cash: number;
+  starting_team_size: number;
+  starting_metrics: {
+    financial: number;
+    operations: number;
+    marketing: number;
+    hr: number;
+    customer_satisfaction: number;
+    overall: number;
+  };
+  difficulty_modifier: number;
+  narrative_template_set: string | null;
+}
+
+export interface Industry {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  product_examples: string[];
+  npc_set: string | null;
+  challenge_focus: string[];
+}
+
+export interface ScenarioPreview {
+  name: string;
+  description: string;
+  archetype: {
+    id: string;
+    name: string;
+    icon: string;
+    description: string;
+    difficulty_modifier: number;
+  };
+  industry: {
+    id: string;
+    name: string;
+    icon: string;
+    description: string;
+    product_examples: string[];
+  };
+  starting_conditions: {
+    cash: number;
+    team_size: number;
+    metrics: {
+      financial: number;
+      operations: number;
+      marketing: number;
+      hr: number;
+      customer_satisfaction: number;
+      overall: number;
+    };
+  };
+  focus_areas: string[];
+  example_products: string[];
+}
+
+// Pod Competition Types
+export interface PodInfo {
+  pod_id: string;
+  pod_name: string;
+  teams: Team[];
+  team_count: number;
+  avg_score: number;
+}
+
+export interface CategoryRanking {
+  category: 'financial' | 'operations' | 'marketing' | 'hr' | 'customer_satisfaction' | 'overall';
+  scope: 'pod' | 'global';
+  pod_id: string | null;
+  team_id: string;
+  team_name: string;
+  score: number;
+  rank: number;
+}
+
+export interface CategoryLeader {
+  category: 'financial' | 'operations' | 'marketing' | 'hr' | 'customer_satisfaction' | 'overall';
+  scope: 'pod' | 'global';
+  pod_id: string | null;
+  team_id: string;
+  team_name: string;
+  score: number;
+}
+
+export interface TeamCategoryRankings {
+  team_id: string;
+  team_name: string;
+  rankings: {
+    category: 'financial' | 'operations' | 'marketing' | 'hr' | 'customer_satisfaction' | 'overall';
+    pod_rank: number | null;
+    global_rank: number;
+    score: number;
+  }[];
+  awards: {
+    global_awards: string[];
+    pod_awards: string[];
+  };
 }

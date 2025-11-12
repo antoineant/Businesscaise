@@ -15,6 +15,11 @@ export interface Game {
   industry_id: string | null;
   company_name: string | null;
   product_description: string | null;
+  // Pod competition fields
+  enable_pods: boolean;
+  pod_size: number;
+  pod_assignment_method: 'random' | 'manual' | 'balanced';
+  enable_category_awards: boolean;
   created_at: Date;
   updated_at: Date;
 }
@@ -29,6 +34,11 @@ export interface CreateGameData {
   industry_id?: string;
   company_name?: string;
   product_description?: string;
+  // Pod competition fields
+  enable_pods?: boolean;
+  pod_size?: number;
+  pod_assignment_method?: 'random' | 'manual' | 'balanced';
+  enable_category_awards?: boolean;
 }
 
 export class GameModel {
@@ -37,8 +47,8 @@ export class GameModel {
    */
   static async create(data: CreateGameData): Promise<Game> {
     const result = await query(
-      `INSERT INTO games (title, description, game_master_id, settings, archetype_id, industry_id, company_name, product_description)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `INSERT INTO games (title, description, game_master_id, settings, archetype_id, industry_id, company_name, product_description, enable_pods, pod_size, pod_assignment_method, enable_category_awards)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
        RETURNING *`,
       [
         data.title,
@@ -48,7 +58,11 @@ export class GameModel {
         data.archetype_id || null,
         data.industry_id || null,
         data.company_name || null,
-        data.product_description || null
+        data.product_description || null,
+        data.enable_pods || false,
+        data.pod_size || 4,
+        data.pod_assignment_method || 'random',
+        data.enable_category_awards !== false // Default true
       ]
     );
 

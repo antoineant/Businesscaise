@@ -107,4 +107,31 @@ router.get('/:teamId/leaderboard',
   teamController.getLeaderboard
 );
 
+/**
+ * Get team's pod information
+ */
+router.get('/:teamId/pod',
+  [param('teamId').isUUID()],
+  validate,
+  teamController.getTeamPod
+);
+
+/**
+ * Get pod leaderboard for team's pod
+ */
+router.get('/:teamId/pod/leaderboard',
+  [param('teamId').isUUID()],
+  validate,
+  teamController.getPodLeaderboard
+);
+
+/**
+ * Get team's category rankings
+ */
+router.get('/:teamId/categories',
+  [param('teamId').isUUID()],
+  validate,
+  teamController.getTeamCategories
+);
+
 export default router;
