@@ -190,30 +190,50 @@ async function joinGameAsTeam(page: Page, gameId: string) {
 }
 
 test.describe('Phase 3: Scenario Customization - GM View', () => {
-  test.skip('GM can create game with scenario via UI', async ({ page }) => {
-    // Skipping: GM Dashboard (port 3002) not running - Team Frontend doesn't have GM game creation UI
-    console.log('[SKIPPED] GM game creation UI only exists in GM Dashboard (port 3002) which is not available');
+  test('GM can create game with scenario via UI', async ({ page }) => {
+    // Register and login
+    await registerAndLoginGM(page);
+
+    // Open create game modal
+    await page.getByRole('button', { name: /create.*game/i }).first().click();
+    await expect(page.getByRole('heading', { name: /create.*game/i, level: 3 })).toBeVisible({ timeout: 5000 });
+
+    // Fill form using semantic selectors (modal has labels, not IDs)
+    await page.getByLabel(/game title/i).fill(`Phase 3 Test ${Date.now()}`);
+    await page.getByLabel(/description/i).fill('Testing Phase 3 pod features');
+
+    // Submit form
+    await page.getByRole('button', { name: /^create game$/i }).click();
+
+    // Wait for modal to close and game to appear
+    await page.waitForTimeout(2000);
+    await expect(page.getByText(/phase 3 test/i)).toBeVisible({ timeout: 5000 });
+
+    console.log('✓ GM created game via UI');
   });
 
   test.skip('GM can view pod management page', async ({ page }) => {
-    // Skipping: GM Dashboard not available, Team Frontend doesn't have pod management UI yet
-    console.log('[SKIPPED] Pod management UI not yet implemented in Team Frontend');
+    // Skipping: Pod management UI not yet implemented
+    console.log('[SKIPPED] Pod management page not yet implemented');
   });
 });
 
-test.describe.skip('Phase 3: Scenario & Pods - Team Player View', () => {
-  // Skipping: Backend API (port 3001) not running - cannot create games via API
+test.describe('Phase 3: Scenario & Pods - Team Player View', () => {
   let gameId: string;
   let gmToken: string;
 
   test.beforeAll(async () => {
-    console.log('[SKIPPED] Backend API (port 3001) not running - cannot create test games');
     // Create game with scenario and pods via API
-    const gm = await registerGMViaAPI();
-    const gameData = await createGameWithScenarioAndPods(gm.token);
-    gameId = gameData.gameId;
-    gmToken = gm.token;
-    console.log(`Test game created: ${gameId}`);
+    try {
+      const gm = await registerGMViaAPI();
+      const gameData = await createGameWithScenarioAndPods(gm.token);
+      gameId = gameData.gameId;
+      gmToken = gm.token;
+      console.log(`[DIAGNOSTIC] Test game created: ${gameId}`);
+    } catch (error) {
+      console.error('[ERROR] Failed to create test game:', error.message);
+      throw new Error(`Cannot run team player tests - game creation failed: ${error.message}`);
+    }
   });
 
   test('Team sees scenario information in dashboard', async ({ page }) => {
@@ -361,13 +381,45 @@ test.describe.skip('Phase 3: Scenario & Pods - Team Player View', () => {
 });
 
 test.describe('Phase 3: Edge Cases', () => {
-  test.skip('GM can create game without scenario', async ({ page }) => {
-    // Skipping: GM Dashboard (port 3002) not running - Team Frontend doesn't have GM game creation UI
-    console.log('[SKIPPED] GM game creation UI only exists in GM Dashboard which is not available');
+  test('GM can create game without scenario', async ({ page }) => {
+    await registerAndLoginGM(page);
+
+    // Open create game modal
+    await page.getByRole('button', { name: /create.*game/i }).first().click();
+    await expect(page.getByRole('heading', { name: /create.*game/i, level: 3 })).toBeVisible({ timeout: 5000 });
+
+    // Fill only title (no scenario selection in basic modal)
+    const gameTitle = `No Scenario ${Date.now()}`;
+    await page.getByLabel(/game title/i).fill(gameTitle);
+
+    // Submit
+    await page.getByRole('button', { name: /^create game$/i }).click();
+
+    // Verify game created
+    await page.waitForTimeout(2000);
+    await expect(page.getByText(new RegExp(gameTitle, 'i'))).toBeVisible({ timeout: 5000 });
+
+    console.log('✓ Game created without scenario');
   });
 
-  test.skip('GM can create game without pods', async ({ page }) => {
-    // Skipping: GM Dashboard (port 3002) not running - Team Frontend doesn't have GM game creation UI
-    console.log('[SKIPPED] GM game creation UI only exists in GM Dashboard which is not available');
+  test('GM can create game without pods', async ({ page }) => {
+    await registerAndLoginGM(page);
+
+    // Open create game modal
+    await page.getByRole('button', { name: /create.*game/i }).first().click();
+    await expect(page.getByRole('heading', { name: /create.*game/i, level: 3 })).toBeVisible({ timeout: 5000 });
+
+    // Fill title
+    const gameTitle = `No Pods ${Date.now()}`;
+    await page.getByLabel(/game title/i).fill(gameTitle);
+
+    // Submit (no pod options in basic modal)
+    await page.getByRole('button', { name: /^create game$/i }).click();
+
+    // Verify game created
+    await page.waitForTimeout(2000);
+    await expect(page.getByText(new RegExp(gameTitle, 'i'))).toBeVisible({ timeout: 5000 });
+
+    console.log('✓ Game created without pods');
   });
 });
