@@ -10,6 +10,11 @@ export interface Game {
   current_session_id: string | null;
   status: 'setup' | 'active' | 'paused' | 'completed';
   settings: any;
+  // Scenario customization fields
+  archetype_id: string | null;
+  industry_id: string | null;
+  company_name: string | null;
+  product_description: string | null;
   created_at: Date;
   updated_at: Date;
 }
@@ -19,6 +24,11 @@ export interface CreateGameData {
   description?: string;
   game_master_id: string;
   settings?: any;
+  // Scenario customization fields
+  archetype_id?: string;
+  industry_id?: string;
+  company_name?: string;
+  product_description?: string;
 }
 
 export class GameModel {
@@ -27,10 +37,19 @@ export class GameModel {
    */
   static async create(data: CreateGameData): Promise<Game> {
     const result = await query(
-      `INSERT INTO games (title, description, game_master_id, settings)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO games (title, description, game_master_id, settings, archetype_id, industry_id, company_name, product_description)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING *`,
-      [data.title, data.description || null, data.game_master_id, data.settings || {}]
+      [
+        data.title,
+        data.description || null,
+        data.game_master_id,
+        data.settings || {},
+        data.archetype_id || null,
+        data.industry_id || null,
+        data.company_name || null,
+        data.product_description || null
+      ]
     );
 
     return result.rows[0];
