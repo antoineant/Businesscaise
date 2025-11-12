@@ -12,15 +12,19 @@ import * as socketHandler from '../socket/socket.handler';
  * POST /api/gm/games
  */
 export const createGame = asyncHandler(async (req: Request, res: Response) => {
-  const { title, description, settings } = req.body;
+  const { title, description, settings, archetype_id, industry_id, company_name, product_description } = req.body;
   const gameMasterId = req.user!.userId;
 
-  // Create game
+  // Create game with scenario fields
   const game = await GameModel.create({
     title,
     description,
     game_master_id: gameMasterId,
     settings: settings || {},
+    archetype_id,
+    industry_id,
+    company_name,
+    product_description,
   });
 
   // Create default 10 sessions (5 days, AM/PM)

@@ -14,6 +14,7 @@ import authRoutes from './routes/auth.routes';
 import gmRoutes from './routes/gm.routes';
 import teamRoutes from './routes/team.routes';
 import uploadRoutes from './routes/upload.routes';
+import scenarioRoutes from './routes/scenario.routes';
 
 // Import socket handler
 import { initializeSocket } from './socket/socket.handler';
@@ -70,6 +71,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/gm', gmRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/scenarios', scenarioRoutes);
 
 // Initialize WebSocket handlers
 initializeSocket(io);
