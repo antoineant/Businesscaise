@@ -3,6 +3,7 @@ import { body, param } from 'express-validator';
 import { authenticate, requirePlayer } from '../middleware/auth.middleware';
 import { validate } from '../middleware/validation.middleware';
 import * as teamController from '../controllers/team.controller';
+import * as narrativeController from '../controllers/narrative.controller';
 
 const router = Router();
 
@@ -132,6 +133,26 @@ router.get('/:teamId/categories',
   [param('teamId').isUUID()],
   validate,
   teamController.getTeamCategories
+);
+
+/**
+ * Narrative endpoints for teams
+ */
+// Get narratives for team
+router.get('/:teamId/narratives',
+  [param('teamId').isUUID()],
+  validate,
+  narrativeController.getTeamNarratives
+);
+
+// Get session briefing
+router.get('/:teamId/sessions/:sessionId/briefing',
+  [
+    param('teamId').isUUID(),
+    param('sessionId').isUUID(),
+  ],
+  validate,
+  narrativeController.getSessionBriefing
 );
 
 export default router;

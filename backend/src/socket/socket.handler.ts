@@ -240,6 +240,43 @@ export const notifyTeamJoined = (gameId: string, teamData: any) => {
   });
 };
 
+// Narrative created (notify all teams in game)
+export const notifyNarrativeCreated = (gameId: string, narrativeData: any) => {
+  if (!socketServer) return;
+  emitToGame(socketServer, gameId, 'narrative:created', {
+    narrative: narrativeData,
+    timestamp: new Date().toISOString(),
+  });
+};
+
+// Narrative updated (notify all teams in game)
+export const notifyNarrativeUpdated = (gameId: string, narrativeData: any) => {
+  if (!socketServer) return;
+  emitToGame(socketServer, gameId, 'narrative:updated', {
+    narrative: narrativeData,
+    timestamp: new Date().toISOString(),
+  });
+};
+
+// Narrative deleted (notify all teams in game)
+export const notifyNarrativeDeleted = (gameId: string, narrativeId: string) => {
+  if (!socketServer) return;
+  emitToGame(socketServer, gameId, 'narrative:deleted', {
+    narrativeId,
+    timestamp: new Date().toISOString(),
+  });
+};
+
+// GM Event created (notify all teams in game)
+export const notifyGMEventCreated = (gameId: string, eventData: any, narrativeData?: any) => {
+  if (!socketServer) return;
+  emitToGame(socketServer, gameId, 'event:created', {
+    event: eventData,
+    narrative: narrativeData,
+    timestamp: new Date().toISOString(),
+  });
+};
+
 export default {
   initializeSocket,
   getSocketServer,
@@ -256,4 +293,8 @@ export default {
   notifyEventInjected,
   notifyDeadlineExtended,
   notifyTeamJoined,
+  notifyNarrativeCreated,
+  notifyNarrativeUpdated,
+  notifyNarrativeDeleted,
+  notifyGMEventCreated,
 };

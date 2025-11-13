@@ -3,6 +3,7 @@ import { body, param } from 'express-validator';
 import { authenticate, requireGameMaster } from '../middleware/auth.middleware';
 import { validate } from '../middleware/validation.middleware';
 import * as gmController from '../controllers/gm.controller';
+import * as narrativeController from '../controllers/narrative.controller';
 
 const router = Router();
 
@@ -160,17 +161,76 @@ router.post('/submissions/:id/score',
 /**
  * Narratives & Events
  */
-router.post('/games/:id/narratives', async (req, res) => {
-  res.json({ message: 'Create narrative - to be implemented' });
-});
+// Create narrative
+router.post('/games/:gameId/narratives',
+  [
+    param('gameId').isUUID(),
+    body('type').isIn(['briefing', 'news', 'email', 'alert']).withMessage('Invalid narrative type'),
+    body('title').notEmpty().withMessage('Title is required'),
+    body('content').notEmpty().withMessage('Content is required'),
+    body('author').optional().isString(),
+    body('session_id').optional().isUUID(),
+    body('target_teams').optional().isArray(),
+    body('published_at').optional().isISO8601(),
+  ],
+  validate,
+  narrativeController.createNarrative
+);
 
-router.get('/games/:id/narratives', async (req, res) => {
-  res.json({ message: 'List narratives - to be implemented' });
-});
+// Get narratives with filters
+router.get('/games/:gameId/narratives',
+  [
+    param('gameId').isUUID(),
+  ],
+  validate,
+  narrativeController.getNarratives
+);
 
-router.post('/games/:id/events', async (req, res) => {
-  res.json({ message: 'Inject custom event - to be implemented' });
-});
+// Update narrative
+router.put('/narratives/:id',
+  [
+    param('id').isUUID(),
+    body('type').optional().isIn(['briefing', 'news', 'email', 'alert']),
+    body('title').optional().isString(),
+    body('content').optional().isString(),
+    body('author').optional().isString(),
+    body('session_id').optional().isUUID(),
+    body('target_teams').optional().isArray(),
+    body('published_at').optional().isISO8601(),
+  ],
+  validate,
+  narrativeController.updateNarrative
+);
+
+// Delete narrative
+router.delete('/narratives/:id',
+  [param('id').isUUID()],
+  validate,
+  narrativeController.deleteNarrative
+);
+
+// Create GM event
+router.post('/games/:gameId/events',
+  [
+    param('gameId').isUUID(),
+    body('event_type').notEmpty().withMessage('Event type is required'),
+    body('title').notEmpty().withMessage('Title is required'),
+    body('description').optional().isString(),
+    body('impacts').optional().isArray(),
+    body('target_teams').optional().isArray(),
+    body('applied_at').optional().isISO8601(),
+    body('auto_generate_narrative').optional().isBoolean(),
+  ],
+  validate,
+  narrativeController.createEvent
+);
+
+// Get events for a game
+router.get('/games/:gameId/events',
+  [param('gameId').isUUID()],
+  validate,
+  narrativeController.getEvents
+);
 
 /**
  * Analytics & Reporting
