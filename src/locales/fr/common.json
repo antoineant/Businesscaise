@@ -42,11 +42,25 @@
   },
   "fileUpload": {
     "dropHere": "Déposez votre fichier ici ou cliquez pour parcourir",
+    "dropFiles": "Déposez vos fichiers ici ou cliquez pour parcourir",
     "acceptedFormats": "Formats acceptés: {{formats}} (Max {{maxSize}}Mo)",
+    "maxPerFile": "Max {{maxSize}}Mo par fichier • Jusqu'à {{maxFiles}} fichiers",
     "processing": "Traitement du fichier...",
     "invalidType": "Type de fichier invalide. Formats acceptés: {{formats}}",
+    "invalidTypeShort": "Type de fichier invalide. Acceptés: {{formats}}",
     "tooLarge": "Fichier trop volumineux. Taille maximale: {{maxSize}}Mo",
-    "failed": "Échec du traitement du fichier. Veuillez réessayer."
+    "tooLargeShort": "Fichier trop volumineux. Taille max: {{maxSize}}Mo",
+    "maxFilesExceeded": "Maximum {{maxFiles}} fichiers autorisés",
+    "failed": "Échec du traitement du fichier. Veuillez réessayer.",
+    "selectedFiles": "Fichiers Sélectionnés ({{count}}/{{max}})",
+    "uploadFiles": "Téléverser {{count}} fichier",
+    "uploadFiles_plural": "Téléverser {{count}} fichiers",
+    "fileSizeUnits": {
+      "bytes": "Octets",
+      "kb": "Ko",
+      "mb": "Mo",
+      "gb": "Go"
+    }
   },
   "common": {
     "week": "Semaine",

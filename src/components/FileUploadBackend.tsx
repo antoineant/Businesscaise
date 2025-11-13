@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Upload, X, FileText, CheckCircle, AlertCircle } from 'lucide-react';
 import { unifiedUploadAPI as uploadAPI } from '../services/api.unified';
 
@@ -29,6 +30,7 @@ export default function FileUploadBackend({
   onUploadComplete,
   onUploadError,
 }: FileUploadBackendProps) {
+  const { t } = useTranslation('common');
   const [selectedFiles, setSelectedFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -37,13 +39,13 @@ export default function FileUploadBackend({
     // Check file type
     const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
     if (!acceptedFormats.includes(fileExtension)) {
-      return `Invalid file type. Accepted: ${acceptedFormats.join(', ')}`;
+      return t('fileUpload.invalidTypeShort', { formats: acceptedFormats.join(', ') });
     }
 
     // Check file size
     const fileSizeMB = file.size / (1024 * 1024);
     if (fileSizeMB > maxSizeMB) {
-      return `File too large. Max size: ${maxSizeMB}MB`;
+      return t('fileUpload.tooLargeShort', { maxSize: maxSizeMB });
     }
 
     return null;
@@ -56,7 +58,7 @@ export default function FileUploadBackend({
 
     // Check if adding these files would exceed the max
     if (selectedFiles.length + fileArray.length > maxFiles) {
-      onUploadError?.(`Maximum ${maxFiles} files allowed`);
+      onUploadError?.(t('fileUpload.maxFilesExceeded', { maxFiles }));
       return;
     }
 
@@ -147,11 +149,11 @@ export default function FileUploadBackend({
   };
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return `0 ${t('fileUpload.fileSizeUnits.bytes')}`;
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizeKeys = ['bytes', 'kb', 'mb', 'gb'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + t(`fileUpload.fileSizeUnits.${sizeKeys[i]}`);
   };
 
   return (
@@ -183,10 +185,10 @@ export default function FileUploadBackend({
           >
             <Upload className="w-12 h-12 text-gray-400" />
             <p className="text-gray-700 font-medium">
-              Drop files here or click to browse
+              {t('fileUpload.dropFiles')}
             </p>
             <p className="text-sm text-gray-500">
-              {acceptedFormats.join(', ')} • Max {maxSizeMB}MB per file • Up to {maxFiles} files
+              {acceptedFormats.join(', ')} • {t('fileUpload.maxPerFile', { maxSize: maxSizeMB, maxFiles })}
             </p>
           </label>
         </div>
@@ -197,14 +199,16 @@ export default function FileUploadBackend({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <h4 className="font-medium text-gray-900">
-              Selected Files ({selectedFiles.length}/{maxFiles})
+              {t('fileUpload.selectedFiles', { count: selectedFiles.length, max: maxFiles })}
             </h4>
             {!isUploading && selectedFiles.some((f) => f.status === 'pending') && (
               <button
                 onClick={uploadFiles}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
               >
-                Upload {selectedFiles.length} file{selectedFiles.length > 1 ? 's' : ''}
+                {selectedFiles.length > 1
+                  ? t('fileUpload.uploadFiles_plural', { count: selectedFiles.length })
+                  : t('fileUpload.uploadFiles', { count: selectedFiles.length })}
               </button>
             )}
           </div>
