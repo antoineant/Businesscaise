@@ -320,7 +320,7 @@ test.describe('Phase 3: Scenario Customization - GM View', () => {
     // Wait for modal to close and game to appear
     console.log('[STEP 6] Waiting for game to appear in list...');
     await page.waitForTimeout(2000);
-    await expect(page.getByText(/phase 3 test/i)).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole('heading', { name: /phase 3 test/i })).toBeVisible({ timeout: 5000 });
     console.log('[STEP 6] ✓ Game visible in list');
 
     console.log('✓ GM created game via UI');
@@ -368,7 +368,7 @@ test.describe('Phase 3: Scenario & Pods - Team Player View', () => {
       await confirmPassword.fill(player.password);
     }
 
-    await page.getByRole('button', { name: /register|sign up/i }).click();
+    await page.getByRole('button', { name: /create account|register|sign up/i }).click();
     await page.waitForURL(/.*\/(dashboard|games)/, { timeout: 10000 });
 
     // Join game
@@ -407,7 +407,7 @@ test.describe('Phase 3: Scenario & Pods - Team Player View', () => {
       await confirmPassword.fill(player.password);
     }
 
-    await page.getByRole('button', { name: /register|sign up/i }).click();
+    await page.getByRole('button', { name: /create account|register|sign up/i }).click();
     await page.waitForURL(/.*\/(dashboard|games)/, { timeout: 10000 });
 
     // Join game
@@ -462,7 +462,7 @@ test.describe('Phase 3: Scenario & Pods - Team Player View', () => {
       await confirmPassword.fill(player.password);
     }
 
-    await page.getByRole('button', { name: /register|sign up/i }).click();
+    await page.getByRole('button', { name: /create account|register|sign up/i }).click();
     await page.waitForURL(/.*\/(dashboard|games)/, { timeout: 10000 });
 
     // Join game
