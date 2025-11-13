@@ -175,4 +175,51 @@ router.get('/:teamId/market-query/history',
   narrativeController.getMarketQueryHistory
 );
 
+/**
+ * Narrative Read Tracking
+ */
+// Mark single narrative as read
+router.post('/:teamId/narratives/:narrativeId/read',
+  [
+    param('teamId').isUUID(),
+    param('narrativeId').isUUID(),
+  ],
+  validate,
+  narrativeController.markNarrativeAsRead
+);
+
+// Mark multiple narratives as read (batch)
+router.post('/:teamId/narratives/read-batch',
+  [
+    param('teamId').isUUID(),
+    body('narrativeIds').isArray().withMessage('narrativeIds must be an array'),
+  ],
+  validate,
+  narrativeController.markMultipleAsRead
+);
+
+// Mark all narratives as read
+router.post('/:teamId/narratives/read-all',
+  [param('teamId').isUUID()],
+  validate,
+  narrativeController.markAllAsRead
+);
+
+// Get unread count
+router.get('/:teamId/narratives/unread-count',
+  [param('teamId').isUUID()],
+  validate,
+  narrativeController.getUnreadCount
+);
+
+// Get read status for narratives
+router.post('/:teamId/narratives/read-status',
+  [
+    param('teamId').isUUID(),
+    body('narrativeIds').isArray().withMessage('narrativeIds must be an array'),
+  ],
+  validate,
+  narrativeController.getReadStatus
+);
+
 export default router;

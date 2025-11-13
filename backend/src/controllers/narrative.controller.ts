@@ -3,6 +3,7 @@ import { NarrativeModel } from '../models/Narrative.model';
 import { GMEventModel } from '../models/GMEvent.model';
 import { GameModel } from '../models/Game.model';
 import { PerplexityUsageModel } from '../models/PerplexityUsage.model';
+import { NarrativeReadsModel } from '../models/NarrativeReads.model';
 import { AppError, asyncHandler } from '../middleware/errorHandler.middleware';
 import * as socketHandler from '../socket/socket.handler';
 import perplexityService from '../services/perplexity.service';
@@ -289,7 +290,7 @@ export const getEvents = asyncHandler(async (req: Request, res: Response) => {
  */
 export const getTeamNarratives = asyncHandler(async (req: Request, res: Response) => {
   const { teamId } = req.params;
-  const { type } = req.query;
+  const { type, includeRead } = req.query;
 
   // Note: Team authorization is handled by team middleware
   // Get team to find game_id
@@ -313,9 +314,26 @@ export const getTeamNarratives = asyncHandler(async (req: Request, res: Response
   // Get narratives visible to this team
   const narratives = await NarrativeModel.findByTeam(gameId, teamId, filters);
 
+  // Get read status for all narratives (if requested or by default)
+  let narrativesWithReadStatus = narratives;
+  if (includeRead !== 'false' && narratives.length > 0) {
+    const narrativeIds = narratives.map(n => n.id);
+    const readStatusMap = await NarrativeReadsModel.getReadStatus(narrativeIds, teamId);
+
+    narrativesWithReadStatus = narratives.map(narrative => ({
+      ...narrative,
+      isRead: readStatusMap.get(narrative.id) || false,
+    }));
+  }
+
+  // Get unread count
+  const unreadCounts = await NarrativeReadsModel.getUnreadCountsByType(teamId, gameId);
+
   res.json({
-    narratives,
-    total: narratives.length
+    narratives: narrativesWithReadStatus,
+    total: narratives.length,
+    unreadCount: unreadCounts.total,
+    unreadByType: unreadCounts.byType,
   });
 });
 
@@ -594,5 +612,200 @@ export const getMarketQueryHistory = asyncHandler(async (req: Request, res: Resp
       total: rateLimit,
       resetIn: rateLimitCheck.resetIn,
     },
+  });
+});
+
+/**
+ * NARRATIVE READ TRACKING ENDPOINTS
+ */
+
+/**
+ * Mark narrative as read
+ * POST /api/teams/:teamId/narratives/:narrativeId/read
+ */
+export const markNarrativeAsRead = asyncHandler(async (req: Request, res: Response) => {
+  const { teamId, narrativeId } = req.params;
+  const userId = req.user!.userId;
+
+  // Verify narrative exists and is visible to team
+  const teamResult = await import('../config/database').then(db => db.query(
+    'SELECT game_id FROM teams WHERE id = $1',
+    [teamId]
+  ));
+
+  if (teamResult.rows.length === 0) {
+    throw new AppError('Team not found', 404);
+  }
+
+  const gameId = teamResult.rows[0].game_id;
+
+  // Get narrative
+  const narrative = await NarrativeModel.findById(narrativeId);
+  if (!narrative) {
+    throw new AppError('Narrative not found', 404);
+  }
+
+  // Verify narrative is visible to this team
+  if (narrative.target_teams && !narrative.target_teams.includes(teamId)) {
+    throw new AppError('Narrative not visible to this team', 403);
+  }
+
+  // Mark as read
+  const newlyMarked = await NarrativeReadsModel.markAsRead({
+    narrative_id: narrativeId,
+    team_id: teamId,
+    read_by: userId,
+  });
+
+  res.json({
+    message: newlyMarked ? 'Narrative marked as read' : 'Already marked as read',
+    narrativeId,
+    newlyMarked,
+  });
+});
+
+/**
+ * Mark multiple narratives as read
+ * POST /api/teams/:teamId/narratives/read-batch
+ */
+export const markMultipleAsRead = asyncHandler(async (req: Request, res: Response) => {
+  const { teamId } = req.params;
+  const { narrativeIds } = req.body;
+  const userId = req.user!.userId;
+
+  if (!Array.isArray(narrativeIds) || narrativeIds.length === 0) {
+    throw new AppError('narrativeIds must be a non-empty array', 400);
+  }
+
+  // Mark as read
+  const markedCount = await NarrativeReadsModel.markMultipleAsRead(
+    narrativeIds,
+    teamId,
+    userId
+  );
+
+  res.json({
+    message: `${markedCount} narrative(s) marked as read`,
+    markedCount,
+    total: narrativeIds.length,
+  });
+});
+
+/**
+ * Mark all narratives as read
+ * POST /api/teams/:teamId/narratives/read-all
+ */
+export const markAllAsRead = asyncHandler(async (req: Request, res: Response) => {
+  const { teamId } = req.params;
+  const userId = req.user!.userId;
+
+  // Get team's game
+  const teamResult = await import('../config/database').then(db => db.query(
+    'SELECT game_id FROM teams WHERE id = $1',
+    [teamId]
+  ));
+
+  if (teamResult.rows.length === 0) {
+    throw new AppError('Team not found', 404);
+  }
+
+  const gameId = teamResult.rows[0].game_id;
+
+  // Mark all as read
+  const markedCount = await NarrativeReadsModel.markAllAsRead(teamId, gameId, userId);
+
+  res.json({
+    message: `All narratives marked as read`,
+    markedCount,
+  });
+});
+
+/**
+ * Get unread count for team
+ * GET /api/teams/:teamId/narratives/unread-count
+ */
+export const getUnreadCount = asyncHandler(async (req: Request, res: Response) => {
+  const { teamId } = req.params;
+
+  // Get team's game
+  const teamResult = await import('../config/database').then(db => db.query(
+    'SELECT game_id FROM teams WHERE id = $1',
+    [teamId]
+  ));
+
+  if (teamResult.rows.length === 0) {
+    throw new AppError('Team not found', 404);
+  }
+
+  const gameId = teamResult.rows[0].game_id;
+
+  // Get unread counts
+  const counts = await NarrativeReadsModel.getUnreadCountsByType(teamId, gameId);
+
+  res.json({
+    unreadCount: counts.total,
+    byType: counts.byType,
+  });
+});
+
+/**
+ * Get read status for narratives (used when displaying list)
+ * POST /api/teams/:teamId/narratives/read-status
+ */
+export const getReadStatus = asyncHandler(async (req: Request, res: Response) => {
+  const { teamId } = req.params;
+  const { narrativeIds } = req.body;
+
+  if (!Array.isArray(narrativeIds) || narrativeIds.length === 0) {
+    throw new AppError('narrativeIds must be a non-empty array', 400);
+  }
+
+  // Get read status
+  const statusMap = await NarrativeReadsModel.getReadStatus(narrativeIds, teamId);
+
+  // Convert Map to object for JSON response
+  const status: Record<string, boolean> = {};
+  statusMap.forEach((value, key) => {
+    status[key] = value;
+  });
+
+  res.json({ status });
+});
+
+/**
+ * Get narrative read statistics (for GM)
+ * GET /api/gm/narratives/:narrativeId/read-stats
+ */
+export const getNarrativeReadStats = asyncHandler(async (req: Request, res: Response) => {
+  const { narrativeId } = req.params;
+  const gameMasterId = req.user!.userId;
+
+  // Get narrative and verify ownership
+  const narrative = await NarrativeModel.findById(narrativeId);
+  if (!narrative) {
+    throw new AppError('Narrative not found', 404);
+  }
+
+  const game = await GameModel.findById(narrative.game_id);
+  if (!game) {
+    throw new AppError('Game not found', 404);
+  }
+
+  if (game.game_master_id !== gameMasterId) {
+    throw new AppError('Not authorized', 403);
+  }
+
+  // Get read statistics
+  const stats = await NarrativeReadsModel.getNarrativeReadStats(narrativeId);
+  const readByTeams = await NarrativeReadsModel.findByNarrative(narrativeId);
+
+  res.json({
+    narrativeId,
+    stats,
+    readByTeams: readByTeams.map(r => ({
+      teamId: r.team_id,
+      teamName: (r as any).team_name,
+      readAt: r.read_at,
+    })),
   });
 });
