@@ -170,12 +170,14 @@
    - ⏳ PDF annotation tools (Future enhancement)
 
 ### Phase 3: Enhanced Storytelling & Scenario System (Weeks 5-6)
-1. **Narrative System** 📝 Design Complete
+1. **Narrative System + AI Integration** 📝 Design Complete
    - Morning briefing generator
-   - News feed
-   - Email notifications
+   - News feed with real-world context
+   - Email notifications from NPCs
    - Character/NPC management
-   - **Status:** Implementation plan created (NARRATIVE_SYSTEM_IMPLEMENTATION_PLAN.md)
+   - **NEW: Reality Lens** - AI-enhanced narratives with Perplexity
+   - **NEW: Ask the Market** - Student research assistant
+   - **Status:** Implementation plan created (NARRATIVE_SYSTEM_IMPLEMENTATION_PLAN.md + PERPLEXITY_AI_INTEGRATION.md)
 
 2. **Company Scenario Customization** ✅ Complete (Nov 13, 2025)
    - ✅ Backend database migration (company_archetypes, industry_types tables)
@@ -249,13 +251,16 @@
 | Database Migrations | ✅ Complete | 100% |
 | Submission Scoring (GM) | ✅ Complete | 100% |
 | Storytelling System | 📝 Design | 5% |
+| Perplexity AI Integration | 📝 Design | 5% |
+| Reality Lens Feature | 📝 Design | 5% |
+| Ask the Market Feature | 📝 Design | 5% |
 | Scenario Customization | ✅ Complete | 100% |
 | Pod Competition System | ✅ Complete | 100% |
 | Phase 3 Integration Tests | ✅ Complete | 100% |
 
-**Overall Progress: ~99%** (88/88 E2E tests passing, Phase 3 features complete with full E2E coverage, all core features operational)
+**Overall Progress: ~99%** (88/88 E2E tests passing, Phase 3A features complete with full E2E coverage, all core features operational)
 **Phase 3A Progress:** 100% (Backend + Frontend + Database + Integration Testing complete for scenario customization and pod competition)
-**Phase 3B Progress:** 5% (Narrative system design complete, implementation pending)
+**Phase 3B Progress:** 5% (Narrative system + Perplexity AI integration designed, 7-week implementation plan ready)
 
 ---
 

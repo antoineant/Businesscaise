@@ -2,8 +2,8 @@
 
 **Start Date:** November 12, 2025
 **Phase 3A Completion:** November 13, 2025 ✅
-**Phase 3B Target:** January 7, 2026 (6 weeks remaining)
-**Total Effort:** ~275-317 hours
+**Phase 3B Target:** January 14, 2026 (7 weeks remaining)
+**Total Effort:** ~320-370 hours
 
 ## ✅ Phase 3A - COMPLETE (Nov 13, 2025)
 
@@ -17,23 +17,30 @@
 - ✅ Frontend UI complete (GM + Team Player)
 - ✅ E2E integration tests passing (6/6)
 
-**Remaining:**
-- ⏳ Narrative/Storytelling System (Phase 3B - 120 hours)
+**Phase 3B - Enhanced Narrative System + AI Integration:**
+- ⏳ Narrative/Storytelling System (120 hours)
+- ⏳ **NEW: Perplexity AI Integration** (45-65 hours)
+  - **Reality Lens** - Auto-enhanced narratives with real-world context
+  - **Ask the Market** - Student research assistant
 
 ---
 
 ## 📋 Overview
 
-**Three Major Systems:**
-1. **Company Scenario Customization** (85-107 hours) - Context-aware simulation
-2. **Pod Competition & Category Awards** (70-90 hours) - Scalable competition
-3. **Narrative/Storytelling System** (120 hours) - Immersive experience
+**Five Major Systems:**
+1. ✅ **Company Scenario Customization** (85-107 hours) - Context-aware simulation [COMPLETE]
+2. ✅ **Pod Competition & Category Awards** (70-90 hours) - Scalable competition [COMPLETE]
+3. ⏳ **Narrative/Storytelling System** (120 hours) - Immersive experience
+4. ⏳ **Reality Lens AI** (25-35 hours) - Real-world context integration via Perplexity
+5. ⏳ **Ask the Market** (20-30 hours) - Student research assistant via Perplexity
 
 **Integration Points:**
 - Narratives are scenario-aware (SaaS vs. restaurant vs. healthcare)
 - Narratives are pod-aware (pod rivalries, category achievements)
+- **NEW: Narratives are reality-aware** (real business news injected dynamically)
+- **NEW: Students research real business questions** (learning + engagement)
 - Category awards align with scenario metrics
-- All three systems enhance each other
+- All five systems create a cohesive, immersive learning experience
 
 ---
 
@@ -42,32 +49,50 @@
 ### Phased Parallel Approach
 
 ```
-Week 1-2: Foundation (Scenarios + Pods Backend)
-├─ Scenario database & API
-├─ Pod database & API
-└─ Both can be developed in parallel
+Week 1-2: Foundation (Scenarios + Pods Backend) ✅ COMPLETED
+├─ Scenario database & API ✅
+├─ Pod database & API ✅
+└─ Both systems fully operational ✅
 
-Week 3-4: User Interfaces (GM + Team)
-├─ GM: Scenario selection + Pod management
-├─ Team: Scenario display + Pod leaderboards
-└─ Frontend for both systems
+Week 3-4: User Interfaces (GM + Team) ✅ COMPLETED
+├─ GM: Scenario selection + Pod management ✅
+├─ Team: Scenario display + Pod leaderboards ✅
+└─ Frontend for both systems ✅
 
-Week 5-6: Narrative System
-├─ Narrative engine (integrates scenarios + pods)
-├─ Template system with variables
-└─ NPC system
+Week 5-6: Narrative System + Perplexity Foundation ⏳ NEXT
+├─ Narrative database models (NarrativeModel, GMEventModel)
+├─ Narrative API endpoints (GM + Team)
+├─ Perplexity service integration
+├─ Reality Lens backend implementation
+└─ WebSocket notifications for narratives
 
-Week 7-8: Integration & Testing
-├─ Scenario + Pod + Narrative integration
-├─ E2E tests for all workflows
-└─ Polish & documentation
+Week 6-7: GM Dashboard + Reality Lens UI ⏳
+├─ NarrativesPage.tsx (list, create, edit narratives)
+├─ Reality Lens toggle and preview
+├─ Template library with AI enhancement option
+└─ Event creation with auto-generated narratives
+
+Week 7: Team Player UI + Ask the Market ⏳
+├─ NewsFeedTab.tsx (timeline with real-world context)
+├─ InboxTab.tsx (NPC emails)
+├─ Ask the Market research assistant UI
+├─ Query credits and rate limiting
+└─ Real-time narrative notifications
+
+Week 7-8: Integration & Testing ⏳
+├─ Scenario + Pod + Narrative + AI integration
+├─ E2E tests for narrative workflows
+├─ E2E tests for Perplexity features
+├─ Performance testing and caching optimization
+└─ Documentation and GM training materials
 ```
 
 **Why This Order:**
-1. **Scenarios first** - Provides context for narratives
-2. **Pods in parallel** - Independent system, can develop alongside scenarios
-3. **Narratives last** - Needs both scenario and pod context to work effectively
-4. **Testing throughout** - Write tests as we build
+1. ✅ **Scenarios first** - Provides context for narratives [DONE]
+2. ✅ **Pods in parallel** - Independent system [DONE]
+3. ⏳ **Narratives + AI together** - Build Perplexity integration as we build narratives
+4. ⏳ **Reality Lens before Ask Market** - Simpler feature validates AI integration
+5. ⏳ **Testing throughout** - Write tests as we build
 
 ---
 
@@ -679,6 +704,230 @@ Week 7-8: Integration & Testing
 - [ ] Documentation complete
 - [ ] Ready for deployment
 - [ ] Training materials available
+
+---
+
+## 📅 Phase 3B: Detailed Implementation Plan
+
+### Week 5: Narrative Backend + Perplexity Integration (Nov 18-24)
+
+#### Days 1-3: Narrative Models & Basic API
+- [ ] Create `NarrativeModel.ts` with CRUD operations
+  - `create()`, `findByGame()`, `findByType()`, `update()`, `delete()`
+  - Support filtering by target_teams, session_id, type
+- [ ] Create `GMEventModel.ts` with event management
+  - Handle metric impacts via JSONB
+  - Auto-generate narratives from events
+- [ ] Implement GM narrative API endpoints
+  - `POST /api/gm/games/:id/narratives` - Create narrative
+  - `GET /api/gm/games/:id/narratives` - List with filters
+  - `PUT /api/gm/narratives/:id` - Update narrative
+  - `DELETE /api/gm/narratives/:id` - Delete narrative
+- [ ] Implement GM event API endpoints
+  - `POST /api/gm/games/:id/events` - Create event
+  - `GET /api/gm/games/:id/events` - List events
+- [ ] Add WebSocket events for narrative notifications
+
+**Deliverables:** Narrative CRUD API functional, WebSocket notifications working
+
+#### Days 4-5: Perplexity Service Integration
+- [ ] Create `PerplexityService.ts` with API client
+  ```typescript
+  class PerplexityService {
+    async search(query: string): Promise<SearchResult>
+    async generateRealityContext(industry, archetype): Promise<Context>
+    async answerBusinessQuery(question: string): Promise<Answer>
+  }
+  ```
+- [ ] Implement caching layer (Redis or in-memory)
+  - Cache duration: 24 hours for market context
+  - Reduce API costs
+- [ ] Create API endpoints for AI features
+  - `POST /api/gm/games/:id/enhance-narrative` - Add reality context
+  - `POST /api/teams/:teamId/market-query` - Ask the Market
+- [ ] Implement rate limiting for student queries
+  - 3-5 queries per team per session
+  - Store in `perplexity_usage` table
+
+**Deliverables:** Perplexity integration working, rate limiting functional
+
+#### Days 6-7: Team Narrative API
+- [ ] Implement team narrative viewing endpoints
+  - `GET /api/teams/:teamId/narratives` - Get filtered narratives
+  - `GET /api/teams/:teamId/sessions/:sessionId/briefing` - Session briefing
+  - `POST /api/teams/:teamId/narratives/:id/read` - Mark as read
+- [ ] Add unread count tracking
+- [ ] Test all API endpoints with Postman
+
+**Deliverables:** Team API complete, ready for frontend integration
+
+---
+
+### Week 6: GM Dashboard UI + Reality Lens (Nov 25 - Dec 1)
+
+#### Days 1-3: Narratives Management Page
+- [ ] Create `NarrativesPage.tsx` (GM Dashboard)
+  - List view with filters (type, session, team)
+  - Tabs: All, Briefings, News, Emails, Alerts
+  - CRUD operations UI
+- [ ] Create `CreateNarrativeModal.tsx`
+  - Type selector (briefing/news/email/alert)
+  - Title and author fields
+  - Rich text editor for content
+  - Target team selector (all or specific)
+  - Session linkage dropdown
+  - **NEW: "Enhance with Reality Lens" checkbox**
+- [ ] Create `EditNarrativeModal.tsx`
+  - Same as create, pre-populated
+
+**Deliverables:** GM can create and manage narratives via UI
+
+#### Days 4-5: Reality Lens UI Integration
+- [ ] Add "Reality Lens" toggle to CreateNarrativeModal
+  - Shows preview of AI-enhanced content
+  - GM can edit before publishing
+- [ ] Create `RealityContextPreview.tsx` component
+  - Shows: Original content vs. AI-enhanced version
+  - Displays sources from Perplexity
+  - Accept/Reject/Edit flow
+- [ ] Add Reality Lens to game settings
+  - Enable/disable per game
+  - Set enhancement frequency (every session, weekly, manual)
+- [ ] Integrate with narrative list
+  - Badge showing "AI-Enhanced" on narratives
+
+**Deliverables:** Reality Lens fully integrated into GM workflow
+
+#### Days 6-7: Event Creation + Template Library
+- [ ] Create `CreateEventModal.tsx`
+  - Event type selector (crisis, market_shift, competitor, etc.)
+  - Metric impacts UI (select metric, specify change)
+  - Auto-generate narrative option
+  - **NEW: "Get Inspiration from Real Events" button**
+- [ ] Create `TemplateLibraryModal.tsx`
+  - Browse pre-built templates (20+ scenarios)
+  - AI-enhanced templates with real examples
+  - One-click apply
+
+**Deliverables:** Event creation and templates complete
+
+---
+
+### Week 7: Team Player UI + Ask the Market (Dec 2-8)
+
+#### Days 1-3: News Feed & Inbox Tabs
+- [ ] Create `NewsFeedTab.tsx` (Team Player Dashboard)
+  - Timeline view of news articles
+  - Show "Real-World Context" badge for AI-enhanced content
+  - Filter by type (news, briefing, alert)
+  - Mark as read functionality
+- [ ] Create `InboxTab.tsx`
+  - Email inbox view
+  - From/Subject/Preview layout
+  - Unread indicators and counts
+  - Read/Unread filter
+- [ ] Enhance session view with briefing display
+  - Show morning briefing at top of session
+  - Highlight AI-enhanced real-world context sections
+
+**Deliverables:** Team can view narratives in organized UI
+
+#### Days 4-5: Ask the Market Feature
+- [ ] Create `MarketQueryPanel.tsx` (Team Dashboard)
+  ```
+  ┌────────────────────────────────────┐
+  │ 💡 Ask the Market          [3/5]   │
+  ├────────────────────────────────────┤
+  │ Your question:                      │
+  │ [________________________________] │
+  │                   [Ask Market]     │
+  │                                     │
+  │ 📊 Recent Queries:                 │
+  │ • What should we do when...        │
+  │ • How do companies handle...       │
+  └────────────────────────────────────┘
+  ```
+- [ ] Create `MarketQueryResult.tsx` component
+  - Display AI-synthesized answer
+  - Show sources with links
+  - Suggest in-game actions based on answer
+  - Save query history
+- [ ] Add query credits display
+  - Show remaining credits
+  - Refill notification when session unlocks
+- [ ] Implement query history view
+  - Team can review past questions/answers
+
+**Deliverables:** Ask the Market fully functional for students
+
+#### Days 6-7: Real-time Notifications
+- [ ] Add WebSocket listeners for narratives
+  - Listen for new narratives
+  - Update unread counts in real-time
+- [ ] Create notification toast component
+  - "New briefing available for Session 3"
+  - "You have a new email from Sarah Chen"
+- [ ] Add notification preferences
+  - Enable/disable notifications
+  - Sound on/off
+
+**Deliverables:** Real-time narrative delivery working
+
+---
+
+### Week 8: Integration, Testing & Documentation (Dec 9-15)
+
+#### Days 1-2: E2E Test Suite - Narratives
+- [ ] Test GM narrative creation workflow
+  - Create briefing, news, email, alert
+  - Edit and delete narratives
+  - Target specific teams
+- [ ] Test team narrative viewing
+  - View news feed
+  - Read inbox
+  - Mark as read
+  - Verify unread counts
+
+#### Days 3-4: E2E Test Suite - AI Features
+- [ ] Test Reality Lens
+  - Enable/disable per game
+  - Enhance narrative with real context
+  - Verify Perplexity API calls
+  - Test caching (same query = cached result)
+- [ ] Test Ask the Market
+  - Submit query and receive answer
+  - Verify sources included
+  - Test rate limiting (exceed credits)
+  - Verify query history
+
+#### Days 5-6: Performance & Polish
+- [ ] Performance testing
+  - 100+ narratives per game
+  - WebSocket notification latency
+  - Perplexity API response times
+  - Cache hit rates
+- [ ] UI/UX polish
+  - Loading states
+  - Error handling
+  - Empty states
+  - Mobile responsiveness
+
+#### Day 7: Documentation & Training
+- [ ] GM Documentation
+  - How to create narratives
+  - How to use Reality Lens
+  - How to use templates
+  - Best practices for storytelling
+- [ ] Student Documentation
+  - How to read narratives
+  - How to use Ask the Market
+  - Query tips and examples
+- [ ] Developer Documentation
+  - Perplexity API integration guide
+  - Rate limiting configuration
+  - Caching strategy
+
+**Deliverables:** Full test suite passing, documentation complete, Phase 3B ready for production
 
 ---
 
