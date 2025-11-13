@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Award, DollarSign, Settings, Megaphone, Users as UsersIcon, Heart, Trophy, Loader2 } from 'lucide-react';
 import { unifiedTeamAPI } from '../services/api.unified';
 
@@ -15,42 +16,36 @@ interface CategoryRanking {
 
 const CATEGORY_CONFIG = {
   financial: {
-    name: 'Financial Excellence',
     icon: DollarSign,
     color: 'text-green-600',
     bg: 'bg-green-50',
     border: 'border-green-200',
   },
   operations: {
-    name: 'Operations Leader',
     icon: Settings,
     color: 'text-blue-600',
     bg: 'bg-blue-50',
     border: 'border-blue-200',
   },
   marketing: {
-    name: 'Marketing Champion',
     icon: Megaphone,
     color: 'text-purple-600',
     bg: 'bg-purple-50',
     border: 'border-purple-200',
   },
   hr: {
-    name: 'Best Employer',
     icon: UsersIcon,
     color: 'text-indigo-600',
     bg: 'bg-indigo-50',
     border: 'border-indigo-200',
   },
   customer_satisfaction: {
-    name: 'Customer Favorite',
     icon: Heart,
     color: 'text-pink-600',
     bg: 'bg-pink-50',
     border: 'border-pink-200',
   },
   overall: {
-    name: 'Overall Champion',
     icon: Trophy,
     color: 'text-yellow-600',
     bg: 'bg-yellow-50',
@@ -59,6 +54,7 @@ const CATEGORY_CONFIG = {
 };
 
 export const CategoryRankingsCard: React.FC<CategoryRankingsCardProps> = ({ teamId }) => {
+  const { t } = useTranslation('common');
   const [loading, setLoading] = useState(true);
   const [enabled, setEnabled] = useState(false);
   const [rankings, setRankings] = useState<CategoryRanking[]>([]);
@@ -117,11 +113,11 @@ export const CategoryRankingsCard: React.FC<CategoryRankingsCardProps> = ({ team
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold text-gray-900 flex items-center">
           <Award className="w-5 h-5 mr-2 text-yellow-600" />
-          Category Rankings
+          {t('categoryRankings.title')}
         </h3>
         {totalAwards > 0 && (
           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-            {totalAwards} {totalAwards === 1 ? 'Award' : 'Awards'}
+            {totalAwards} {totalAwards === 1 ? t('categoryRankings.award') : t('categoryRankings.awards')}
           </span>
         )}
       </div>
@@ -130,21 +126,21 @@ export const CategoryRankingsCard: React.FC<CategoryRankingsCardProps> = ({ team
         <div className="bg-gradient-to-r from-yellow-50 to-amber-50 border-2 border-yellow-300 rounded-lg p-4 mb-4">
           <h4 className="font-semibold text-gray-900 mb-2 flex items-center">
             <Trophy className="w-4 h-4 mr-2 text-yellow-600" />
-            Your Awards
+            {t('categoryRankings.yourAwards')}
           </h4>
           <div className="space-y-1 text-sm">
             {awards.global_awards.map((award, index) => (
               <div key={index} className="flex items-center text-gray-700">
                 <span className="mr-2">🏆</span>
                 <span className="font-medium">{award}</span>
-                <span className="ml-2 text-xs text-gray-500">(Global)</span>
+                <span className="ml-2 text-xs text-gray-500">({t('categoryRankings.global')})</span>
               </div>
             ))}
             {awards.pod_awards.map((award, index) => (
               <div key={index} className="flex items-center text-gray-700">
                 <span className="mr-2">🥇</span>
                 <span className="font-medium">{award}</span>
-                <span className="ml-2 text-xs text-gray-500">(Pod)</span>
+                <span className="ml-2 text-xs text-gray-500">({t('categoryRankings.pod')})</span>
               </div>
             ))}
           </div>
@@ -165,16 +161,16 @@ export const CategoryRankingsCard: React.FC<CategoryRankingsCardProps> = ({ team
                 <div className="flex items-center gap-3">
                   <Icon className={`w-5 h-5 ${config.color}`} />
                   <div>
-                    <p className="font-semibold text-gray-900">{config.name}</p>
+                    <p className="font-semibold text-gray-900">{t(`categoryRankings.categories.${ranking.category}`)}</p>
                     <div className="flex items-center gap-3 text-sm text-gray-600 mt-1">
                       <span>
-                        Global: <span className="font-medium">#{ranking.global_rank}</span>
+                        {t('categoryRankings.global')}: <span className="font-medium">#{ranking.global_rank}</span>
                       </span>
                       {inPod && ranking.pod_rank !== null && (
                         <>
                           <span className="text-gray-400">•</span>
                           <span>
-                            Pod: <span className="font-medium">#{ranking.pod_rank}</span>
+                            {t('categoryRankings.pod')}: <span className="font-medium">#{ranking.pod_rank}</span>
                           </span>
                         </>
                       )}
@@ -194,7 +190,7 @@ export const CategoryRankingsCard: React.FC<CategoryRankingsCardProps> = ({ team
 
       <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
         <p className="text-xs text-blue-800">
-          Multiple paths to success! Compete in 6 different categories to find your strength and earn awards.
+          {t('categoryRankings.multiplePathsDescription')}
         </p>
       </div>
     </div>

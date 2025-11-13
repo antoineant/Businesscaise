@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DollarSign, TrendingUp, Users, Package, Megaphone, PiggyBank, AlertCircle } from 'lucide-react';
 import type { Level1Decision, LoanTerm, Level1TeamState, LOAN_OPTIONS } from '../services/scoring/level1-types';
 import { LOAN_OPTIONS as LOANS, LEVEL1_CONFIG } from '../services/scoring/level1-types';
@@ -10,6 +11,8 @@ interface Level1InputProps {
 }
 
 export default function Level1Input({ teamState, onSubmit, isSubmitting = false }: Level1InputProps) {
+  const { t } = useTranslation('game');
+
   // Loan decision state
   const [takeLoan, setTakeLoan] = useState(false);
   const [loanTerm, setLoanTerm] = useState<Exclude<LoanTerm, 'none'>>('medium');
@@ -49,12 +52,15 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
     // Validate allocations
     const total = employees + products + marketing + savings;
     if (total !== 100) {
-      newErrors.push(`Allocation must total 100% (currently ${total}%)`);
+      newErrors.push(t('level1.validationAllocation', { total }));
     }
 
     // Validate loan amount
     if (takeLoan && (loanAmount < selectedLoan.minAmount || loanAmount > selectedLoan.maxAmount)) {
-      newErrors.push(`Loan amount must be between $${selectedLoan.minAmount.toLocaleString()} and $${selectedLoan.maxAmount.toLocaleString()}`);
+      newErrors.push(t('level1.validationLoanAmount', {
+        min: selectedLoan.minAmount.toLocaleString(),
+        max: selectedLoan.maxAmount.toLocaleString()
+      }));
     }
 
     if (newErrors.length > 0) {
@@ -85,23 +91,23 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Current State Overview */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4" data-testid="current-financial-state">
-        <h3 className="font-bold text-blue-900 mb-2">Current Financial State</h3>
+        <h3 className="font-bold text-blue-900 mb-2">{t('level1.currentFinancialState')}</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           <div>
-            <p className="text-blue-600">Cash</p>
+            <p className="text-blue-600">{t('level1.cash')}</p>
             <p className="font-bold text-blue-900" data-testid="starting-cash">${teamState.cash.toLocaleString()}</p>
           </div>
           <div>
-            <p className="text-blue-600">Total Debt</p>
+            <p className="text-blue-600">{t('level1.totalDebt')}</p>
             <p className="font-bold text-blue-900" data-testid="total-debt">${teamState.totalDebt.toLocaleString()}</p>
           </div>
           <div>
-            <p className="text-blue-600">Session</p>
+            <p className="text-blue-600">{t('level1.session')}</p>
             <p className="font-bold text-blue-900" data-testid="session-number">#{teamState.sessionNumber + 1}</p>
           </div>
           {teamState.activeLoan && (
             <div>
-              <p className="text-blue-600">Monthly Payment</p>
+              <p className="text-blue-600">{t('level1.monthlyPayment')}</p>
               <p className="font-bold text-blue-900" data-testid="active-loan-payment">${teamState.activeLoan.monthlyPayment.toLocaleString()}</p>
             </div>
           )}
@@ -112,7 +118,7 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
       <div className="bg-white border border-gray-200 rounded-lg p-6" data-testid="banking-decision">
         <div className="flex items-center gap-2 mb-4">
           <DollarSign className="w-5 h-5 text-green-600" />
-          <h3 className="text-lg font-bold text-gray-900">Banking Decision</h3>
+          <h3 className="text-lg font-bold text-gray-900">{t('level1.bankingDecision')}</h3>
         </div>
 
         {/* Take Loan Toggle */}
@@ -126,7 +132,7 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
               disabled={isSubmitting}
               data-testid="loan-checkbox"
             />
-            <span className="font-medium text-gray-900">Take a loan this session?</span>
+            <span className="font-medium text-gray-900">{t('level1.takeLoan')}</span>
           </label>
         </div>
 
@@ -134,10 +140,11 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
           <div className="space-y-4 pl-8 border-l-2 border-blue-200">
             {/* Loan Term Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Loan Term</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('level1.loanTermLabel')}</label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {(['short', 'medium', 'long'] as const).map((term) => {
                   const option = LOANS[term];
+                  const termKey = term === 'short' ? 'shortTerm' : term === 'medium' ? 'mediumTerm' : 'longTerm';
                   return (
                     <button
                       key={term}
@@ -150,9 +157,9 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
                           : 'border-gray-300 hover:border-gray-400'
                       }`}
                     >
-                      <p className="font-bold text-gray-900 capitalize">{term}-Term</p>
-                      <p className="text-xs text-gray-600">{option.sessions} sessions</p>
-                      <p className="text-xs text-gray-600">{option.interestRate * 100}% interest</p>
+                      <p className="font-bold text-gray-900">{t(`level1.${termKey}`)}</p>
+                      <p className="text-xs text-gray-600">{option.sessions} {t('level1.sessions')}</p>
+                      <p className="text-xs text-gray-600">{option.interestRate * 100}% {t('level1.interest')}</p>
                     </button>
                   );
                 })}
@@ -162,7 +169,7 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
             {/* Loan Amount Slider */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Loan Amount: ${loanAmount.toLocaleString()}
+                {t('level1.loanAmount')}: ${loanAmount.toLocaleString()}
               </label>
               <input
                 type="range"
@@ -183,19 +190,19 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
             {/* Loan Summary */}
             <div className="bg-gray-50 rounded p-3 space-y-1 text-sm" data-testid="loan-summary">
               <div className="flex justify-between">
-                <span className="text-gray-600">Principal:</span>
+                <span className="text-gray-600">{t('level1.principal')}</span>
                 <span className="font-medium" data-testid="loan-principal">${loanAmount.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Interest ({selectedLoan.interestRate * 100}%):</span>
+                <span className="text-gray-600">{t('level1.interestLabel', { rate: selectedLoan.interestRate * 100 })}</span>
                 <span className="font-medium" data-testid="loan-interest">${(loanAmount * selectedLoan.interestRate).toLocaleString()}</span>
               </div>
               <div className="flex justify-between border-t border-gray-300 pt-1">
-                <span className="text-gray-900 font-medium">Total Owed:</span>
+                <span className="text-gray-900 font-medium">{t('level1.totalOwed')}</span>
                 <span className="font-bold" data-testid="loan-total-owed">${totalOwed.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Monthly Payment:</span>
+                <span className="text-gray-600">{t('level1.monthlyPayment')}</span>
                 <span className="font-medium" data-testid="loan-monthly-payment">${monthlyPayment.toLocaleString()} × {selectedLoan.sessions}</span>
               </div>
             </div>
@@ -207,18 +214,18 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
       <div className="bg-white border border-gray-200 rounded-lg p-6" data-testid="budget-allocation">
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="w-5 h-5 text-purple-600" />
-          <h3 className="text-lg font-bold text-gray-900">Budget Allocation</h3>
+          <h3 className="text-lg font-bold text-gray-900">{t('level1.budgetAllocation')}</h3>
         </div>
 
         <p className="text-sm text-gray-600 mb-4">
-          Available funds: <span className="font-bold" data-testid="available-funds">${availableFunds.toLocaleString()}</span>
+          {t('level1.availableFunds')} <span className="font-bold" data-testid="available-funds">${availableFunds.toLocaleString()}</span>
         </p>
 
         <div className="space-y-4">
           {/* Employees */}
           <AllocationSlider
             icon={<Users className="w-5 h-5" />}
-            label="Employees"
+            label={t('level1.employees')}
             value={employees}
             onChange={setEmployees}
             amount={availableFunds * (employees / 100)}
@@ -229,7 +236,7 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
           {/* Products */}
           <AllocationSlider
             icon={<Package className="w-5 h-5" />}
-            label="Products & Operations"
+            label={t('level1.productsOperations')}
             value={products}
             onChange={setProducts}
             amount={availableFunds * (products / 100)}
@@ -240,7 +247,7 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
           {/* Marketing */}
           <AllocationSlider
             icon={<Megaphone className="w-5 h-5" />}
-            label="Marketing"
+            label={t('level1.marketing')}
             value={marketing}
             onChange={setMarketing}
             amount={availableFunds * (marketing / 100)}
@@ -251,7 +258,7 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
           {/* Savings */}
           <AllocationSlider
             icon={<PiggyBank className="w-5 h-5" />}
-            label="Savings"
+            label={t('level1.savings')}
             value={savings}
             onChange={setSavings}
             amount={availableFunds * (savings / 100)}
@@ -267,7 +274,7 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
               : 'bg-red-50 border border-red-200'
           }`} data-testid="total-allocation">
             <div className="flex justify-between items-center">
-              <span className="font-medium text-gray-900">Total Allocation:</span>
+              <span className="font-medium text-gray-900">{t('level1.totalAllocation')}</span>
               <span className={`text-lg font-bold ${
                 employees + products + marketing + savings === 100 ? 'text-green-600' : 'text-red-600'
               }`} data-testid="total-allocation-percentage">
@@ -284,7 +291,7 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
           <div className="flex items-start gap-2">
             <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
             <div className="flex-1">
-              <h4 className="font-bold text-red-900 mb-1">Please fix the following errors:</h4>
+              <h4 className="font-bold text-red-900 mb-1">{t('level1.pleaseFixErrors')}</h4>
               <ul className="list-disc list-inside text-sm text-red-800 space-y-1">
                 {errors.map((error, i) => (
                   <li key={i}>{error}</li>
@@ -302,7 +309,7 @@ export default function Level1Input({ teamState, onSubmit, isSubmitting = false 
         className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         data-testid="submit-decision-button"
       >
-        {isSubmitting ? 'Submitting...' : 'Submit Decision'}
+        {isSubmitting ? t('level1.submitting') : t('level1.submitDecision')}
       </button>
     </form>
   );

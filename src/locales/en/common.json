@@ -42,11 +42,25 @@
   },
   "fileUpload": {
     "dropHere": "Drop your file here or click to browse",
+    "dropFiles": "Drop files here or click to browse",
     "acceptedFormats": "Accepted formats: {{formats}} (Max {{maxSize}}MB)",
+    "maxPerFile": "Max {{maxSize}}MB per file • Up to {{maxFiles}} files",
     "processing": "Processing file...",
     "invalidType": "Invalid file type. Accepted formats: {{formats}}",
+    "invalidTypeShort": "Invalid file type. Accepted: {{formats}}",
     "tooLarge": "File too large. Maximum size: {{maxSize}}MB",
-    "failed": "Failed to process file. Please try again."
+    "tooLargeShort": "File too large. Max size: {{maxSize}}MB",
+    "maxFilesExceeded": "Maximum {{maxFiles}} files allowed",
+    "failed": "Failed to process file. Please try again.",
+    "selectedFiles": "Selected Files ({{count}}/{{max}})",
+    "uploadFiles": "Upload {{count}} file",
+    "uploadFiles_plural": "Upload {{count}} files",
+    "fileSizeUnits": {
+      "bytes": "Bytes",
+      "kb": "KB",
+      "mb": "MB",
+      "gb": "GB"
+    }
   },
   "common": {
     "week": "Week",
@@ -67,5 +81,29 @@
     "industry": "Industry",
     "companyName": "Company Name",
     "productService": "Product/Service"
+  },
+  "podLeaderboard": {
+    "yourPod": "Your Pod",
+    "team": "team",
+    "teams": "teams",
+    "podDescription": "Competing in a focused group for more direct rivalry and engagement",
+    "noScores": "No scores yet in your pod"
+  },
+  "categoryRankings": {
+    "title": "Category Rankings",
+    "award": "Award",
+    "awards": "Awards",
+    "yourAwards": "Your Awards",
+    "global": "Global",
+    "pod": "Pod",
+    "categories": {
+      "financial": "Financial Excellence",
+      "operations": "Operations Leader",
+      "marketing": "Marketing Champion",
+      "hr": "Best Employer",
+      "customer_satisfaction": "Customer Favorite",
+      "overall": "Overall Champion"
+    },
+    "multiplePathsDescription": "Multiple paths to success! Compete in 6 different categories to find your strength and earn awards."
   }
 }

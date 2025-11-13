@@ -42,11 +42,25 @@
   },
   "fileUpload": {
     "dropHere": "Déposez votre fichier ici ou cliquez pour parcourir",
+    "dropFiles": "Déposez vos fichiers ici ou cliquez pour parcourir",
     "acceptedFormats": "Formats acceptés: {{formats}} (Max {{maxSize}}Mo)",
+    "maxPerFile": "Max {{maxSize}}Mo par fichier • Jusqu'à {{maxFiles}} fichiers",
     "processing": "Traitement du fichier...",
     "invalidType": "Type de fichier invalide. Formats acceptés: {{formats}}",
+    "invalidTypeShort": "Type de fichier invalide. Acceptés: {{formats}}",
     "tooLarge": "Fichier trop volumineux. Taille maximale: {{maxSize}}Mo",
-    "failed": "Échec du traitement du fichier. Veuillez réessayer."
+    "tooLargeShort": "Fichier trop volumineux. Taille max: {{maxSize}}Mo",
+    "maxFilesExceeded": "Maximum {{maxFiles}} fichiers autorisés",
+    "failed": "Échec du traitement du fichier. Veuillez réessayer.",
+    "selectedFiles": "Fichiers Sélectionnés ({{count}}/{{max}})",
+    "uploadFiles": "Téléverser {{count}} fichier",
+    "uploadFiles_plural": "Téléverser {{count}} fichiers",
+    "fileSizeUnits": {
+      "bytes": "Octets",
+      "kb": "Ko",
+      "mb": "Mo",
+      "gb": "Go"
+    }
   },
   "common": {
     "week": "Semaine",
@@ -67,5 +81,29 @@
     "industry": "Industrie",
     "companyName": "Nom de l'Entreprise",
     "productService": "Produit/Service"
+  },
+  "podLeaderboard": {
+    "yourPod": "Votre Pod",
+    "team": "équipe",
+    "teams": "équipes",
+    "podDescription": "Compétition dans un groupe ciblé pour une rivalité et un engagement plus directs",
+    "noScores": "Aucun score dans votre pod pour le moment"
+  },
+  "categoryRankings": {
+    "title": "Classements par Catégorie",
+    "award": "Distinction",
+    "awards": "Distinctions",
+    "yourAwards": "Vos Distinctions",
+    "global": "Global",
+    "pod": "Pod",
+    "categories": {
+      "financial": "Excellence Financière",
+      "operations": "Leader Opérationnel",
+      "marketing": "Champion du Marketing",
+      "hr": "Meilleur Employeur",
+      "customer_satisfaction": "Favori des Clients",
+      "overall": "Champion Général"
+    },
+    "multiplePathsDescription": "Plusieurs chemins vers le succès! Compétitionnez dans 6 catégories différentes pour trouver votre force et gagner des distinctions."
   }
 }

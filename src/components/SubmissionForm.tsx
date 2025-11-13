@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AlertCircle, CheckCircle, Send } from 'lucide-react';
 import FileUploadBackend from './FileUploadBackend';
 import Level1Input from './Level1Input';
@@ -26,6 +27,7 @@ export default function SubmissionForm({
   challengeDescription = 'Submit your decision for this challenge',
   onSubmissionComplete,
 }: SubmissionFormProps) {
+  const { t } = useTranslation('game');
   const [team, setTeam] = useState<Team | null>(null);
   const [loading, setLoading] = useState(true);
   const [submissionData, setSubmissionData] = useState('');
@@ -96,7 +98,7 @@ export default function SubmissionForm({
 
     // Validate that we have either submission data or files
     if (!submissionData.trim() && fileUrls.length === 0) {
-      setError('Please provide submission data or upload at least one file');
+      setError(t('submission.validationError'));
       return;
     }
 
@@ -140,7 +142,7 @@ export default function SubmissionForm({
       <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
         <div className="flex items-center justify-center py-12">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          <span className="ml-3 text-gray-600">Loading...</span>
+          <span className="ml-3 text-gray-600">{t('submission.loading')}</span>
         </div>
       </div>
     );
@@ -150,8 +152,8 @@ export default function SubmissionForm({
   if (team?.difficulty_level === 'beginner' && team.level1_state) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-        <h3 className="text-xl font-bold text-gray-900 mb-2">Level 1: Business Fundamentals</h3>
-        <p className="text-gray-600 mb-6">Make strategic decisions about loans and budget allocation</p>
+        <h3 className="text-xl font-bold text-gray-900 mb-2">{t('submission.level1Title')}</h3>
+        <p className="text-gray-600 mb-6">{t('submission.level1Description')}</p>
 
         {/* Show results if submitted */}
         {level1Result ? (
@@ -161,7 +163,7 @@ export default function SubmissionForm({
               <div className="flex items-center gap-2 mb-4">
                 <CheckCircle className="w-5 h-5 text-green-600" />
                 <p className="font-medium text-green-900">
-                  Decision submitted and scored! Your team's state has been updated.
+                  {t('submission.decisionSubmittedScored')}
                 </p>
               </div>
               <button
@@ -171,7 +173,7 @@ export default function SubmissionForm({
                 }}
                 className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
               >
-                Continue to Next Session
+                {t('submission.continueNextSession')}
               </button>
             </div>
           </div>
@@ -203,7 +205,7 @@ export default function SubmissionForm({
         {/* Submission Data Input */}
         <div>
           <label htmlFor="submission-data" className="block text-sm font-medium text-gray-700 mb-2">
-            Decision Data (JSON or text)
+            {t('submission.decisionData')}
           </label>
           <textarea
             id="submission-data"
@@ -211,18 +213,18 @@ export default function SubmissionForm({
             value={submissionData}
             onChange={(e) => setSubmissionData(e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
-            placeholder='{"decision": "your decision here", "reasoning": "explanation..."}'
+            placeholder={t('submission.decisionDataPlaceholder')}
             disabled={isSubmitting || success}
           />
           <p className="text-xs text-gray-500 mt-1">
-            Enter your decision data as JSON, or plain text
+            {t('submission.decisionDataHelp')}
           </p>
         </div>
 
         {/* File Upload */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Supporting Documents (Optional)
+            {t('submission.supportingDocuments')}
           </label>
           <FileUploadBackend
             gameId={gameId}
@@ -247,7 +249,7 @@ export default function SubmissionForm({
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-start">
             <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 mr-3 flex-shrink-0" />
             <p className="text-sm text-green-800">
-              Decision submitted successfully! Waiting for Game Master to score it.
+              {t('submission.decisionSubmittedSuccess')}
             </p>
           </div>
         )}
@@ -261,17 +263,17 @@ export default function SubmissionForm({
           {isSubmitting ? (
             <>
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              Submitting...
+              {t('submission.submitting')}
             </>
           ) : success ? (
             <>
               <CheckCircle className="w-5 h-5" />
-              Submitted
+              {t('submission.submitted')}
             </>
           ) : (
             <>
               <Send className="w-5 h-5" />
-              Submit Decision
+              {t('submission.submitDecision')}
             </>
           )}
         </button>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Layers, Trophy, TrendingUp, Loader2 } from 'lucide-react';
 import { unifiedTeamAPI } from '../services/api.unified';
 
@@ -15,6 +16,7 @@ interface PodLeaderboardEntry {
 }
 
 export const PodLeaderboardCard: React.FC<PodLeaderboardCardProps> = ({ teamId }) => {
+  const { t } = useTranslation('common');
   const [loading, setLoading] = useState(true);
   const [inPod, setInPod] = useState(false);
   const [podInfo, setPodInfo] = useState<{ pod_id: string | null; pod_name: string | null }>({ pod_id: null, pod_name: null });
@@ -67,23 +69,23 @@ export const PodLeaderboardCard: React.FC<PodLeaderboardCardProps> = ({ teamId }
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold text-gray-900 flex items-center">
           <Layers className="w-5 h-5 mr-2 text-indigo-600" />
-          {podInfo.pod_name || 'Your Pod'}
+          {podInfo.pod_name || t('podLeaderboard.yourPod')}
         </h3>
         <span className="text-sm text-gray-600">
-          {leaderboard.length} {leaderboard.length === 1 ? 'team' : 'teams'}
+          {leaderboard.length} {leaderboard.length === 1 ? t('podLeaderboard.team') : t('podLeaderboard.teams')}
         </span>
       </div>
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
         <p className="text-sm text-blue-800">
-          Competing in a focused group for more direct rivalry and engagement
+          {t('podLeaderboard.podDescription')}
         </p>
       </div>
 
       {leaderboard.length === 0 ? (
         <div className="text-center py-8">
           <Trophy className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-          <p className="text-gray-600">No scores yet in your pod</p>
+          <p className="text-gray-600">{t('podLeaderboard.noScores')}</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -105,7 +107,7 @@ export const PodLeaderboardCard: React.FC<PodLeaderboardCardProps> = ({ teamId }
                     <p className="font-semibold text-gray-900">
                       {entry.team_name}
                       {entry.is_current_team && (
-                        <span className="ml-2 text-sm text-indigo-600">(You)</span>
+                        <span className="ml-2 text-sm text-indigo-600">{t('common.you')}</span>
                       )}
                     </p>
                   </div>
