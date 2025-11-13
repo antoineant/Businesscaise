@@ -340,7 +340,7 @@ After creating users, verify in PostgreSQL:
 
 ```sql
 -- Connect to database
-psql -U postgres -d businesscaise
+psql -U postgres -d businesscase
 
 -- List all users
 SELECT id, email, name, role, created_at FROM users;
@@ -360,7 +360,7 @@ SELECT DISTINCT role FROM users;
 
 - Ensure PostgreSQL is running: `pg_isready`
 - Check `.env` file has correct database credentials
-- Verify database exists: `psql -U postgres -l | grep businesscaise`
+- Verify database exists: `psql -U postgres -l | grep businesscase`
 
 ### "Invalid token"
 

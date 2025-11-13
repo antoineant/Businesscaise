@@ -85,7 +85,7 @@ export default function DemoModeToggle() {
               <div>
                 <h3 className="text-lg font-bold text-gray-900 mb-2">What is Demo Mode?</h3>
                 <p className="text-gray-600">
-                  Demo Mode lets you test the complete BusinessCaise application without setting up a backend
+                  Demo Mode lets you test the complete BusinessCase application without setting up a backend
                   server or database. All data is simulated in the browser using mock services.
                 </p>
               </div>

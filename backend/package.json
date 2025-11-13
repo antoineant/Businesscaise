@@ -1,7 +1,7 @@
 {
-  "name": "businesscaise-backend",
+  "name": "businesscase-backend",
   "version": "1.0.0",
-  "description": "Backend API for BusinessCaise Professional Edition",
+  "description": "Backend API for BusinessCase Professional Edition",
   "main": "dist/server.js",
   "scripts": {
     "dev": "nodemon src/server.ts",

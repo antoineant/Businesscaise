@@ -5,7 +5,7 @@ class DemoModeManager {
   private isDemoMode: boolean = false;
 
   constructor() {
-    const stored = localStorage.getItem('businesscaise_demo_mode');
+    const stored = localStorage.getItem('businesscase_demo_mode');
     this.isDemoMode = stored === 'true';
   }
 
@@ -30,23 +30,23 @@ class DemoModeManager {
   }
 
   private save(): void {
-    localStorage.setItem('businesscaise_demo_mode', this.isDemoMode.toString());
+    localStorage.setItem('businesscase_demo_mode', this.isDemoMode.toString());
   }
 
   getDemoCredentials() {
     return {
       gameMaster: {
-        email: 'demo-gm@businesscaise.com',
+        email: 'demo-gm@businesscase.com',
         password: 'demo123',
         name: 'Demo Game Master',
       },
       player1: {
-        email: 'demo-player1@businesscaise.com',
+        email: 'demo-player1@businesscase.com',
         password: 'demo123',
         name: 'Demo Player 1',
       },
       player2: {
-        email: 'demo-player2@businesscaise.com',
+        email: 'demo-player2@businesscase.com',
         password: 'demo123',
         name: 'Demo Player 2',
       },
@@ -75,20 +75,20 @@ describe('DemoModeManager', () => {
 
       expect(manager.isEnabled()).toBe(true);
       expect(localStorage.setItem).toHaveBeenCalledWith(
-        'businesscaise_demo_mode',
+        'businesscase_demo_mode',
         'true'
       );
     });
 
     it('should disable demo mode', () => {
-      localStorage.setItem('businesscaise_demo_mode', 'true');
+      localStorage.setItem('businesscase_demo_mode', 'true');
       const manager = new DemoModeManager();
 
       manager.disable();
 
       expect(manager.isEnabled()).toBe(false);
       expect(localStorage.setItem).toHaveBeenCalledWith(
-        'businesscaise_demo_mode',
+        'businesscase_demo_mode',
         'false'
       );
     });
@@ -122,14 +122,14 @@ describe('DemoModeManager', () => {
       const credentials = manager.getDemoCredentials();
 
       expect(credentials.gameMaster).toBeDefined();
-      expect(credentials.gameMaster.email).toBe('demo-gm@businesscaise.com');
+      expect(credentials.gameMaster.email).toBe('demo-gm@businesscase.com');
       expect(credentials.gameMaster.password).toBe('demo123');
 
       expect(credentials.player1).toBeDefined();
-      expect(credentials.player1.email).toBe('demo-player1@businesscaise.com');
+      expect(credentials.player1.email).toBe('demo-player1@businesscase.com');
 
       expect(credentials.player2).toBeDefined();
-      expect(credentials.player2.email).toBe('demo-player2@businesscaise.com');
+      expect(credentials.player2.email).toBe('demo-player2@businesscase.com');
     });
 
     it('should provide same credentials regardless of demo mode state', () => {

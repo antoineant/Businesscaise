@@ -23,7 +23,7 @@ class MockDataStore {
     // Create demo Game Master user
     const gmUser: User = {
       id: 'gm-demo-001',
-      email: 'demo-gm@businesscaise.com',
+      email: 'demo-gm@businesscase.com',
       name: 'Demo Game Master',
       role: 'game_master',
     };
@@ -32,13 +32,13 @@ class MockDataStore {
     // Create demo Player users
     const player1: User = {
       id: 'player-demo-001',
-      email: 'demo-player1@businesscaise.com',
+      email: 'demo-player1@businesscase.com',
       name: 'Demo Player 1',
       role: 'player',
     };
     const player2: User = {
       id: 'player-demo-002',
-      email: 'demo-player2@businesscaise.com',
+      email: 'demo-player2@businesscase.com',
       name: 'Demo Player 2',
       role: 'player',
     };

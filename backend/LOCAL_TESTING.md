@@ -19,7 +19,7 @@ cd backend
 
 This script will:
 - ✅ Check if PostgreSQL is installed and running
-- ✅ Create the `businesscaise` database
+- ✅ Create the `businesscase` database
 - ✅ Run all migrations (9 tables)
 - ✅ Create test user accounts
 - ✅ Create `.env` file with correct settings
@@ -128,13 +128,13 @@ curl -X GET http://localhost:3001/api/gm/games \
 ### View all tables
 
 ```bash
-psql -U postgres -d businesscaise -c "\dt"
+psql -U postgres -d businesscase -c "\dt"
 ```
 
 ### Check games
 
 ```sql
-psql -U postgres -d businesscaise
+psql -U postgres -d businesscase
 
 SELECT id, title, status, created_at FROM games;
 ```
@@ -190,7 +190,7 @@ Check your `.env` file has correct credentials:
 ```
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=businesscaise
+DB_NAME=businesscase
 DB_USER=postgres
 DB_PASSWORD=postgres  # or your password
 ```
@@ -265,7 +265,7 @@ To start fresh:
 
 ```bash
 # Drop and recreate database
-psql -U postgres -c "DROP DATABASE IF EXISTS businesscaise;"
+psql -U postgres -c "DROP DATABASE IF EXISTS businesscase;"
 ./setup-db.sh
 
 # Restart server

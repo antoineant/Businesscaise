@@ -1,8 +1,8 @@
-# BusinessCaise
+# BusinessCase
 
 **An Interactive Business Strategy Simulation Game for Students**
 
-BusinessCaise is a comprehensive, choose-your-adventure style business game designed for business students to experience the complexity of running a company. Teams make strategic decisions across 5 weeks, with each choice impacting all departments: Marketing, Sales, Research & Development, Finance, and Human Resources.
+BusinessCase is a comprehensive, choose-your-adventure style business game designed for business students to experience the complexity of running a company. Teams make strategic decisions across 5 weeks, with each choice impacting all departments: Marketing, Sales, Research & Development, Finance, and Human Resources.
 
 ## Features
 
@@ -145,7 +145,7 @@ Teams are scored across all 5 departments with weighted contributions:
 ## File Structure
 
 ```
-businesscaise/
+businesscase/
 ├── src/
 │   ├── components/
 │   │   ├── DepartmentDashboard.tsx    # Metrics visualization

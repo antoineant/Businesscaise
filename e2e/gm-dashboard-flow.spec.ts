@@ -8,7 +8,7 @@ import { test, expect, Page } from '@playwright/test';
 // Generate unique test data for each test run
 const generateTestGM = () => ({
   name: 'Test Game Master',
-  email: `gm-test-${Date.now()}-${Math.random().toString(36).substring(2, 9)}@businesscaise.com`,
+  email: `gm-test-${Date.now()}-${Math.random().toString(36).substring(2, 9)}@businesscase.com`,
   password: 'TestGM123!',
 });
 

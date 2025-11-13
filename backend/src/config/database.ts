@@ -6,7 +6,7 @@ dotenv.config();
 const poolConfig: PoolConfig = {
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '5432'),
-  database: process.env.DB_NAME || 'businesscaise',
+  database: process.env.DB_NAME || 'businesscase',
   user: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASSWORD,
   max: 20, // Maximum number of clients in the pool

@@ -82,7 +82,7 @@ http://localhost:5173/?demo=false
 ### "Team not found"
 ```bash
 # Check team was created in database
-psql -d businesscaise -c "SELECT * FROM teams;"
+psql -d businesscase -c "SELECT * FROM teams;"
 
 # Clear stale localStorage
 localStorage.removeItem('team_<gameId>')

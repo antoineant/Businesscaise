@@ -69,7 +69,7 @@ This indicates Playwright downloaded the browsers (Chromium, Firefox, WebKit) bu
 ```bash
 # 1. Clone repository
 git clone <repo-url>
-cd Businesscaise
+cd BusinessCase
 
 # 2. Install dependencies
 npm install
@@ -183,10 +183,10 @@ CMD ["npx", "playwright", "test"]
 **Run with Docker**:
 ```bash
 # Build image
-docker build -t businesscaise-e2e -f Dockerfile.e2e .
+docker build -t businesscase-e2e -f Dockerfile.e2e .
 
 # Run tests
-docker run --ipc=host businesscaise-e2e
+docker run --ipc=host businesscase-e2e
 ```
 
 ## Expected Test Results

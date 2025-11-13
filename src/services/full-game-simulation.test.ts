@@ -30,7 +30,7 @@ describe('Full Game Simulation: 3 Teams Competing', () => {
   describe('Phase 1: Game Setup', () => {
     it('GM logs in and creates a new game', async () => {
       // GM login
-      const gmAuth = await mockAuthAPI.login('demo-gm@businesscaise.com', 'demo123');
+      const gmAuth = await mockAuthAPI.login('demo-gm@businesscase.com', 'demo123');
 
       expect(gmAuth.user.role).toBe('game_master');
       expect(gmAuth.token).toBeDefined();

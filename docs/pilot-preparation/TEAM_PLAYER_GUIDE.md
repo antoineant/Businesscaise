@@ -9,7 +9,7 @@
 
 ## Table of Contents
 
-1. [Welcome to BusinessCaise](#welcome-to-businesscaise)
+1. [Welcome to BusinessCaise](#welcome-to-businesscase)
 2. [Getting Started](#getting-started)
 3. [Understanding Your Dashboard](#understanding-your-dashboard)
 4. [Reading Narratives](#reading-narratives)
@@ -57,7 +57,7 @@ BusinessCaise is a business simulation where your team runs a virtual company ov
 
 Your instructor will provide a unique game join link. It looks like:
 ```
-https://businesscaise.com/join?gameCode=ABC123
+https://businesscase.com/join?gameCode=ABC123
 ```
 
 **Important:** Everyone on your team uses the **same join link**.

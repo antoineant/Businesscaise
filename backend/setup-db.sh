@@ -59,7 +59,7 @@ fi
 echo -e "${GREEN}✓ PostgreSQL is running${NC}"
 
 # Set database credentials
-DB_NAME="businesscaise"
+DB_NAME="businesscase"
 DB_USER="${PGUSER:-postgres}"
 DB_PASSWORD="${PGPASSWORD:-postgres}"
 
@@ -162,7 +162,7 @@ DB_USER=$DB_USER
 DB_PASSWORD=$DB_PASSWORD
 
 # JWT Configuration
-JWT_SECRET=businesscaise_dev_secret_key_change_in_production
+JWT_SECRET=businesscase_dev_secret_key_change_in_production
 JWT_EXPIRES_IN=7d
 
 # File Upload

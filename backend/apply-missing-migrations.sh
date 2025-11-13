@@ -16,7 +16,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 # Database credentials
-DB_NAME="businesscaise"
+DB_NAME="businesscase"
 DB_USER="${PGUSER:-postgres}"
 
 # Check if PostgreSQL is running

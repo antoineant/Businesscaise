@@ -16,7 +16,7 @@ if [ ! -f .env ]; then
     echo "Please create .env file with your database credentials:"
     echo "  DB_HOST=localhost"
     echo "  DB_PORT=5432"
-    echo "  DB_NAME=businesscaise"
+    echo "  DB_NAME=businesscase"
     echo "  DB_USER=postgres"
     echo "  DB_PASSWORD=your_password"
     echo ""
@@ -50,5 +50,5 @@ else
     echo "Please check:"
     echo "  1. PostgreSQL is running"
     echo "  2. Database credentials in .env are correct"
-    echo "  3. Database 'businesscaise' exists"
+    echo "  3. Database 'businesscase' exists"
 fi

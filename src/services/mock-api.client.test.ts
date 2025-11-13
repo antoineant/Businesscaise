@@ -4,10 +4,10 @@ import { mockTeamAPI, mockAuthAPI, mockGmAPI } from './mock-api.client';
 describe('Mock API Client', () => {
   describe('mockAuthAPI', () => {
     it('should login successfully with valid credentials', async () => {
-      const result = await mockAuthAPI.login('demo-gm@businesscaise.com', 'demo123');
+      const result = await mockAuthAPI.login('demo-gm@businesscase.com', 'demo123');
 
       expect(result.user).toBeDefined();
-      expect(result.user.email).toBe('demo-gm@businesscaise.com');
+      expect(result.user.email).toBe('demo-gm@businesscase.com');
       expect(result.token).toContain('mock-token');
     });
 

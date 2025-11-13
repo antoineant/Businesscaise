@@ -19,7 +19,7 @@ import { test, expect, Page } from '@playwright/test';
 
 const TEST_PLAYER = {
   name: 'E2E Test Player',
-  email: `player-${Date.now()}-${Math.random().toString(36).substring(7)}@businesscaise.com`,
+  email: `player-${Date.now()}-${Math.random().toString(36).substring(7)}@businesscase.com`,
   password: 'PlayerTest123!',
   role: 'player',
 };
@@ -35,7 +35,7 @@ async function registerAndLoginPlayer(page: Page) {
   // Generate unique credentials for each registration (avoid conflicts)
   const playerData = {
     name: 'E2E Test Player',
-    email: `player-${Date.now()}-${Math.random().toString(36).substring(7)}@businesscaise.com`,
+    email: `player-${Date.now()}-${Math.random().toString(36).substring(7)}@businesscase.com`,
     password: 'PlayerTest123!',
   };
 
@@ -199,7 +199,7 @@ async function joinGameAsTeam(page: Page, gameId: string, teamData = TEST_TEAM) 
 
 // Helper: Create game via API and return game ID
 async function createGameAsGM() {
-  const GM_EMAIL = `gm-${Date.now()}@businesscaise.com`;
+  const GM_EMAIL = `gm-${Date.now()}@businesscase.com`;
   const GM_PASSWORD = 'GMTest123!';
 
   console.log(`[DIAGNOSTIC] Creating game as GM: ${GM_EMAIL}`);

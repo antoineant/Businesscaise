@@ -91,7 +91,7 @@ await page.goto('http://localhost:5173/?demo=false', { waitUntil: 'networkidle' 
 async function registerAndLoginPlayer(page: Page) {
   const playerData = {
     name: 'E2E Test Player',
-    email: `player-${Date.now()}-${Math.random().toString(36).substring(7)}@businesscaise.com`,
+    email: `player-${Date.now()}-${Math.random().toString(36).substring(7)}@businesscase.com`,
     password: 'PlayerTest123!',
   };
   // ... registration logic ...
@@ -279,7 +279,7 @@ Tests use randomly generated data to avoid conflicts:
 
 ```typescript
 const TEST_PLAYER = {
-  email: `player-${Date.now()}-${Math.random().toString(36).substring(7)}@businesscaise.com`,
+  email: `player-${Date.now()}-${Math.random().toString(36).substring(7)}@businesscase.com`,
   // ...
 };
 ```

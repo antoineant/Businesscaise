@@ -215,7 +215,7 @@ npx playwright show-trace trace.zip
 ## Test Data
 
 Tests use demo accounts configured in `mock-data.service.ts`:
-- Email: `demo-player1@businesscaise.com`
+- Email: `demo-player1@businesscase.com`
 - Password: `demo123`
 - Difficulty Level: `beginner` (Level 1)
 

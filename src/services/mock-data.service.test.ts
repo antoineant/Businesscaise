@@ -18,14 +18,14 @@ class MockDataStore {
     // Create demo users
     this.users.push({
       id: 'gm-demo-001',
-      email: 'demo-gm@businesscaise.com',
+      email: 'demo-gm@businesscase.com',
       name: 'Demo Game Master',
       role: 'game_master',
     });
 
     this.users.push({
       id: 'player-demo-001',
-      email: 'demo-player1@businesscaise.com',
+      email: 'demo-player1@businesscase.com',
       name: 'Demo Player 1',
       role: 'player',
     });
@@ -144,10 +144,10 @@ describe('MockDataStore', () => {
 
   describe('Authentication', () => {
     it('should login with valid credentials', () => {
-      const result = store.login('demo-gm@businesscaise.com', 'demo123');
+      const result = store.login('demo-gm@businesscase.com', 'demo123');
 
       expect(result.user).toBeDefined();
-      expect(result.user.email).toBe('demo-gm@businesscaise.com');
+      expect(result.user.email).toBe('demo-gm@businesscase.com');
       expect(result.user.role).toBe('game_master');
       expect(result.token).toContain('mock-token');
     });
@@ -160,7 +160,7 @@ describe('MockDataStore', () => {
 
     it('should reject invalid password', () => {
       expect(() => {
-        store.login('demo-gm@businesscaise.com', 'wrongpassword');
+        store.login('demo-gm@businesscase.com', 'wrongpassword');
       }).toThrow('Invalid credentials');
     });
   });

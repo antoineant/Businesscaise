@@ -17,13 +17,13 @@ import { test, expect, Browser, BrowserContext, Page } from '@playwright/test';
 
 const GM_USER = {
   name: 'Integration GM',
-  email: `integration-gm-${Date.now()}@businesscaise.com`,
+  email: `integration-gm-${Date.now()}@businesscase.com`,
   password: 'IntegrationTest123!',
 };
 
 const PLAYER_USER = {
   name: 'Integration Player',
-  email: `integration-player-${Date.now()}@businesscaise.com`,
+  email: `integration-player-${Date.now()}@businesscase.com`,
   password: 'IntegrationTest123!',
 };
 

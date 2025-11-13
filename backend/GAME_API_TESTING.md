@@ -828,7 +828,7 @@ After testing, verify database state:
 
 ```sql
 -- Connect to database
-psql -U postgres -d businesscaise
+psql -U postgres -d businesscase
 
 -- Check games
 SELECT id, title, status, game_master_id, created_at FROM games;

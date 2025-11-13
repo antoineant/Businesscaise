@@ -15,7 +15,7 @@ test.describe('Level 1: Accessibility & UX', () => {
 
     // Login with keyboard
     await page.keyboard.press('Tab'); // Focus email
-    await page.keyboard.type('demo-player1@businesscaise.com');
+    await page.keyboard.type('demo-player1@businesscase.com');
     await page.keyboard.press('Tab'); // Focus password
     await page.keyboard.type('demo123');
     await page.keyboard.press('Tab'); // Focus login button
@@ -72,7 +72,7 @@ test.describe('Level 1: Accessibility & UX', () => {
 
     const emailInput = page.getByLabel(/email/i).first();
     if (await emailInput.isVisible().catch(() => false)) {
-      await emailInput.fill('demo-player1@businesscaise.com');
+      await emailInput.fill('demo-player1@businesscase.com');
       await page.getByLabel(/password/i).fill('demo123');
       await page.getByRole('button', { name: /log in|sign in/i }).click();
       await page.waitForTimeout(2000);
@@ -121,7 +121,7 @@ test.describe('Level 1: Accessibility & UX', () => {
 
     const emailInput = page.getByLabel(/email/i).first();
     if (await emailInput.isVisible().catch(() => false)) {
-      await emailInput.fill('demo-player1@businesscaise.com');
+      await emailInput.fill('demo-player1@businesscase.com');
       await page.getByLabel(/password/i).fill('demo123');
       await page.getByRole('button', { name: /log in|sign in/i }).click();
       await page.waitForTimeout(2000);
@@ -166,7 +166,7 @@ test.describe('Level 1: Accessibility & UX', () => {
 
     const emailInput = page.getByLabel(/email/i).first();
     if (await emailInput.isVisible().catch(() => false)) {
-      await emailInput.fill('demo-player1@businesscaise.com');
+      await emailInput.fill('demo-player1@businesscase.com');
       await page.getByLabel(/password/i).fill('demo123');
       await page.getByRole('button', { name: /log in|sign in/i }).click();
       await page.waitForTimeout(2000);
@@ -198,7 +198,7 @@ test.describe('Level 1: Accessibility & UX', () => {
 
     const emailInput = page.getByLabel(/email/i).first();
     if (await emailInput.isVisible().catch(() => false)) {
-      await emailInput.fill('demo-player1@businesscaise.com');
+      await emailInput.fill('demo-player1@businesscase.com');
       await page.getByLabel(/password/i).fill('demo123');
       await page.getByRole('button', { name: /log in|sign in/i }).click();
       await page.waitForTimeout(2000);
@@ -248,7 +248,7 @@ test.describe('Level 1: Accessibility & UX', () => {
 
     const emailInput = page.getByLabel(/email/i).first();
     if (await emailInput.isVisible({ timeout: 10000 }).catch(() => false)) {
-      await emailInput.fill('demo-player1@businesscaise.com');
+      await emailInput.fill('demo-player1@businesscase.com');
       await page.getByLabel(/password/i).fill('demo123');
       await page.getByRole('button', { name: /log in|sign in/i }).click();
       await page.waitForTimeout(3000);
