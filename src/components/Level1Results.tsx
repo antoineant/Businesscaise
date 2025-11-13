@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   TrendingUp,
   TrendingDown,
@@ -19,6 +20,7 @@ interface Level1ResultsProps {
 }
 
 export default function Level1Results({ result }: Level1ResultsProps) {
+  const { t } = useTranslation('game');
   const { calculations, scores, warnings, feedback, endingState } = result;
 
   return (
@@ -32,12 +34,12 @@ export default function Level1Results({ result }: Level1ResultsProps) {
       }`}>
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold mb-1">Overall Score</h2>
+            <h2 className="text-2xl font-bold mb-1">{t('level1.overallScore')}</h2>
             <p className="text-white/90">{feedback.summary}</p>
           </div>
           <div className="text-right">
             <div className="text-5xl font-bold">{Math.round(scores.overall)}</div>
-            <div className="text-sm text-white/90">/ 100</div>
+            <div className="text-sm text-white/90">{t('level1.outOf100')}</div>
           </div>
         </div>
       </div>
@@ -83,29 +85,29 @@ export default function Level1Results({ result }: Level1ResultsProps) {
 
       {/* Detailed Scores */}
       <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Performance Breakdown</h3>
+        <h3 className="text-lg font-bold text-gray-900 mb-4">{t('level1.performanceBreakdown')}</h3>
         <div className="space-y-4">
           <ScoreBar
             icon={<DollarSign className="w-5 h-5" />}
-            label="Cash & Profit"
+            label={t('level1.cashAndProfit')}
             score={scores.cashAndProfit}
             color="green"
           />
           <ScoreBar
             icon={<CreditCard className="w-5 h-5" />}
-            label="Debt Health"
+            label={t('level1.debtHealth')}
             score={scores.debtHealth}
             color="blue"
           />
           <ScoreBar
             icon={<Users className="w-5 h-5" />}
-            label="Employee Happiness"
+            label={t('level1.employeeHappiness')}
             score={scores.employeeHappiness}
             color="purple"
           />
           <ScoreBar
             icon={<Heart className="w-5 h-5" />}
-            label="Customer Satisfaction"
+            label={t('level1.customerSatisfaction')}
             score={scores.customerSatisfaction}
             color="pink"
           />
@@ -114,16 +116,16 @@ export default function Level1Results({ result }: Level1ResultsProps) {
 
       {/* Financial Summary */}
       <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Financial Summary</h3>
+        <h3 className="text-lg font-bold text-gray-900 mb-4">{t('level1.financialSummary')}</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Metric label="Revenue" value={`$${calculations.revenue.toLocaleString()}`} />
-          <Metric label="Gross Profit" value={`$${calculations.grossProfit.toLocaleString()}`} />
-          <Metric label="Debt Payment" value={`$${calculations.debtPayment.toLocaleString()}`} />
-          <Metric label="Net Profit" value={`$${calculations.netProfit.toLocaleString()}`} isProfit />
-          <Metric label="Ending Cash" value={`$${calculations.endingCash.toLocaleString()}`} />
-          <Metric label="Total Debt" value={`$${endingState.totalDebt.toLocaleString()}`} />
-          <Metric label="Debt Ratio" value={`${calculations.debtRatio.toFixed(1)}%`} />
-          <Metric label="Cash Flow" value={`$${calculations.cashFlow.toLocaleString()}`} isProfit />
+          <Metric label={t('level1.revenue')} value={`$${calculations.revenue.toLocaleString()}`} />
+          <Metric label={t('level1.grossProfit')} value={`$${calculations.grossProfit.toLocaleString()}`} />
+          <Metric label={t('level1.debtPayment')} value={`$${calculations.debtPayment.toLocaleString()}`} />
+          <Metric label={t('level1.netProfit')} value={`$${calculations.netProfit.toLocaleString()}`} isProfit />
+          <Metric label={t('level1.endingCash')} value={`$${calculations.endingCash.toLocaleString()}`} />
+          <Metric label={t('level1.totalDebt')} value={`$${endingState.totalDebt.toLocaleString()}`} />
+          <Metric label={t('level1.debtRatio')} value={`${calculations.debtRatio.toFixed(1)}%`} />
+          <Metric label={t('level1.cashFlow')} value={`$${calculations.cashFlow.toLocaleString()}`} isProfit />
         </div>
       </div>
 
@@ -134,7 +136,7 @@ export default function Level1Results({ result }: Level1ResultsProps) {
           <div className="bg-green-50 border border-green-200 rounded-lg p-6">
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle className="w-5 h-5 text-green-600" />
-              <h3 className="font-bold text-green-900">Strengths</h3>
+              <h3 className="font-bold text-green-900">{t('level1.strengths')}</h3>
             </div>
             <ul className="space-y-2">
               {feedback.strengths.map((strength, i) => (
@@ -152,7 +154,7 @@ export default function Level1Results({ result }: Level1ResultsProps) {
           <div className="bg-red-50 border border-red-200 rounded-lg p-6">
             <div className="flex items-center gap-2 mb-3">
               <AlertCircle className="w-5 h-5 text-red-600" />
-              <h3 className="font-bold text-red-900">Areas for Improvement</h3>
+              <h3 className="font-bold text-red-900">{t('level1.areasForImprovement')}</h3>
             </div>
             <ul className="space-y-2">
               {feedback.concerns.map((concern, i) => (
@@ -171,7 +173,7 @@ export default function Level1Results({ result }: Level1ResultsProps) {
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
           <div className="flex items-center gap-2 mb-4">
             <Lightbulb className="w-5 h-5 text-blue-600" />
-            <h3 className="font-bold text-blue-900">Learning Tips</h3>
+            <h3 className="font-bold text-blue-900">{t('level1.learningTips')}</h3>
           </div>
           <div className="space-y-4">
             {feedback.learningTips.map((tip, i) => (
@@ -179,7 +181,7 @@ export default function Level1Results({ result }: Level1ResultsProps) {
                 <h4 className="font-bold text-blue-900 mb-1">{tip.concept}</h4>
                 <p className="text-sm text-blue-800 mb-2">{tip.explanation}</p>
                 {tip.example && (
-                  <p className="text-xs text-blue-600 italic">Example: {tip.example}</p>
+                  <p className="text-xs text-blue-600 italic">{t('level1.example')} {tip.example}</p>
                 )}
               </div>
             ))}
@@ -189,26 +191,26 @@ export default function Level1Results({ result }: Level1ResultsProps) {
 
       {/* Updated State */}
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Next Session Starting Position</h3>
+        <h3 className="text-lg font-bold text-gray-900 mb-4">{t('level1.nextSessionStartingPosition')}</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <p className="text-sm text-gray-600">Cash</p>
+            <p className="text-sm text-gray-600">{t('level1.cash')}</p>
             <p className="text-xl font-bold text-gray-900">${endingState.cash.toLocaleString()}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">Total Debt</p>
+            <p className="text-sm text-gray-600">{t('level1.totalDebt')}</p>
             <p className="text-xl font-bold text-gray-900">${endingState.totalDebt.toLocaleString()}</p>
           </div>
           {endingState.activeLoan && (
             <>
               <div>
-                <p className="text-sm text-gray-600">Monthly Payment</p>
+                <p className="text-sm text-gray-600">{t('level1.monthlyPayment')}</p>
                 <p className="text-xl font-bold text-gray-900">
                   ${endingState.activeLoan.monthlyPayment.toLocaleString()}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Payments Remaining</p>
+                <p className="text-sm text-gray-600">{t('level1.paymentsRemaining')}</p>
                 <p className="text-xl font-bold text-gray-900">{endingState.activeLoan.sessionsRemaining}</p>
               </div>
             </>
