@@ -117,5 +117,52 @@
     "example": "Example:",
     "nextSessionStartingPosition": "Next Session Starting Position",
     "paymentsRemaining": "Payments Remaining"
+  },
+  "narrative": {
+    "inbox": {
+      "title": "Narrative Inbox",
+      "subtitle": "Stay updated with game narratives",
+      "markAllRead": "Mark All Read",
+      "all": "All",
+      "briefings": "Briefings",
+      "news": "News",
+      "emails": "Emails",
+      "alerts": "Alerts",
+      "error": "Error",
+      "noNarratives": "No narratives yet",
+      "noNarrativesDesc": "New narratives will appear here",
+      "selectToRead": "Select a narrative to read",
+      "selectFromList": "Choose from the list on the left",
+      "by": "By",
+      "justNow": "Just now",
+      "minutesAgo": "{{count}}m ago",
+      "hoursAgo": "{{count}}h ago",
+      "daysAgo": "{{count}}d ago"
+    },
+    "askMarket": {
+      "title": "Ask the Market",
+      "subtitle": "Get AI-powered answers to your business questions",
+      "queriesRemaining": "queries remaining",
+      "askQuestion": "Ask a business question",
+      "showHistory": "Show",
+      "hideHistory": "Hide",
+      "history": "History ({{count}})",
+      "placeholder": "e.g., What are the key factors affecting customer retention in the retail industry?",
+      "asking": "Asking...",
+      "ask": "Ask",
+      "limitReached": "You have reached your query limit for this session. Please try again later.",
+      "limitWarning": "Query limit reached: You've used all {{total}} queries for this session. More queries will be available in the next session.",
+      "recentQuestions": "Recent Questions",
+      "yourQuestion": "Your Question:",
+      "answer": "Answer:",
+      "highConfidence": "✓ High Confidence",
+      "mediumConfidence": "⚠ Medium Confidence",
+      "lowConfidence": "! Low Confidence",
+      "sources": "Sources:",
+      "relatedQuestions": "Related Questions:",
+      "emptyStateTitle": "Ask a Question",
+      "emptyStateDesc": "Get AI-powered insights on business topics relevant to your game. You have <strong>{{remaining}}</strong> queries remaining for this session.",
+      "failedToAnswer": "Failed to get answer. Please try again or contact your GM."
+    }
   }
 }

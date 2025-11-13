@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   getTeamNarratives,
   markNarrativeAsRead,
@@ -27,6 +28,7 @@ const narrativeTypeIcons = {
 };
 
 export default function NarrativeInbox({ teamId, gameId }: NarrativeInboxProps) {
+  const { t } = useTranslation('game');
   const [narratives, setNarratives] = useState<NarrativeWithReadStatus[]>([]);
   const [unreadCounts, setUnreadCounts] = useState<UnreadCounts>({
     total: 0,
@@ -117,10 +119,10 @@ export default function NarrativeInbox({ teamId, gameId }: NarrativeInboxProps) 
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
+    if (diffMins < 1) return t('narrative.inbox.justNow');
+    if (diffMins < 60) return t('narrative.inbox.minutesAgo', { count: diffMins });
+    if (diffHours < 24) return t('narrative.inbox.hoursAgo', { count: diffHours });
+    if (diffDays < 7) return t('narrative.inbox.daysAgo', { count: diffDays });
     return date.toLocaleDateString();
   };
 
@@ -138,15 +140,15 @@ export default function NarrativeInbox({ teamId, gameId }: NarrativeInboxProps) 
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4 text-white">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold">Narrative Inbox</h2>
-            <p className="text-blue-100 text-sm">Stay updated with game narratives</p>
+            <h2 className="text-2xl font-bold">{t('narrative.inbox.title')}</h2>
+            <p className="text-blue-100 text-sm">{t('narrative.inbox.subtitle')}</p>
           </div>
           {unreadCounts.total > 0 && (
             <button
               onClick={handleMarkAllAsRead}
               className="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors font-medium"
             >
-              Mark All Read
+              {t('narrative.inbox.markAllRead')}
             </button>
           )}
         </div>
@@ -156,11 +158,11 @@ export default function NarrativeInbox({ teamId, gameId }: NarrativeInboxProps) 
       <div className="border-b border-gray-200 bg-gray-50">
         <div className="flex space-x-1 p-2">
           {[
-            { value: 'all', label: 'All', count: unreadCounts.total },
-            { value: 'briefing', label: 'Briefings', count: unreadCounts.byType.briefing },
-            { value: 'news', label: 'News', count: unreadCounts.byType.news },
-            { value: 'email', label: 'Emails', count: unreadCounts.byType.email },
-            { value: 'alert', label: 'Alerts', count: unreadCounts.byType.alert },
+            { value: 'all', label: t('narrative.inbox.all'), count: unreadCounts.total },
+            { value: 'briefing', label: t('narrative.inbox.briefings'), count: unreadCounts.byType.briefing },
+            { value: 'news', label: t('narrative.inbox.news'), count: unreadCounts.byType.news },
+            { value: 'email', label: t('narrative.inbox.emails'), count: unreadCounts.byType.email },
+            { value: 'alert', label: t('narrative.inbox.alerts'), count: unreadCounts.byType.alert },
           ].map((tab) => (
             <button
               key={tab.value}
@@ -184,7 +186,7 @@ export default function NarrativeInbox({ teamId, gameId }: NarrativeInboxProps) 
 
       {error && (
         <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700">
-          <p className="font-medium">Error</p>
+          <p className="font-medium">{t('narrative.inbox.error')}</p>
           <p className="text-sm">{error}</p>
         </div>
       )}
@@ -208,8 +210,8 @@ export default function NarrativeInbox({ teamId, gameId }: NarrativeInboxProps) 
                   d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
                 />
               </svg>
-              <p className="text-lg font-medium">No narratives yet</p>
-              <p className="text-sm">New narratives will appear here</p>
+              <p className="text-lg font-medium">{t('narrative.inbox.noNarratives')}</p>
+              <p className="text-sm">{t('narrative.inbox.noNarrativesDesc')}</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-200">
@@ -281,7 +283,7 @@ export default function NarrativeInbox({ teamId, gameId }: NarrativeInboxProps) 
                   <span>
                     {new Date(selectedNarrative.published_at).toLocaleString()}
                   </span>
-                  {selectedNarrative.author && <span>By {selectedNarrative.author}</span>}
+                  {selectedNarrative.author && <span>{t('narrative.inbox.by')} {selectedNarrative.author}</span>}
                 </div>
               </div>
 
@@ -307,8 +309,8 @@ export default function NarrativeInbox({ teamId, gameId }: NarrativeInboxProps) 
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 />
               </svg>
-              <p className="text-lg font-medium">Select a narrative to read</p>
-              <p className="text-sm">Choose from the list on the left</p>
+              <p className="text-lg font-medium">{t('narrative.inbox.selectToRead')}</p>
+              <p className="text-sm">{t('narrative.inbox.selectFromList')}</p>
             </div>
           )}
         </div>

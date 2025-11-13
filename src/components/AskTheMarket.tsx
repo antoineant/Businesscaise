@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   askMarket,
   getMarketQueryHistory,
@@ -18,13 +19,8 @@ const confidenceColors = {
   low: 'bg-red-100 text-red-800',
 };
 
-const confidenceLabels = {
-  high: '✓ High Confidence',
-  medium: '⚠ Medium Confidence',
-  low: '! Low Confidence',
-};
-
 export default function AskTheMarket({ teamId, gameId }: AskTheMarketProps) {
+  const { t } = useTranslation('game');
   const [question, setQuestion] = useState('');
   const [result, setResult] = useState<MarketQueryResult | null>(null);
   const [history, setHistory] = useState<MarketQueryHistory[]>([]);
@@ -32,6 +28,16 @@ export default function AskTheMarket({ teamId, gameId }: AskTheMarketProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+
+  // Get confidence label with translation
+  const getConfidenceLabel = (confidence: 'high' | 'medium' | 'low') => {
+    const labels = {
+      high: t('narrative.askMarket.highConfidence'),
+      medium: t('narrative.askMarket.mediumConfidence'),
+      low: t('narrative.askMarket.lowConfidence'),
+    };
+    return labels[confidence];
+  };
 
   // Load history on mount
   useEffect(() => {
@@ -52,7 +58,7 @@ export default function AskTheMarket({ teamId, gameId }: AskTheMarketProps) {
     if (!question.trim() || loading) return;
 
     if (rateLimit.remaining <= 0) {
-      setError('You have reached your query limit for this session. Please try again later.');
+      setError(t('narrative.askMarket.limitReached'));
       return;
     }
 
@@ -73,8 +79,7 @@ export default function AskTheMarket({ teamId, gameId }: AskTheMarketProps) {
     } catch (err: any) {
       console.error('Failed to ask question:', err);
       setError(
-        err.response?.data?.error ||
-          'Failed to get answer. Please try again or contact your GM.'
+        err.response?.data?.error || t('narrative.askMarket.failedToAnswer')
       );
     } finally {
       setLoading(false);
@@ -111,14 +116,14 @@ export default function AskTheMarket({ teamId, gameId }: AskTheMarketProps) {
       <div className="bg-gradient-to-r from-purple-600 to-purple-700 p-6 text-white">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold mb-2">Ask the Market</h2>
+            <h2 className="text-2xl font-bold mb-2">{t('narrative.askMarket.title')}</h2>
             <p className="text-purple-100">
-              Get AI-powered answers to your business questions
+              {t('narrative.askMarket.subtitle')}
             </p>
           </div>
           <div className="text-right">
             <div className="text-3xl font-bold">{rateLimit.remaining}</div>
-            <div className="text-sm text-purple-200">queries remaining</div>
+            <div className="text-sm text-purple-200">{t('narrative.askMarket.queriesRemaining')}</div>
           </div>
         </div>
       </div>
@@ -128,13 +133,13 @@ export default function AskTheMarket({ teamId, gameId }: AskTheMarketProps) {
         <div className="flex items-center space-x-2 mb-3">
           <span className="text-2xl">💬</span>
           <label className="text-sm font-medium text-gray-700">
-            Ask a business question
+            {t('narrative.askMarket.askQuestion')}
           </label>
           <button
             onClick={() => setShowHistory(!showHistory)}
             className="ml-auto text-sm text-purple-600 hover:text-purple-700 font-medium"
           >
-            {showHistory ? 'Hide' : 'Show'} History ({history.length})
+            {showHistory ? t('narrative.askMarket.hideHistory') : t('narrative.askMarket.showHistory')} {t('narrative.askMarket.history', { count: history.length })}
           </button>
         </div>
 
@@ -143,7 +148,7 @@ export default function AskTheMarket({ teamId, gameId }: AskTheMarketProps) {
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="e.g., What are the key factors affecting customer retention in the retail industry?"
+            placeholder={t('narrative.askMarket.placeholder')}
             className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
             rows={3}
             disabled={loading || rateLimit.remaining <= 0}
@@ -160,10 +165,10 @@ export default function AskTheMarket({ teamId, gameId }: AskTheMarketProps) {
             {loading ? (
               <div className="flex items-center space-x-2">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                <span>Asking...</span>
+                <span>{t('narrative.askMarket.asking')}</span>
               </div>
             ) : (
-              'Ask'
+              t('narrative.askMarket.ask')
             )}
           </button>
         </div>
@@ -176,8 +181,7 @@ export default function AskTheMarket({ teamId, gameId }: AskTheMarketProps) {
 
         {rateLimit.remaining === 0 && (
           <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800 text-sm">
-            <strong>Query limit reached:</strong> You've used all {rateLimit.total} queries for
-            this session. More queries will be available in the next session.
+            {t('narrative.askMarket.limitWarning', { total: rateLimit.total })}
           </div>
         )}
       </div>
@@ -185,7 +189,7 @@ export default function AskTheMarket({ teamId, gameId }: AskTheMarketProps) {
       {/* History Sidebar */}
       {showHistory && history.length > 0 && (
         <div className="p-6 bg-gray-50 border-b border-gray-200">
-          <h3 className="font-semibold text-gray-900 mb-3">Recent Questions</h3>
+          <h3 className="font-semibold text-gray-900 mb-3">{t('narrative.askMarket.recentQuestions')}</h3>
           <div className="space-y-2 max-h-48 overflow-y-auto">
             {history.map((item) => (
               <button
@@ -213,7 +217,7 @@ export default function AskTheMarket({ teamId, gameId }: AskTheMarketProps) {
             <div className="flex items-start space-x-3">
               <span className="text-2xl">❓</span>
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-900 mb-2">Your Question:</h3>
+                <h3 className="font-semibold text-gray-900 mb-2">{t('narrative.askMarket.yourQuestion')}</h3>
                 <p className="text-gray-700 bg-gray-50 p-4 rounded-lg">{result.question}</p>
               </div>
             </div>
@@ -225,13 +229,13 @@ export default function AskTheMarket({ teamId, gameId }: AskTheMarketProps) {
               <span className="text-2xl">💡</span>
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-semibold text-gray-900">Answer:</h3>
+                  <h3 className="font-semibold text-gray-900">{t('narrative.askMarket.answer')}</h3>
                   <span
                     className={`text-xs px-3 py-1 rounded-full ${
                       confidenceColors[result.confidence]
                     }`}
                   >
-                    {confidenceLabels[result.confidence]}
+                    {getConfidenceLabel(result.confidence)}
                   </span>
                 </div>
                 <div className="prose prose-sm max-w-none">
@@ -249,7 +253,7 @@ export default function AskTheMarket({ teamId, gameId }: AskTheMarketProps) {
               <div className="flex items-start space-x-3">
                 <span className="text-2xl">📚</span>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900 mb-3">Sources:</h3>
+                  <h3 className="font-semibold text-gray-900 mb-3">{t('narrative.askMarket.sources')}</h3>
                   <div className="space-y-2">
                     {result.sources.map((source, index) => (
                       <a
@@ -298,7 +302,7 @@ export default function AskTheMarket({ teamId, gameId }: AskTheMarketProps) {
               <div className="flex items-start space-x-3">
                 <span className="text-2xl">🔍</span>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900 mb-3">Related Questions:</h3>
+                  <h3 className="font-semibold text-gray-900 mb-3">{t('narrative.askMarket.relatedQuestions')}</h3>
                   <div className="space-y-2">
                     {result.relatedQuestions.map((q, index) => (
                       <button
@@ -338,11 +342,10 @@ export default function AskTheMarket({ teamId, gameId }: AskTheMarketProps) {
               d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <h3 className="text-lg font-medium text-gray-500 mb-2">Ask a Question</h3>
-          <p className="text-sm text-gray-400 max-w-md mx-auto">
-            Get AI-powered insights on business topics relevant to your game. You have{' '}
-            <strong>{rateLimit.remaining}</strong> queries remaining for this session.
-          </p>
+          <h3 className="text-lg font-medium text-gray-500 mb-2">{t('narrative.askMarket.emptyStateTitle')}</h3>
+          <p className="text-sm text-gray-400 max-w-md mx-auto" dangerouslySetInnerHTML={{
+            __html: t('narrative.askMarket.emptyStateDesc', { remaining: rateLimit.remaining })
+          }} />
         </div>
       )}
     </div>
