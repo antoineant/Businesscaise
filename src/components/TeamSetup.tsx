@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Team } from '../types/game';
 import { initialMetrics } from '../data/gameData';
 import { TEAM_COLORS } from '../utils/gameEngine';
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export default function TeamSetup({ teams, onCreateTeam, onSelectTeam, currentTeamId }: Props) {
+  const { t } = useTranslation('common');
   const [showForm, setShowForm] = useState(false);
   const [teamName, setTeamName] = useState('');
   const [members, setMembers] = useState('');
@@ -44,12 +46,12 @@ export default function TeamSetup({ teams, onCreateTeam, onSelectTeam, currentTe
 
   return (
     <div className="card">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Team Selection</h2>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800">{t('teamSetup.title')}</h2>
 
       {/* Existing Teams */}
       {teams.length > 0 && (
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3 text-gray-700">Select Your Team:</h3>
+          <h3 className="text-lg font-semibold mb-3 text-gray-700">{t('teamSetup.selectYour')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {teams.map((team) => (
               <button
@@ -69,10 +71,10 @@ export default function TeamSetup({ teams, onCreateTeam, onSelectTeam, currentTe
                   <h4 className="font-bold text-gray-800">{team.name}</h4>
                 </div>
                 <p className="text-sm text-gray-600">
-                  {team.members.length} member{team.members.length !== 1 ? 's' : ''}
+                  {team.members.length} {team.members.length !== 1 ? t('teamSetup.members_plural') : t('teamSetup.members')}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  Score: {team.overallScore}
+                  {t('teamSetup.score')}: {team.overallScore}
                 </p>
               </button>
             ))}
@@ -86,47 +88,47 @@ export default function TeamSetup({ teams, onCreateTeam, onSelectTeam, currentTe
           onClick={() => setShowForm(true)}
           className="btn-primary w-full"
         >
-          + Create New Team
+          + {t('buttons.createTeam')}
         </button>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4 border-t pt-4">
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Team Name *
+              {t('teamSetup.teamName')} {t('teamSetup.required')}
             </label>
             <input
               type="text"
               value={teamName}
               onChange={(e) => setTeamName(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-              placeholder="e.g., Alpha Squad, Marketing Mavericks"
+              placeholder={t('teamSetup.teamNamePlaceholder')}
               required
             />
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Team Members (comma-separated)
+              {t('teamSetup.teamMembers')}
             </label>
             <textarea
               value={members}
               onChange={(e) => setMembers(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-              placeholder="John Doe, Jane Smith, Alex Johnson"
+              placeholder={t('teamSetup.teamMembersPlaceholder')}
               rows={3}
             />
           </div>
 
           <div className="flex gap-3">
             <button type="submit" className="btn-primary flex-1">
-              Create Team
+              {t('buttons.create')}
             </button>
             <button
               type="button"
               onClick={() => setShowForm(false)}
               className="btn-secondary flex-1"
             >
-              Cancel
+              {t('buttons.cancel')}
             </button>
           </div>
         </form>

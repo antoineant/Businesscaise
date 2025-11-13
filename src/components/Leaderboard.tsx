@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Team } from '../types/game';
 import { calculateTeamScore } from '../utils/gameEngine';
 
@@ -7,6 +8,8 @@ interface Props {
 }
 
 export default function Leaderboard({ teams, currentTeamId }: Props) {
+  const { t } = useTranslation(['game', 'common']);
+
   // Sort teams by overall score
   const sortedTeams = [...teams].sort((a, b) => {
     const scoreA = calculateTeamScore(a.metrics);
@@ -25,7 +28,7 @@ export default function Leaderboard({ teams, currentTeamId }: Props) {
     <div className="card">
       <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
         <span>🏆</span>
-        Leaderboard
+        {t('game:leaderboard.title')}
       </h2>
 
       <div className="space-y-3">
@@ -59,18 +62,18 @@ export default function Leaderboard({ teams, currentTeamId }: Props) {
                 <h3 className="font-bold text-gray-800 truncate">
                   {team.name}
                   {isCurrentTeam && (
-                    <span className="ml-2 text-sm font-normal text-primary-600">(You)</span>
+                    <span className="ml-2 text-sm font-normal text-primary-600">{t('common:common.you')}</span>
                   )}
                 </h3>
                 <p className="text-sm text-gray-600">
-                  {team.members.length} member{team.members.length !== 1 ? 's' : ''} • {team.submissions.length} decisions made
+                  {team.members.length} {team.members.length !== 1 ? t('common:teamSetup.members_plural') : t('common:teamSetup.members')} • {team.submissions.length} {t('game:leaderboard.decisionsMode')}
                 </p>
               </div>
 
               {/* Score */}
               <div className="text-right">
                 <div className="text-2xl font-bold text-gray-800">{score}</div>
-                <div className="text-xs text-gray-500">points</div>
+                <div className="text-xs text-gray-500">{t('common:common.points')}</div>
               </div>
             </div>
           );
@@ -78,24 +81,24 @@ export default function Leaderboard({ teams, currentTeamId }: Props) {
 
         {teams.length === 0 && (
           <div className="text-center py-8 text-gray-500">
-            <p className="text-lg">No teams yet!</p>
-            <p className="text-sm">Create a team to get started.</p>
+            <p className="text-lg">{t('game:leaderboard.noTeams')}</p>
+            <p className="text-sm">{t('game:leaderboard.createTeam')}</p>
           </div>
         )}
       </div>
 
       {/* Scoring Info */}
       <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <h4 className="font-semibold text-blue-900 mb-2">💡 How Scoring Works</h4>
+        <h4 className="font-semibold text-blue-900 mb-2">💡 {t('game:leaderboard.scoring.title')}</h4>
         <p className="text-sm text-blue-800 mb-2">
-          Your overall score is calculated based on performance across all five departments:
+          {t('game:leaderboard.scoring.description')}
         </p>
         <ul className="text-sm text-blue-800 space-y-1 ml-4">
-          <li>• Marketing (20%): Brand awareness, customer acquisition, market share</li>
-          <li>• Sales (25%): Revenue, conversion rate, customer satisfaction</li>
-          <li>• Research & Development (20%): Innovation, quality, efficiency</li>
-          <li>• Finance (20%): Cash flow, profit margin, investor confidence</li>
-          <li>• Human Resources (15%): Morale, productivity, retention</li>
+          <li>• {t('game:leaderboard.scoring.marketing')}</li>
+          <li>• {t('game:leaderboard.scoring.sales')}</li>
+          <li>• {t('game:leaderboard.scoring.research')}</li>
+          <li>• {t('game:leaderboard.scoring.finance')}</li>
+          <li>• {t('game:leaderboard.scoring.hr')}</li>
         </ul>
       </div>
     </div>

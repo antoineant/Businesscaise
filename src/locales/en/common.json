@@ -60,5 +60,12 @@
   },
   "footer": {
     "tagline": "A comprehensive business strategy simulation for students"
+  },
+  "scenarioInfo": {
+    "title": "Your Business Scenario",
+    "companyType": "Company Type",
+    "industry": "Industry",
+    "companyName": "Company Name",
+    "productService": "Product/Service"
   }
 }

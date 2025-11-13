@@ -60,5 +60,12 @@
   },
   "footer": {
     "tagline": "Une simulation complète de stratégie d'entreprise pour les étudiants"
+  },
+  "scenarioInfo": {
+    "title": "Votre Scénario d'Entreprise",
+    "companyType": "Type d'Entreprise",
+    "industry": "Industrie",
+    "companyName": "Nom de l'Entreprise",
+    "productService": "Produit/Service"
   }
 }

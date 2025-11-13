@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MajorDecision, SubDecision, Team, DepartmentImpact } from '../types/game';
 import { hasSubmitted, getSubmission, getDepartmentDisplay } from '../utils/gameEngine';
 import FileUpload from './FileUpload';
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export default function DecisionView({ decision, team, onSubmit }: Props) {
+  const { t } = useTranslation(['game', 'common']);
   const [selectedSubDecision, setSelectedSubDecision] = useState<string | null>(null);
 
   const renderSubDecision = (subDecision: SubDecision) => {
@@ -25,7 +27,7 @@ export default function DecisionView({ decision, team, onSubmit }: Props) {
           </div>
           {submitted && (
             <span className="ml-4 px-3 py-1 bg-green-100 text-green-800 text-sm font-semibold rounded-full">
-              ✓ Submitted
+              ✓ {t('common:common.submitted')}
             </span>
           )}
         </div>
@@ -36,6 +38,7 @@ export default function DecisionView({ decision, team, onSubmit }: Props) {
             submitted={submitted}
             submission={submission}
             onSubmit={(value: number) => onSubmit(subDecision.id, value)}
+            t={t}
           />
         )}
 
@@ -45,6 +48,7 @@ export default function DecisionView({ decision, team, onSubmit }: Props) {
             submitted={submitted}
             submission={submission}
             onSubmit={(fileData: any) => onSubmit(subDecision.id, null, fileData)}
+            t={t}
           />
         )}
 
@@ -54,6 +58,7 @@ export default function DecisionView({ decision, team, onSubmit }: Props) {
             submitted={submitted}
             submission={submission}
             onSubmit={(value: string) => onSubmit(subDecision.id, value)}
+            t={t}
           />
         )}
       </div>
@@ -66,7 +71,7 @@ export default function DecisionView({ decision, team, onSubmit }: Props) {
       <div className="card bg-gradient-to-r from-primary-600 to-primary-700 text-white">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <div className="text-sm font-semibold mb-2">Week {decision.week}</div>
+            <div className="text-sm font-semibold mb-2">{t('common:common.week')} {decision.week}</div>
             <h2 className="text-3xl font-bold mb-3">{decision.title}</h2>
             <p className="text-primary-100 mb-4">{decision.description}</p>
           </div>
@@ -74,29 +79,29 @@ export default function DecisionView({ decision, team, onSubmit }: Props) {
 
         {/* Context Box */}
         <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 mt-4">
-          <h3 className="font-semibold mb-2">📋 Context</h3>
+          <h3 className="font-semibold mb-2">📋 {t('common:common.context')}</h3>
           <p className="text-sm leading-relaxed">{decision.context}</p>
         </div>
 
         {/* Deadline */}
         <div className="mt-4 flex items-center gap-2 text-sm">
-          <span className="font-semibold">⏰ Deadline:</span>
+          <span className="font-semibold">⏰ {t('common:common.deadline')}:</span>
           <span>{new Date(decision.deadline).toLocaleDateString()} {new Date(decision.deadline).toLocaleTimeString()}</span>
         </div>
       </div>
 
       {/* Sub Decisions */}
       <div className="space-y-4">
-        <h3 className="text-2xl font-bold text-gray-800">Your Decisions</h3>
+        <h3 className="text-2xl font-bold text-gray-800">{t('game:decision.yourDecisions')}</h3>
         {decision.subDecisions.map(renderSubDecision)}
       </div>
 
       {/* Impact Preview */}
       {decision.minimumImpact.length > 0 && (
         <div className="card bg-blue-50 border-l-4 border-blue-500">
-          <h3 className="text-lg font-bold text-gray-800 mb-3">📊 Guaranteed Impacts</h3>
+          <h3 className="text-lg font-bold text-gray-800 mb-3">📊 {t('game:decision.guaranteedImpacts')}</h3>
           <p className="text-sm text-gray-600 mb-4">
-            These impacts will occur regardless of your choices:
+            {t('game:decision.guaranteedDescription')}
           </p>
           <ImpactList impacts={decision.minimumImpact} />
         </div>
@@ -106,7 +111,7 @@ export default function DecisionView({ decision, team, onSubmit }: Props) {
 }
 
 // Numeric Input Component
-function NumericInput({ subDecision, submitted, submission, onSubmit }: any) {
+function NumericInput({ subDecision, submitted, submission, onSubmit, t }: any) {
   const [value, setValue] = useState(submission?.value || subDecision.numericConfig?.min || 0);
   const [showImpacts, setShowImpacts] = useState(false);
 
@@ -122,7 +127,7 @@ function NumericInput({ subDecision, submitted, submission, onSubmit }: any) {
       <div>
         <div className="flex items-center justify-between mb-2">
           <label className="text-sm font-semibold text-gray-700">
-            Enter Value ({config.min} - {config.max} {config.unit})
+            {t('game:decision.enterValue', { min: config.min, max: config.max, unit: config.unit })}
           </label>
           <span className="text-2xl font-bold text-primary-600">
             {value} {config.unit}
@@ -149,7 +154,7 @@ function NumericInput({ subDecision, submitted, submission, onSubmit }: any) {
         onClick={() => setShowImpacts(!showImpacts)}
         className="text-sm text-primary-600 hover:text-primary-700 font-semibold"
       >
-        {showImpacts ? '▼ Hide' : '▶'} Preview Impact ({impacts.length} departments affected)
+        {showImpacts ? `▼ ${t('common:buttons.hideImpact')}` : `▶ ${t('common:buttons.showImpact')}`} ({impacts.length} {t('game:decision.departmentsAffected')})
       </button>
 
       {showImpacts && (
@@ -160,7 +165,7 @@ function NumericInput({ subDecision, submitted, submission, onSubmit }: any) {
 
       {!submitted && (
         <button onClick={handleSubmit} className="btn-primary w-full">
-          Submit Decision
+          {t('common:buttons.submit')}
         </button>
       )}
     </div>
@@ -168,7 +173,7 @@ function NumericInput({ subDecision, submitted, submission, onSubmit }: any) {
 }
 
 // File Upload Input Component
-function FileUploadInput({ subDecision, submitted, submission, onSubmit }: any) {
+function FileUploadInput({ subDecision, submitted, submission, onSubmit, t }: any) {
   const [fileData, setFileData] = useState<any>(null);
 
   const config = subDecision.fileConfig!;
@@ -183,13 +188,13 @@ function FileUploadInput({ subDecision, submitted, submission, onSubmit }: any) 
     <div className="space-y-4">
       {/* Scoring Rubric */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-        <h5 className="font-semibold text-blue-900 mb-1">📝 Scoring Rubric</h5>
+        <h5 className="font-semibold text-blue-900 mb-1">📝 {t('game:decision.scoringRubric')}</h5>
         <p className="text-sm text-blue-800">{config.scoringRubric}</p>
       </div>
 
       {submitted && submission?.fileData ? (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <p className="font-semibold text-green-800 mb-2">✓ File Submitted</p>
+          <p className="font-semibold text-green-800 mb-2">✓ {t('game:decision.fileSubmitted')}</p>
           <p className="text-sm text-green-700">
             {submission.fileData.fileName} ({(submission.fileData.fileSize / 1024 / 1024).toFixed(2)} MB)
           </p>
@@ -213,7 +218,7 @@ function FileUploadInput({ subDecision, submitted, submission, onSubmit }: any) 
 
           {fileData && !submitted && (
             <button onClick={handleSubmit} className="btn-primary w-full">
-              Submit Document
+              {t('common:buttons.submitDocument')}
             </button>
           )}
         </>
@@ -223,7 +228,7 @@ function FileUploadInput({ subDecision, submitted, submission, onSubmit }: any) 
 }
 
 // Multiple Choice Input Component
-function MultipleChoiceInput({ subDecision, submitted, submission, onSubmit }: any) {
+function MultipleChoiceInput({ subDecision, submitted, submission, onSubmit, t }: any) {
   const [selectedOption, setSelectedOption] = useState<string | null>(submission?.value || null);
   const [showImpacts, setShowImpacts] = useState<string | null>(null);
 
@@ -263,7 +268,7 @@ function MultipleChoiceInput({ subDecision, submitted, submission, onSubmit }: a
                 }}
                 className="text-sm text-primary-600 hover:text-primary-700 font-semibold"
               >
-                {showImpacts === option.value ? '▼ Hide' : '▶'} View Impact
+                {showImpacts === option.value ? `▼ ${t('common:buttons.hideImpact')}` : `▶ ${t('common:buttons.viewImpact')}`}
               </button>
 
               {showImpacts === option.value && (
@@ -278,7 +283,7 @@ function MultipleChoiceInput({ subDecision, submitted, submission, onSubmit }: a
 
       {!submitted && selectedOption && (
         <button onClick={handleSubmit} className="btn-primary w-full mt-4">
-          Submit Decision
+          {t('common:buttons.submit')}
         </button>
       )}
     </div>
