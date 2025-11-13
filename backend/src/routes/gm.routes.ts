@@ -265,6 +265,13 @@ router.get('/games/:gameId/perplexity-usage',
   narrativeController.getPerplexityUsage
 );
 
+// Get narrative read statistics
+router.get('/narratives/:narrativeId/read-stats',
+  [param('narrativeId').isUUID()],
+  validate,
+  narrativeController.getNarrativeReadStats
+);
+
 /**
  * Analytics & Reporting
  */

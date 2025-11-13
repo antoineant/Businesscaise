@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { unifiedTeamAPI as teamAPI, unifiedWebSocketService as websocketService, Team, Session } from '../services/api.unified';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Users, TrendingUp, FileText, Trophy, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Users, TrendingUp, FileText, Trophy, AlertCircle, Mail, MessageCircle } from 'lucide-react';
 import LanguageSelector from '../components/LanguageSelector';
 import DepartmentDashboard from '../components/DepartmentDashboard';
 import SubmissionForm from '../components/SubmissionForm';
@@ -12,6 +12,8 @@ import { PodLeaderboardCard } from '../components/PodLeaderboardCard';
 import { CategoryRankingsCard } from '../components/CategoryRankingsCard';
 import { DepartmentMetrics } from '../types/game';
 import { demoMode } from '../services/demo-mode';
+import NarrativeInbox from '../components/NarrativeInbox';
+import AskTheMarket from '../components/AskTheMarket';
 
 // Helper function to convert backend metrics to frontend DepartmentMetrics format
 function convertToDepartmentMetrics(backendMetrics: any): DepartmentMetrics {
@@ -72,7 +74,7 @@ export default function PlayerGame() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [showJoinModal, setShowJoinModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'game' | 'leaderboard'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'game' | 'leaderboard' | 'narratives' | 'ask-market'>('dashboard');
 
   useEffect(() => {
     if (gameId) {
@@ -300,6 +302,8 @@ export default function PlayerGame() {
             {[
               { id: 'dashboard', label: 'Dashboard', icon: TrendingUp },
               { id: 'game', label: 'Current Challenge', icon: FileText },
+              { id: 'narratives', label: 'Narratives', icon: Mail },
+              { id: 'ask-market', label: 'Ask the Market', icon: MessageCircle },
               { id: 'leaderboard', label: 'Leaderboard', icon: Trophy },
             ].map((tab) => (
               <button
@@ -489,6 +493,14 @@ export default function PlayerGame() {
               </div>
             </div>
           </div>
+        )}
+
+        {activeTab === 'narratives' && teamId && gameId && (
+          <NarrativeInbox teamId={teamId} gameId={gameId} />
+        )}
+
+        {activeTab === 'ask-market' && teamId && gameId && (
+          <AskTheMarket teamId={teamId} gameId={gameId} />
         )}
       </main>
     </div>

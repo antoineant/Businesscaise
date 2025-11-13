@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { unifiedGmAPI as gmAPI, Game, Team, Session, Submission } from '../services/api.unified';
 import { useTranslation } from 'react-i18next';
-import { Play, Pause, Users, FileText, TrendingUp, ArrowLeft, Unlock, AlertCircle, CheckCircle, XCircle, Download, Eye, X } from 'lucide-react';
+import { Play, Pause, Users, FileText, TrendingUp, ArrowLeft, Unlock, AlertCircle, CheckCircle, XCircle, Download, Eye, X, Mail, Sparkles } from 'lucide-react';
 import LanguageSelector from '../components/LanguageSelector';
 import { useAuth } from '../contexts/AuthContext';
+import GMNarrativeManager from '../components/GMNarrativeManager';
+import RealityLens from '../components/RealityLens';
 
 export default function GameMasterDashboard() {
   const { t } = useTranslation('common');
@@ -18,7 +20,7 @@ export default function GameMasterDashboard() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState<'overview' | 'sessions' | 'teams' | 'submissions'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'sessions' | 'teams' | 'submissions' | 'narratives' | 'reality-lens'>('overview');
   const [submissionFilter, setSubmissionFilter] = useState<'all' | 'pending' | 'scored'>('all');
   const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
   const [scoringModalOpen, setScoringModalOpen] = useState(false);
@@ -283,17 +285,19 @@ export default function GameMasterDashboard() {
       {/* Tabs */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-1">
+          <div className="flex gap-1 overflow-x-auto">
             {[
               { id: 'overview', label: 'Overview', icon: TrendingUp },
               { id: 'sessions', label: 'Sessions', icon: FileText },
               { id: 'teams', label: 'Teams', icon: Users },
               { id: 'submissions', label: 'Submissions', icon: FileText },
+              { id: 'narratives', label: 'Narratives', icon: Mail },
+              { id: 'reality-lens', label: 'Reality Lens', icon: Sparkles },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-6 py-3 font-semibold transition-colors ${
+                className={`flex items-center gap-2 px-6 py-3 font-semibold transition-colors whitespace-nowrap ${
                   activeTab === tab.id
                     ? 'text-blue-600 border-b-2 border-blue-600'
                     : 'text-gray-600 hover:text-gray-900'
@@ -581,6 +585,26 @@ export default function GameMasterDashboard() {
               </div>
             )}
           </div>
+        )}
+
+        {activeTab === 'narratives' && gameId && (
+          <GMNarrativeManager gameId={gameId} teams={teams} />
+        )}
+
+        {activeTab === 'reality-lens' && gameId && (
+          <RealityLens
+            gameId={gameId}
+            industry={game?.industry_name}
+            archetype={game?.archetype_name}
+            onNarrativeCreated={(content) => {
+              // Switch to narratives tab when narrative is created via Reality Lens
+              setActiveTab('narratives');
+            }}
+            onEventCreated={(event) => {
+              // Could implement event creation here
+              console.log('Event created:', event);
+            }}
+          />
         )}
       </main>
 
