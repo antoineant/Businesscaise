@@ -339,7 +339,7 @@ npx playwright codegen http://localhost:3002
 ### Output Structure
 
 ```
-Businesscaise/
+BusinessCase/
 ├── playwright-report/          # HTML test report
 │   └── index.html
 ├── test-results/               # Raw test results
@@ -422,7 +422,7 @@ pg_isready
 
 **Error:**
 ```
-Database 'businesscaise' not found
+Database 'businesscase' not found
 ```
 
 **Solution:**
@@ -557,7 +557,7 @@ jobs:
         image: postgres:14
         env:
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: businesscaise
+          POSTGRES_DB: businesscase
         options: >-
           --health-cmd pg_isready
           --health-interval 10s

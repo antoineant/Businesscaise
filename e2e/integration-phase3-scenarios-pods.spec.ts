@@ -14,13 +14,13 @@ import { test, expect, type Page } from '@playwright/test';
 // Generate unique test data
 const generateTestGM = () => ({
   name: 'Phase 3 Test GM',
-  email: `gm-phase3-${Date.now()}-${Math.random().toString(36).substring(2, 9)}@businesscaise.com`,
+  email: `gm-phase3-${Date.now()}-${Math.random().toString(36).substring(2, 9)}@businesscase.com`,
   password: 'TestGM123!',
 });
 
 const generateTestPlayer = () => ({
   name: 'Phase 3 Test Player',
-  email: `player-phase3-${Date.now()}-${Math.random().toString(36).substring(2, 9)}@businesscaise.com`,
+  email: `player-phase3-${Date.now()}-${Math.random().toString(36).substring(2, 9)}@businesscase.com`,
   password: 'TestPlayer123!',
 });
 

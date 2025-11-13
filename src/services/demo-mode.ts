@@ -1,7 +1,7 @@
 // Demo Mode Manager
 // Controls whether the app uses real API or mock data
 
-const DEMO_MODE_KEY = 'businesscaise_demo_mode';
+const DEMO_MODE_KEY = 'businesscase_demo_mode';
 
 export class DemoModeManager {
   private static instance: DemoModeManager;
@@ -84,17 +84,17 @@ export class DemoModeManager {
   getDemoCredentials() {
     return {
       gameMaster: {
-        email: 'demo-gm@businesscaise.com',
+        email: 'demo-gm@businesscase.com',
         password: 'demo123',
         name: 'Demo Game Master',
       },
       player1: {
-        email: 'demo-player1@businesscaise.com',
+        email: 'demo-player1@businesscase.com',
         password: 'demo123',
         name: 'Demo Player 1',
       },
       player2: {
-        email: 'demo-player2@businesscaise.com',
+        email: 'demo-player2@businesscase.com',
         password: 'demo123',
         name: 'Demo Player 2',
       },

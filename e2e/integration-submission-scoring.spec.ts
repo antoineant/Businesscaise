@@ -8,13 +8,13 @@ import { test, expect, Page, chromium } from '@playwright/test';
 // Generate unique test data
 const generateTestGM = () => ({
   name: 'Test Game Master',
-  email: `gm-test-${Date.now()}-${Math.random().toString(36).substring(2, 9)}@businesscaise.com`,
+  email: `gm-test-${Date.now()}-${Math.random().toString(36).substring(2, 9)}@businesscase.com`,
   password: 'TestGM123!',
 });
 
 const generateTestPlayer = () => ({
   name: 'Test Player',
-  email: `player-test-${Date.now()}-${Math.random().toString(36).substring(2, 9)}@businesscaise.com`,
+  email: `player-test-${Date.now()}-${Math.random().toString(36).substring(2, 9)}@businesscase.com`,
   password: 'TestPlayer123!',
 });
 

@@ -14,7 +14,7 @@ import { test, expect } from '@playwright/test';
 
 const GAME_MASTER = {
   name: 'GM Dashboard Test',
-  email: `gm-dashboard-${Date.now()}@businesscaise.com`,
+  email: `gm-dashboard-${Date.now()}@businesscase.com`,
   password: 'DashboardTest123!',
 };
 

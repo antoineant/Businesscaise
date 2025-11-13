@@ -16,7 +16,7 @@ import { test, expect, Page, Browser } from '@playwright/test';
 
 const GAME_MASTER = {
   name: 'Integration Test GM',
-  email: `integration-gm-${Date.now()}@businesscaise.com`,
+  email: `integration-gm-${Date.now()}@businesscase.com`,
   password: 'IntegrationTest123!',
 };
 

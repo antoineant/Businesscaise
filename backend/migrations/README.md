@@ -33,7 +33,7 @@ cd backend
 psql $DATABASE_URL -f migrations/002_update_submissions_table.sql
 
 # Or if using connection params:
-psql -h localhost -U your_user -d businesscaise -f migrations/002_update_submissions_table.sql
+psql -h localhost -U your_user -d businesscase -f migrations/002_update_submissions_table.sql
 ```
 
 ### Option 2: Using npm migrate (if configured)

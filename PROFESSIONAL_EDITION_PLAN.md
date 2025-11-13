@@ -227,7 +227,7 @@ GET    /api/teams/history                   - Get metrics history
 ## File Structure
 
 ```
-businesscaise/
+businesscase/
 ├── frontend/              # Team interface (existing React app)
 ├── admin/                 # GM dashboard (new React app)
 ├── backend/

@@ -46,19 +46,19 @@ psql -U postgres
 
 ```sql
 -- Create the database
-CREATE DATABASE businesscaise;
+CREATE DATABASE businesscase;
 
 -- Create a user (optional, for production)
-CREATE USER businesscaise_user WITH ENCRYPTED PASSWORD 'your_secure_password';
+CREATE USER businesscase_user WITH ENCRYPTED PASSWORD 'your_secure_password';
 
 -- Grant privileges
-GRANT ALL PRIVILEGES ON DATABASE businesscaise TO businesscaise_user;
+GRANT ALL PRIVILEGES ON DATABASE businesscase TO businesscase_user;
 
 -- Connect to the database
-\c businesscaise
+\c businesscase
 
 -- Grant schema privileges
-GRANT ALL ON SCHEMA public TO businesscaise_user;
+GRANT ALL ON SCHEMA public TO businesscase_user;
 
 -- Exit psql
 \q
@@ -71,10 +71,10 @@ GRANT ALL ON SCHEMA public TO businesscaise_user;
 cd backend
 
 # Run the initial schema migration
-psql -U postgres -d businesscaise -f migrations/001_initial_schema.sql
+psql -U postgres -d businesscase -f migrations/001_initial_schema.sql
 
 # Or if using the created user
-psql -U businesscaise_user -d businesscaise -f migrations/001_initial_schema.sql
+psql -U businesscase_user -d businesscase -f migrations/001_initial_schema.sql
 ```
 
 ## Verify Installation
@@ -83,13 +83,13 @@ psql -U businesscaise_user -d businesscaise -f migrations/001_initial_schema.sql
 
 ```bash
 # Test connection
-psql -U postgres -d businesscaise -c "SELECT version();"
+psql -U postgres -d businesscase -c "SELECT version();"
 ```
 
 ### Verify Tables
 
 ```bash
-psql -U postgres -d businesscaise -c "\dt"
+psql -U postgres -d businesscase -c "\dt"
 ```
 
 You should see the following tables:
@@ -110,7 +110,7 @@ Ensure your `.env` file has the correct database credentials:
 ```env
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=businesscaise
+DB_NAME=businesscase
 DB_USER=postgres
 DB_PASSWORD=your_password_here
 ```
@@ -154,7 +154,7 @@ If you get an error about uuid-ossp extension:
 
 ```sql
 -- Connect to your database
-psql -U postgres -d businesscaise
+psql -U postgres -d businesscase
 
 -- Enable the extension manually
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -166,7 +166,7 @@ To create a test user for development:
 
 ```sql
 -- Connect to the database
-psql -U postgres -d businesscaise
+psql -U postgres -d businesscase
 
 -- Insert a Game Master user
 INSERT INTO users (email, password_hash, role, name)

@@ -69,12 +69,12 @@ NODE_ENV=development
 # Database
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=businesscaise
+DB_NAME=businesscase
 DB_USER=postgres
 DB_PASSWORD=postgres
 
 # JWT
-JWT_SECRET=businesscaise_dev_secret_key_please_change_in_production_2024
+JWT_SECRET=businesscase_dev_secret_key_please_change_in_production_2024
 JWT_EXPIRES_IN=7d
 
 # CORS (IMPORTANT: Include both frontends!)
@@ -151,7 +151,7 @@ Error: password authentication failed for user "postgres"
 
 3. **Verify database exists:**
    ```bash
-   psql -U postgres -l | grep businesscaise
+   psql -U postgres -l | grep businesscase
    ```
 
 4. **If missing, create it:**
@@ -283,13 +283,13 @@ npm run dev
 
 ```bash
 # Test PostgreSQL connection
-psql -U postgres -d businesscaise -c "SELECT current_database();"
+psql -U postgres -d businesscase -c "SELECT current_database();"
 
 # List all tables
-psql -U postgres -d businesscaise -c "\dt"
+psql -U postgres -d businesscase -c "\dt"
 
 # Check if tables have data
-psql -U postgres -d businesscaise -c "SELECT COUNT(*) FROM users;"
+psql -U postgres -d businesscase -c "SELECT COUNT(*) FROM users;"
 ```
 
 ### Check Environment Variables
@@ -301,7 +301,7 @@ cat .env
 
 # Should show:
 # - PORT=3001
-# - DB_NAME=businesscaise
+# - DB_NAME=businesscase
 # - CORS_ORIGIN=http://localhost:5173,http://localhost:3002
 # - JWT_SECRET=...
 ```

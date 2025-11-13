@@ -186,11 +186,11 @@ main() {
   echo -e "${GREEN}✓ PostgreSQL is running${NC}"
 
   # Check if database exists
-  if ! psql -U postgres -lqt | cut -d \| -f 1 | grep -qw businesscaise; then
-    echo -e "${YELLOW}Database 'businesscaise' not found. Creating...${NC}"
+  if ! psql -U postgres -lqt | cut -d \| -f 1 | grep -qw businesscase; then
+    echo -e "${YELLOW}Database 'businesscase' not found. Creating...${NC}"
     cd backend && ./setup-db.sh && cd ..
   fi
-  echo -e "${GREEN}✓ Database 'businesscaise' exists${NC}"
+  echo -e "${GREEN}✓ Database 'businesscase' exists${NC}"
 
   echo ""
 

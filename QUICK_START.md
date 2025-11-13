@@ -32,9 +32,9 @@ open http://localhost:5173/?demo=true
 
 | Role | Email | Password |
 |------|-------|----------|
-| **Game Master** | demo-gm@businesscaise.com | demo123 |
-| **Player 1** | demo-player1@businesscaise.com | demo123 |
-| **Player 2** | demo-player2@businesscaise.com | demo123 |
+| **Game Master** | demo-gm@businesscase.com | demo123 |
+| **Player 1** | demo-player1@businesscase.com | demo123 |
+| **Player 2** | demo-player2@businesscase.com | demo123 |
 
 ## 📝 5-Minute Demo Flow
 
@@ -83,10 +83,10 @@ cd backend
 npm install
 
 # Create database
-psql -U postgres -c "CREATE DATABASE businesscaise;"
+psql -U postgres -c "CREATE DATABASE businesscase;"
 
 # Run migrations
-psql -U postgres -d businesscaise -f src/db/migrations/initial_schema.sql
+psql -U postgres -d businesscase -f src/db/migrations/initial_schema.sql
 
 # Configure environment
 cp .env.example .env

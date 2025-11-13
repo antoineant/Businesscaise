@@ -132,7 +132,7 @@ PORT=3001
 # Database
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=businesscaise
+DB_NAME=businesscase
 DB_USER=postgres
 DB_PASSWORD=postgres
 
@@ -472,7 +472,7 @@ npm run build
 
 ### PM2 Configuration
 ```bash
-pm2 start dist/server.js --name businesscaise-api -i max
+pm2 start dist/server.js --name businesscase-api -i max
 pm2 save
 pm2 startup
 ```

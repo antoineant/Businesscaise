@@ -331,7 +331,7 @@ await page.goto('http://localhost:5173/?demo=false', { waitUntil: 'networkidle' 
 async function registerAndLoginPlayer(page: Page) {
   const testPlayer = {
     name: 'E2E Test Player',
-    email: `player-${Date.now()}-${Math.random().toString(36).substring(7)}@businesscaise.com`,
+    email: `player-${Date.now()}-${Math.random().toString(36).substring(7)}@businesscase.com`,
     password: 'PlayerTest123!',
   };
 

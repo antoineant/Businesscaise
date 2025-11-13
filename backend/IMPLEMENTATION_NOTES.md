@@ -146,7 +146,7 @@ The game creation, session management, and team management features work indepen
 ## Database Setup Checklist
 
 - [ ] PostgreSQL 14+ installed and running
-- [ ] Database `businesscaise` created
+- [ ] Database `businesscase` created
 - [ ] Migration `001_initial_schema.sql` applied
 - [ ] UUID extension enabled (`uuid-ossp`)
 - [ ] Environment variables configured (`.env`)
@@ -233,7 +233,7 @@ PORT=3001
 NODE_ENV=development
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=businesscaise
+DB_NAME=businesscase
 DB_USER=postgres
 DB_PASSWORD=your_password
 JWT_SECRET=your_secret_key

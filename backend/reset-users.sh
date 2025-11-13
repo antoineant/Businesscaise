@@ -11,7 +11,7 @@ RED='\033[0;31m'
 NC='\033[0m'
 
 DB_USER="${PGUSER:-postgres}"
-DB_NAME="businesscaise"
+DB_NAME="businesscase"
 
 echo "Resetting test users..."
 

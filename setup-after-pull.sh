@@ -48,12 +48,12 @@ NODE_ENV=development
 # Database
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=businesscaise
+DB_NAME=businesscase
 DB_USER=postgres
 DB_PASSWORD=postgres
 
 # JWT
-JWT_SECRET=businesscaise_dev_secret_key_please_change_in_production_2024
+JWT_SECRET=businesscase_dev_secret_key_please_change_in_production_2024
 JWT_EXPIRES_IN=7d
 
 # CORS
@@ -104,12 +104,12 @@ fi
 echo -e "${GREEN}✓ PostgreSQL is running${NC}"
 
 # Check if database exists
-if ! psql -U postgres -lqt | cut -d \| -f 1 | grep -qw businesscaise; then
-  echo -e "${YELLOW}Database 'businesscaise' not found. Creating...${NC}"
+if ! psql -U postgres -lqt | cut -d \| -f 1 | grep -qw businesscase; then
+  echo -e "${YELLOW}Database 'businesscase' not found. Creating...${NC}"
   cd backend && ./setup-db.sh && cd ..
   echo -e "${GREEN}✓ Database created${NC}"
 else
-  echo -e "${GREEN}✓ Database 'businesscaise' exists${NC}"
+  echo -e "${GREEN}✓ Database 'businesscase' exists${NC}"
 fi
 echo ""
 

@@ -53,7 +53,7 @@ export default function Login() {
             </svg>
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            BusinessCaise
+            BusinessCase
           </h1>
           <p className="text-gray-600">
             {t('login.subtitle', 'Sign in to your account')}
@@ -168,7 +168,7 @@ export default function Login() {
 
         {/* Footer */}
         <div className="mt-8 text-center text-sm text-gray-500">
-          <p>© 2024 BusinessCaise. All rights reserved.</p>
+          <p>© 2024 BusinessCase. All rights reserved.</p>
         </div>
       </div>
     </div>

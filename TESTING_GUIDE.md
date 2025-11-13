@@ -16,7 +16,7 @@ Before testing, ensure you have:
 ### Backend (.env in backend/)
 ```
 PORT=3001
-DATABASE_URL=postgresql://user:password@localhost:5432/businesscaise
+DATABASE_URL=postgresql://user:password@localhost:5432/businesscase
 JWT_SECRET=your-secret-key-here
 JWT_EXPIRES_IN=7d
 NODE_ENV=development
@@ -35,7 +35,7 @@ VITE_ENV=development
 cd backend
 
 # Run database migrations
-psql -U your_user -d businesscaise -f src/db/migrations/initial_schema.sql
+psql -U your_user -d businesscase -f src/db/migrations/initial_schema.sql
 ```
 
 ## Starting the Application
@@ -380,7 +380,7 @@ Test that scoring actually updates metrics according to the formula in:
 
 ### Backend Won't Start
 - Check PostgreSQL is running: `pg_isready`
-- Verify database exists: `psql -l | grep businesscaise`
+- Verify database exists: `psql -l | grep businesscase`
 - Check port 3001 is available: `lsof -i :3001`
 
 ### Frontend Won't Connect

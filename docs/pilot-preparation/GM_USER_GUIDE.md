@@ -744,7 +744,7 @@ A: The platform doesn't track individual contributions. Manage team dynamics acc
 
 ## Need Help?
 
-**Technical Support:** [support@businesscaise.com](mailto:support@businesscaise.com)
+**Technical Support:** [support@businesscase.com](mailto:support@businesscase.com)
 **Pedagogical Questions:** Refer to Faculty Training Deck
 **Platform Updates:** Check release notes in dashboard
 

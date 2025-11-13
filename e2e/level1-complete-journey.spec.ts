@@ -17,7 +17,7 @@ async function loginAsDemoPlayer(page) {
   // beforeEach already navigated to /login?demo=true, so just fill the form
 
   // Fill in login credentials
-  await page.getByLabel(/email/i).fill('demo-player1@businesscaise.com');
+  await page.getByLabel(/email/i).fill('demo-player1@businesscase.com');
   await page.getByLabel(/password/i).fill('demo123');
 
   // Click login button

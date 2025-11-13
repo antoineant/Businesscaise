@@ -48,9 +48,9 @@ When you enable Demo Mode, the following data is automatically available:
 ### User Accounts
 | Role | Email | Password | Name |
 |------|-------|----------|------|
-| Game Master | demo-gm@businesscaise.com | demo123 | Demo Game Master |
-| Player 1 | demo-player1@businesscaise.com | demo123 | Demo Player 1 |
-| Player 2 | demo-player2@businesscaise.com | demo123 | Demo Player 2 |
+| Game Master | demo-gm@businesscase.com | demo123 | Demo Game Master |
+| Player 1 | demo-player1@businesscase.com | demo123 | Demo Player 1 |
+| Player 2 | demo-player2@businesscase.com | demo123 | Demo Player 2 |
 
 ### Pre-Loaded Game
 - **Title**: Demo Business Simulation - Winter 2025
@@ -84,7 +84,7 @@ When you enable Demo Mode, the following data is automatically available:
 **Steps**:
 1. Click **Demo Mode** toggle (bottom-right) if not already enabled
 2. Login as GM:
-   - Email: `demo-gm@businesscaise.com`
+   - Email: `demo-gm@businesscase.com`
    - Password: `demo123`
 
 3. **Dashboard Overview**:
@@ -130,7 +130,7 @@ When you enable Demo Mode, the following data is automatically available:
 **Steps**:
 1. Logout from GM account (or open new incognito window)
 2. Login as Player:
-   - Email: `demo-player1@businesscaise.com`
+   - Email: `demo-player1@businesscase.com`
    - Password: `demo123`
 
 3. **Game Selection**:
@@ -202,14 +202,14 @@ When you enable Demo Mode, the following data is automatically available:
 3. Keep this window visible
 
 **Window 2 - Player 1** (Alpha Innovators):
-1. Login as `demo-player1@businesscaise.com`
+1. Login as `demo-player1@businesscase.com`
 2. Enter game ID: `game-demo-001`
 3. Note: Alpha Innovators team already exists, you'll join it
 4. Navigate to Dashboard tab
 5. Keep this window visible
 
 **Window 3 - Player 2** (New Team):
-1. Login as `demo-player2@businesscaise.com`
+1. Login as `demo-player2@businesscase.com`
 2. Create new team: "Echo Squad"
 3. Navigate to Leaderboard tab
 4. Keep this window visible
@@ -416,7 +416,7 @@ When you enable Demo Mode, the following data is automatically available:
 **Solutions**:
 1. Verify you're in Demo Mode (check toggle button)
 2. Use exact credentials (case-sensitive):
-   - Email: `demo-gm@businesscaise.com`
+   - Email: `demo-gm@businesscase.com`
    - Password: `demo123`
 3. Check if password field is auto-filled incorrectly
 4. Clear form and re-enter manually

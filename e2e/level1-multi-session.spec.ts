@@ -14,7 +14,7 @@ test.describe('Level 1: Multi-Session Progression', () => {
     }
 
     // Login
-    await page.getByLabel(/email/i).fill('demo-player1@businesscaise.com');
+    await page.getByLabel(/email/i).fill('demo-player1@businesscase.com');
     await page.getByLabel(/password/i).fill('demo123');
     await page.getByRole('button', { name: /log in|sign in/i }).click();
     await page.waitForTimeout(2000);
@@ -86,7 +86,7 @@ test.describe('Level 1: Multi-Session Progression', () => {
 
     const emailInput = page.getByLabel(/email/i).first();
     if (await emailInput.isVisible().catch(() => false)) {
-      await emailInput.fill('demo-player1@businesscaise.com');
+      await emailInput.fill('demo-player1@businesscase.com');
       await page.getByLabel(/password/i).fill('demo123');
       await page.getByRole('button', { name: /log in|sign in/i }).click();
       await page.waitForTimeout(2000);
@@ -149,7 +149,7 @@ test.describe('Level 1: Multi-Session Progression', () => {
 
     const emailInput = page.getByLabel(/email/i).first();
     if (await emailInput.isVisible().catch(() => false)) {
-      await emailInput.fill('demo-player1@businesscaise.com');
+      await emailInput.fill('demo-player1@businesscase.com');
       await page.getByLabel(/password/i).fill('demo123');
       await page.getByRole('button', { name: /log in|sign in/i }).click();
       await page.waitForTimeout(2000);
@@ -219,7 +219,7 @@ test.describe('Level 1: Multi-Session Progression', () => {
 
     const emailInput = page.getByLabel(/email/i).first();
     if (await emailInput.isVisible().catch(() => false)) {
-      await emailInput.fill('demo-player1@businesscaise.com');
+      await emailInput.fill('demo-player1@businesscase.com');
       await page.getByLabel(/password/i).fill('demo123');
       await page.getByRole('button', { name: /log in|sign in/i }).click();
       await page.waitForTimeout(2000);
