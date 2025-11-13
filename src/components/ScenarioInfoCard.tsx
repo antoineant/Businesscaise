@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Building2, Briefcase } from 'lucide-react';
 
 interface ScenarioInfoCardProps {
@@ -24,6 +25,8 @@ export const ScenarioInfoCard: React.FC<ScenarioInfoCardProps> = ({
   companyName,
   productDescription,
 }) => {
+  const { t } = useTranslation('common');
+
   // Don't render if no scenario is set
   if (!archetype && !industry) {
     return null;
@@ -33,7 +36,7 @@ export const ScenarioInfoCard: React.FC<ScenarioInfoCardProps> = ({
     <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg shadow-sm p-6 border-2 border-indigo-200">
       <h3 className="text-lg font-bold text-indigo-900 mb-4 flex items-center">
         <Briefcase className="w-5 h-5 mr-2" />
-        Your Business Scenario
+        {t('scenarioInfo.title')}
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -42,7 +45,7 @@ export const ScenarioInfoCard: React.FC<ScenarioInfoCardProps> = ({
             <div className="flex items-center mb-2">
               <span className="text-2xl mr-3">{archetype.icon}</span>
               <div>
-                <p className="text-sm text-gray-600">Company Type</p>
+                <p className="text-sm text-gray-600">{t('scenarioInfo.companyType')}</p>
                 <p className="font-semibold text-gray-900">{archetype.name}</p>
               </div>
             </div>
@@ -55,7 +58,7 @@ export const ScenarioInfoCard: React.FC<ScenarioInfoCardProps> = ({
             <div className="flex items-center mb-2">
               <span className="text-2xl mr-3">{industry.icon}</span>
               <div>
-                <p className="text-sm text-gray-600">Industry</p>
+                <p className="text-sm text-gray-600">{t('scenarioInfo.industry')}</p>
                 <p className="font-semibold text-gray-900">{industry.name}</p>
               </div>
             </div>
@@ -71,13 +74,13 @@ export const ScenarioInfoCard: React.FC<ScenarioInfoCardProps> = ({
             <div className="flex-1">
               {companyName && (
                 <div className="mb-2">
-                  <p className="text-xs text-gray-600">Company Name</p>
+                  <p className="text-xs text-gray-600">{t('scenarioInfo.companyName')}</p>
                   <p className="font-medium text-gray-900">{companyName}</p>
                 </div>
               )}
               {productDescription && (
                 <div>
-                  <p className="text-xs text-gray-600">Product/Service</p>
+                  <p className="text-xs text-gray-600">{t('scenarioInfo.productService')}</p>
                   <p className="text-sm text-gray-700">{productDescription}</p>
                 </div>
               )}

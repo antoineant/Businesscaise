@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { formatFileSize, fileToBase64 } from '../utils/gameEngine';
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function FileUpload({ onFileSelect, acceptedFormats, maxSize, disabled }: Props) {
+  const { t } = useTranslation('common');
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [error, setError] = useState<string>('');
@@ -23,13 +25,13 @@ export default function FileUpload({ onFileSelect, acceptedFormats, maxSize, dis
     // Check file type
     const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
     if (!acceptedFormats.includes(fileExtension)) {
-      return `Invalid file type. Accepted formats: ${acceptedFormats.join(', ')}`;
+      return t('fileUpload.invalidType', { formats: acceptedFormats.join(', ') });
     }
 
     // Check file size
     const fileSizeMB = file.size / (1024 * 1024);
     if (fileSizeMB > maxSize) {
-      return `File too large. Maximum size: ${maxSize}MB`;
+      return t('fileUpload.tooLarge', { maxSize });
     }
 
     return null;
@@ -58,7 +60,7 @@ export default function FileUpload({ onFileSelect, acceptedFormats, maxSize, dis
 
       setUploading(false);
     } catch (err) {
-      setError('Failed to process file. Please try again.');
+      setError(t('fileUpload.failed'));
       setUploading(false);
     }
   };
@@ -112,7 +114,7 @@ export default function FileUpload({ onFileSelect, acceptedFormats, maxSize, dis
         {uploading ? (
           <div className="space-y-2">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto" />
-            <p className="text-sm text-gray-600">Processing file...</p>
+            <p className="text-sm text-gray-600">{t('fileUpload.processing')}</p>
           </div>
         ) : selectedFile ? (
           <div className="space-y-2">
@@ -127,17 +129,17 @@ export default function FileUpload({ onFileSelect, acceptedFormats, maxSize, dis
               }}
               className="text-sm text-red-600 hover:text-red-700 underline"
             >
-              Remove
+              {t('buttons.remove')}
             </button>
           </div>
         ) : (
           <div className="space-y-2">
             <div className="text-4xl">📁</div>
             <p className="font-semibold text-gray-700">
-              Drop your file here or click to browse
+              {t('fileUpload.dropHere')}
             </p>
             <p className="text-sm text-gray-500">
-              Accepted formats: {acceptedFormats.join(', ')} (Max {maxSize}MB)
+              {t('fileUpload.acceptedFormats', { formats: acceptedFormats.join(', '), maxSize })}
             </p>
           </div>
         )}

@@ -1,4 +1,5 @@
 import { DepartmentMetrics, DepartmentImpact, Team, TeamSubmission } from '../types/game';
+import i18n from '../i18n';
 
 /**
  * Apply impacts to department metrics
@@ -72,79 +73,80 @@ export function calculateTeamScore(metrics: DepartmentMetrics): number {
  * Get metric display info (color, label, unit)
  */
 export function getMetricDisplay(_department: string, metric: string) {
-  const displays: Record<string, { label: string; unit: string; color: string }> = {
+  const metricConfig: Record<string, { unit: string; color: string }> = {
     // Marketing
-    'brandAwareness': { label: 'Brand Awareness', unit: '%', color: 'text-purple-600' },
-    'customerAcquisition': { label: 'Customer Acquisition', unit: '%', color: 'text-purple-600' },
-    'campaignEffectiveness': { label: 'Campaign Effectiveness', unit: '%', color: 'text-purple-600' },
-    'marketShare': { label: 'Market Share', unit: '%', color: 'text-purple-600' },
+    'brandAwareness': { unit: '%', color: 'text-purple-600' },
+    'customerAcquisition': { unit: '%', color: 'text-purple-600' },
+    'campaignEffectiveness': { unit: '%', color: 'text-purple-600' },
+    'marketShare': { unit: '%', color: 'text-purple-600' },
 
     // Sales
-    'revenue': { label: 'Revenue', unit: '$K', color: 'text-green-600' },
-    'conversionRate': { label: 'Conversion Rate', unit: '%', color: 'text-green-600' },
-    'customerSatisfaction': { label: 'Customer Satisfaction', unit: '%', color: 'text-green-600' },
-    'salesGrowth': { label: 'Sales Growth', unit: '%', color: 'text-green-600' },
+    'revenue': { unit: '$K', color: 'text-green-600' },
+    'conversionRate': { unit: '%', color: 'text-green-600' },
+    'customerSatisfaction': { unit: '%', color: 'text-green-600' },
+    'salesGrowth': { unit: '%', color: 'text-green-600' },
 
     // Research
-    'innovation': { label: 'Innovation Score', unit: '%', color: 'text-blue-600' },
-    'productQuality': { label: 'Product Quality', unit: '%', color: 'text-blue-600' },
-    'rdBudgetEfficiency': { label: 'R&D Efficiency', unit: '%', color: 'text-blue-600' },
-    'patentsFiled': { label: 'Patents Filed', unit: '', color: 'text-blue-600' },
+    'innovation': { unit: '%', color: 'text-blue-600' },
+    'productQuality': { unit: '%', color: 'text-blue-600' },
+    'rdBudgetEfficiency': { unit: '%', color: 'text-blue-600' },
+    'patentsFiled': { unit: '', color: 'text-blue-600' },
 
     // Finance
-    'cashFlow': { label: 'Cash Flow', unit: '$K', color: 'text-yellow-600' },
-    'profitMargin': { label: 'Profit Margin', unit: '%', color: 'text-yellow-600' },
-    'debtRatio': { label: 'Debt Ratio', unit: '%', color: 'text-yellow-600' },
-    'investorConfidence': { label: 'Investor Confidence', unit: '%', color: 'text-yellow-600' },
+    'cashFlow': { unit: '$K', color: 'text-yellow-600' },
+    'profitMargin': { unit: '%', color: 'text-yellow-600' },
+    'debtRatio': { unit: '%', color: 'text-yellow-600' },
+    'investorConfidence': { unit: '%', color: 'text-yellow-600' },
 
     // HR
-    'employeeMorale': { label: 'Employee Morale', unit: '%', color: 'text-indigo-600' },
-    'productivity': { label: 'Productivity', unit: '%', color: 'text-indigo-600' },
-    'retentionRate': { label: 'Retention Rate', unit: '%', color: 'text-indigo-600' },
-    'talentQuality': { label: 'Talent Quality', unit: '%', color: 'text-indigo-600' },
+    'employeeMorale': { unit: '%', color: 'text-indigo-600' },
+    'productivity': { unit: '%', color: 'text-indigo-600' },
+    'retentionRate': { unit: '%', color: 'text-indigo-600' },
+    'talentQuality': { unit: '%', color: 'text-indigo-600' },
   };
 
-  return displays[metric] || { label: metric, unit: '', color: 'text-gray-600' };
+  const config = metricConfig[metric] || { unit: '', color: 'text-gray-600' };
+  const label = i18n.t(`dashboard:metrics.${metric}`, { defaultValue: metric });
+
+  return { label, ...config };
 }
 
 /**
  * Get department display info
  */
 export function getDepartmentDisplay(department: string) {
-  const displays: Record<string, { name: string; icon: string; color: string; bgColor: string }> = {
+  const departmentConfig: Record<string, { icon: string; color: string; bgColor: string }> = {
     marketing: {
-      name: 'Marketing',
-      icon: '📢',
+      icon: i18n.t('dashboard:departments.marketing.icon'),
       color: 'border-purple-500',
       bgColor: 'bg-purple-50'
     },
     sales: {
-      name: 'Sales',
-      icon: '💰',
+      icon: i18n.t('dashboard:departments.sales.icon'),
       color: 'border-green-500',
       bgColor: 'bg-green-50'
     },
     research: {
-      name: 'Research & Development',
-      icon: '🔬',
+      icon: i18n.t('dashboard:departments.research.icon'),
       color: 'border-blue-500',
       bgColor: 'bg-blue-50'
     },
     finance: {
-      name: 'Finance',
-      icon: '📊',
+      icon: i18n.t('dashboard:departments.finance.icon'),
       color: 'border-yellow-500',
       bgColor: 'bg-yellow-50'
     },
     hr: {
-      name: 'Human Resources',
-      icon: '👥',
+      icon: i18n.t('dashboard:departments.hr.icon'),
       color: 'border-indigo-500',
       bgColor: 'bg-indigo-50'
     },
   };
 
-  return displays[department] || { name: department, icon: '📋', color: 'border-gray-500', bgColor: 'bg-gray-50' };
+  const config = departmentConfig[department] || { icon: '📋', color: 'border-gray-500', bgColor: 'bg-gray-50' };
+  const name = i18n.t(`dashboard:departments.${department}.name`, { defaultValue: department });
+
+  return { name, ...config };
 }
 
 /**
