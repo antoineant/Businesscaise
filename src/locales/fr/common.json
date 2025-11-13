@@ -67,5 +67,29 @@
     "industry": "Industrie",
     "companyName": "Nom de l'Entreprise",
     "productService": "Produit/Service"
+  },
+  "podLeaderboard": {
+    "yourPod": "Votre Pod",
+    "team": "équipe",
+    "teams": "équipes",
+    "podDescription": "Compétition dans un groupe ciblé pour une rivalité et un engagement plus directs",
+    "noScores": "Aucun score dans votre pod pour le moment"
+  },
+  "categoryRankings": {
+    "title": "Classements par Catégorie",
+    "award": "Distinction",
+    "awards": "Distinctions",
+    "yourAwards": "Vos Distinctions",
+    "global": "Global",
+    "pod": "Pod",
+    "categories": {
+      "financial": "Excellence Financière",
+      "operations": "Leader Opérationnel",
+      "marketing": "Champion du Marketing",
+      "hr": "Meilleur Employeur",
+      "customer_satisfaction": "Favori des Clients",
+      "overall": "Champion Général"
+    },
+    "multiplePathsDescription": "Plusieurs chemins vers le succès! Compétitionnez dans 6 catégories différentes pour trouver votre force et gagner des distinctions."
   }
 }
