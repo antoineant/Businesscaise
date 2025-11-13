@@ -155,4 +155,24 @@ router.get('/:teamId/sessions/:sessionId/briefing',
   narrativeController.getSessionBriefing
 );
 
+/**
+ * AI-Powered Features (Ask the Market)
+ */
+// Ask the Market - Submit business question
+router.post('/:teamId/market-query',
+  [
+    param('teamId').isUUID(),
+    body('question').notEmpty().withMessage('Question is required'),
+  ],
+  validate,
+  narrativeController.askMarket
+);
+
+// Get market query history
+router.get('/:teamId/market-query/history',
+  [param('teamId').isUUID()],
+  validate,
+  narrativeController.getMarketQueryHistory
+);
+
 export default router;

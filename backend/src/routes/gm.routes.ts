@@ -233,6 +233,39 @@ router.get('/games/:gameId/events',
 );
 
 /**
+ * AI-Powered Features (Reality Lens & Event Inspiration)
+ */
+// Enhance narrative with AI
+router.post('/games/:gameId/narratives/enhance',
+  [
+    param('gameId').isUUID(),
+    body('content').notEmpty().withMessage('Content is required'),
+    body('industry').optional().isString(),
+    body('archetype').optional().isString(),
+  ],
+  validate,
+  narrativeController.enhanceNarrative
+);
+
+// Get event inspiration from real-world news
+router.post('/games/:gameId/events/inspiration',
+  [
+    param('gameId').isUUID(),
+    body('industry').optional().isString(),
+    body('eventType').optional().isString(),
+  ],
+  validate,
+  narrativeController.getEventInspiration
+);
+
+// Get Perplexity usage statistics
+router.get('/games/:gameId/perplexity-usage',
+  [param('gameId').isUUID()],
+  validate,
+  narrativeController.getPerplexityUsage
+);
+
+/**
  * Analytics & Reporting
  */
 router.get('/games/:id/leaderboard',
