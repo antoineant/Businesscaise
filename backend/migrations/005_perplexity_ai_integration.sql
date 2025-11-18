@@ -46,8 +46,9 @@ CREATE INDEX idx_perplexity_usage_team ON perplexity_usage(team_id, created_at D
 CREATE INDEX idx_perplexity_usage_type ON perplexity_usage(query_type, created_at DESC);
 
 -- Fast count for recent team queries (rate limiting)
+-- Note: Time filtering should be done in queries, not in index predicate
 CREATE INDEX idx_perplexity_usage_team_recent ON perplexity_usage(team_id, query_type, created_at DESC)
-    WHERE team_id IS NOT NULL AND created_at > (NOW() - INTERVAL '4 hours');
+    WHERE team_id IS NOT NULL;
 
 -- ============================================================================
 -- SAMPLE DATA (Optional - for testing)
