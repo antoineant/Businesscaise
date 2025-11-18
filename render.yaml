@@ -1,10 +1,5 @@
-# PostgreSQL Database
-databases:
-  - name: businesscase-db
-    databaseName: businesscase
-    user: businesscase_user
-    plan: standard
-    region: oregon
+# Note: Create PostgreSQL database manually in Render dashboard first
+# Then add database connection details to backend environment variables
 
 services:
   # Backend API Service
@@ -20,30 +15,8 @@ services:
         value: production
       - key: PORT
         value: 10000
-      - key: DATABASE_URL
-        fromDatabase:
-          name: businesscase-db
-          property: connectionString
-      - key: DB_HOST
-        fromDatabase:
-          name: businesscase-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: businesscase-db
-          property: port
-      - key: DB_NAME
-        fromDatabase:
-          name: businesscase-db
-          property: database
-      - key: DB_USER
-        fromDatabase:
-          name: businesscase-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: businesscase-db
-          property: password
+      # Database connection - ADD MANUALLY after creating database
+      # DATABASE_URL, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRES_IN
@@ -65,7 +38,6 @@ services:
   - type: web
     name: businesscase-frontend
     runtime: static
-    plan: starter
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     envVars:
@@ -94,7 +66,6 @@ services:
   - type: web
     name: businesscase-gm-dashboard
     runtime: static
-    plan: starter
     buildCommand: cd gm-dashboard && npm install && npm run build
     staticPublishPath: ./gm-dashboard/dist
     envVars:
