@@ -1,14 +1,12 @@
-services:
-  # PostgreSQL Database
-  - type: pserv
-    name: businesscase-db
-    env: docker
+# PostgreSQL Database
+databases:
+  - name: businesscase-db
+    databaseName: businesscase
+    user: businesscase_user
     plan: standard
     region: oregon
-    databaseName: businesscase
-    databaseUser: businesscase_user
-    ipAllowList: []
 
+services:
   # Backend API Service
   - type: web
     name: businesscase-api
@@ -51,20 +49,16 @@ services:
       - key: JWT_EXPIRES_IN
         value: 7d
       - key: UPLOAD_DIR
-        value: /opt/render/project/src/uploads
+        value: /opt/render/project/src/backend/uploads
       - key: MAX_FILE_SIZE
         value: 10485760
-      - key: CORS_ORIGIN
-        sync: false  # Set manually to include frontend URLs
-      - key: PERPLEXITY_API_KEY
-        sync: false  # Optional - set manually if using AI features
       - key: PERPLEXITY_RATE_LIMIT
         value: 5
     healthCheckPath: /health
     autoDeploy: true
     disk:
       name: uploads
-      mountPath: /opt/render/project/src/uploads
+      mountPath: /opt/render/project/src/backend/uploads
       sizeGB: 1
 
   # Main Frontend - Student Player Interface
@@ -76,12 +70,11 @@ services:
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     envVars:
-      - key: VITE_API_URL
-        sync: false  # Will be set to backend URL
-      - key: VITE_SOCKET_URL
-        sync: false  # Will be set to backend URL
       - key: VITE_ENV
         value: production
+      # Add these manually after backend deployment:
+      # VITE_API_URL: https://businesscase-api.onrender.com/api
+      # VITE_SOCKET_URL: https://businesscase-api.onrender.com
     headers:
       - path: /*
         name: X-Frame-Options
@@ -107,12 +100,11 @@ services:
     buildCommand: cd gm-dashboard && npm install && npm run build
     staticPublishPath: ./gm-dashboard/dist
     envVars:
-      - key: VITE_API_URL
-        sync: false  # Will be set to backend URL
-      - key: VITE_SOCKET_URL
-        sync: false  # Will be set to backend URL
       - key: VITE_ENV
         value: production
+      # Add these manually after backend deployment:
+      # VITE_API_URL: https://businesscase-api.onrender.com/api
+      # VITE_SOCKET_URL: https://businesscase-api.onrender.com
     headers:
       - path: /*
         name: X-Frame-Options

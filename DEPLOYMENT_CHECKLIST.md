@@ -19,47 +19,43 @@ Use this checklist to deploy your BusinessCase application to Render.
 - [ ] Render detects `render.yaml` configuration
 - [ ] Review the 4 services that will be created
 
-## Step 2: Deploy Services
+## Step 2: Deploy Blueprint
 
 - [ ] Click "Apply" to start deployment
 - [ ] Wait for database to provision (~2-3 minutes)
 - [ ] Wait for backend API to deploy (~5-7 minutes)
-- [ ] Note down the backend URL: `https://businesscase-api.onrender.com`
+  - Migrations will run automatically
+- [ ] Wait for frontend services to deploy (~3-5 minutes each)
+- [ ] Note down service URLs:
+  - Backend: `https://businesscase-api.onrender.com`
+  - Main Frontend: `https://businesscase-frontend.onrender.com`
+  - GM Dashboard: `https://businesscase-gm-dashboard.onrender.com`
 
-## Step 3: Configure Environment Variables
-
-### Backend API (`businesscase-api`)
-
-- [ ] Verify auto-generated `JWT_SECRET` is set
-- [ ] **Set `CORS_ORIGIN`** (CRITICAL - see Step 4)
-- [ ] (Optional) Set `PERPLEXITY_API_KEY` if using AI features
+## Step 3: Add Frontend Environment Variables
 
 ### Main Frontend (`businesscase-frontend`)
 
-- [ ] Set `VITE_API_URL` = `https://businesscase-api.onrender.com/api`
-- [ ] Set `VITE_SOCKET_URL` = `https://businesscase-api.onrender.com`
-- [ ] Trigger redeploy after setting variables
+- [ ] Go to service settings → Environment
+- [ ] Add `VITE_API_URL` = `https://businesscase-api.onrender.com/api`
+- [ ] Add `VITE_SOCKET_URL` = `https://businesscase-api.onrender.com`
+- [ ] Save and trigger Manual Deploy
 
 ### GM Dashboard (`businesscase-gm-dashboard`)
 
-- [ ] Set `VITE_API_URL` = `https://businesscase-api.onrender.com/api`
-- [ ] Set `VITE_SOCKET_URL` = `https://businesscase-api.onrender.com`
-- [ ] Trigger redeploy after setting variables
+- [ ] Go to service settings → Environment
+- [ ] Add `VITE_API_URL` = `https://businesscase-api.onrender.com/api`
+- [ ] Add `VITE_SOCKET_URL` = `https://businesscase-api.onrender.com`
+- [ ] Save and trigger Manual Deploy
 
-## Step 4: Update CORS
+## Step 4: Add Backend CORS Configuration
 
-After both frontends are deployed:
+### Backend API (`businesscase-api`)
 
-- [ ] Note frontend URLs:
-  - Main: `https://businesscase-frontend.onrender.com`
-  - GM: `https://businesscase-gm-dashboard.onrender.com`
-- [ ] Go to backend API service settings
-- [ ] Set `CORS_ORIGIN` to:
-  ```
-  https://businesscase-frontend.onrender.com,https://businesscase-gm-dashboard.onrender.com
-  ```
-  (No spaces, comma-separated)
-- [ ] Save and trigger backend redeploy
+- [ ] Go to service settings → Environment
+- [ ] Add `CORS_ORIGIN` = `https://businesscase-frontend.onrender.com,https://businesscase-gm-dashboard.onrender.com`
+  - **Important:** No spaces between URLs!
+- [ ] Save and trigger Manual Deploy
+- [ ] (Optional) Add `PERPLEXITY_API_KEY` if using AI features
 
 ## Step 5: Verify Deployment
 
