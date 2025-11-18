@@ -8,8 +8,8 @@ services:
     runtime: node
     plan: standard
     region: oregon
-    buildCommand: cd backend && npm ci --include=dev && npm run build && npm run migrate:up
-    startCommand: cd backend && npm run start
+    buildCommand: cd backend && npm ci --include=dev && npm run build
+    startCommand: cd backend && npm run migrate:up && npm run start
     envVars:
       - key: NODE_ENV
         value: production
