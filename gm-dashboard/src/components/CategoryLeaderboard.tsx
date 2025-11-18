@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { podAPI } from '../services/api';
-import { CategoryLeader } from '../types';
+import type { CategoryLeader } from '../types';
 import { Trophy, DollarSign, Settings, Megaphone, Users as UsersIcon, Heart, Award, Loader2 } from 'lucide-react';
 
 interface CategoryLeaderboardProps {

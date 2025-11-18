@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { gameAPI, podAPI } from '../services/api';
-import { PodInfo, Game } from '../types';
+import type { PodInfo, Game } from '../types';
 import { ArrowLeft, Shuffle, Users, TrendingUp, Award, Layers, Loader2 } from 'lucide-react';
 
 export const PodManagementPage: React.FC = () => {
@@ -291,7 +291,7 @@ export const PodManagementPage: React.FC = () => {
                         <div>
                           <p className="font-medium text-gray-900">{team.name}</p>
                           <p className="text-xs text-gray-500">
-                            Score: {team.overall_score?.toFixed(1) || 0}
+                            Score: {Number(team.overall_score ?? 0).toFixed(1)}
                           </p>
                         </div>
                       </div>

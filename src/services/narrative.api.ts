@@ -70,6 +70,7 @@ export interface MarketQueryResult {
   rateLimit: {
     remaining: number;
     total: number;
+    resetIn: number;
   };
 }
 

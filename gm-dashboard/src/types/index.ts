@@ -50,6 +50,8 @@ export interface Team {
   rank?: number;
   created_at: string;
   updated_at: string;
+  color?: string;
+  overall_score?: number | string;
 }
 
 export interface Metrics {
