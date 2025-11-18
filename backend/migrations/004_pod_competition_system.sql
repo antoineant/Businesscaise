@@ -149,6 +149,7 @@ DECLARE
     v_scope VARCHAR;
     v_pod_id VARCHAR;
     v_inserted_count INTEGER := 0;
+    v_temp_count INTEGER;
     v_pod RECORD;
 BEGIN
     -- Loop through all categories
@@ -168,7 +169,8 @@ BEGIN
             rank
         FROM calculate_category_rankings(p_game_id, p_session_id, v_category, 'global', NULL);
 
-        GET DIAGNOSTICS v_inserted_count = v_inserted_count + ROW_COUNT;
+        GET DIAGNOSTICS v_temp_count = ROW_COUNT;
+        v_inserted_count := v_inserted_count + v_temp_count;
 
         -- Pod rankings (if pods enabled)
         FOR v_pod IN
@@ -189,7 +191,8 @@ BEGIN
                 rank
             FROM calculate_category_rankings(p_game_id, p_session_id, v_category, 'pod', v_pod.pod_id);
 
-            GET DIAGNOSTICS v_inserted_count = v_inserted_count + ROW_COUNT;
+            GET DIAGNOSTICS v_temp_count = ROW_COUNT;
+            v_inserted_count := v_inserted_count + v_temp_count;
         END LOOP;
     END LOOP;
 
