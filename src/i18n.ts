@@ -41,6 +41,13 @@ i18n
     defaultNS: 'common',
     ns: ['common', 'dashboard', 'game', 'scenarios', 'feedback'],
 
+    // Normalize language codes (en-US -> en, fr-FR -> fr)
+    load: 'languageOnly',
+
+    // Supported languages
+    supportedLngs: ['en', 'fr'],
+    nonExplicitSupportedLngs: false,
+
     interpolation: {
       escapeValue: false, // React already escapes values
     },
@@ -48,6 +55,12 @@ i18n
     detection: {
       order: ['localStorage', 'navigator'],
       caches: ['localStorage'],
+      lookupLocalStorage: 'i18nextLng',
+    },
+
+    // React-specific options
+    react: {
+      useSuspense: false,
     },
   });
 
