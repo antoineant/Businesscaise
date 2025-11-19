@@ -8,10 +8,13 @@ const languages = [
 export default function LanguageSelector() {
   const { i18n } = useTranslation();
 
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
+  // Normalize the current language code (e.g., 'en-US' -> 'en')
+  const normalizedLanguage = i18n.language.split('-')[0];
 
-  const handleLanguageChange = (langCode: string) => {
-    i18n.changeLanguage(langCode);
+  const currentLanguage = languages.find(lang => lang.code === normalizedLanguage) || languages[0];
+
+  const handleLanguageChange = async (langCode: string) => {
+    await i18n.changeLanguage(langCode);
   };
 
   return (
@@ -34,12 +37,12 @@ export default function LanguageSelector() {
             key={lang.code}
             onClick={() => handleLanguageChange(lang.code)}
             className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-primary-50 transition-colors first:rounded-t-lg last:rounded-b-lg ${
-              i18n.language === lang.code ? 'bg-primary-100' : ''
+              normalizedLanguage === lang.code ? 'bg-primary-100' : ''
             }`}
           >
             <span className="text-2xl">{lang.flag}</span>
             <span className="font-medium text-gray-700">{lang.name}</span>
-            {i18n.language === lang.code && (
+            {normalizedLanguage === lang.code && (
               <svg className="w-5 h-5 ml-auto text-primary-600" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
