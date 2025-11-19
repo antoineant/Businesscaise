@@ -60,6 +60,10 @@ export interface Game {
   settings: any;
   created_at: string;
   updated_at: string;
+  archetype_id?: string;
+  industry_id?: string;
+  archetype_name?: string;
+  industry_name?: string;
 }
 
 export interface Team {

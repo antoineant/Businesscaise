@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { scenarioAPI } from '../services/api';
-import { Archetype, Industry, ScenarioPreview } from '../types';
+import type { Archetype, Industry, ScenarioPreview } from '../types';
 import { Loader2, Building2, Factory, Info } from 'lucide-react';
 
 interface ScenarioSelectorProps {
@@ -20,7 +20,7 @@ export const ScenarioSelector: React.FC<ScenarioSelectorProps> = ({
   const [companyName, setCompanyName] = useState('');
   const [productDescription, setProductDescription] = useState('');
   const [loading, setLoading] = useState(true);
-  const [previewLoading, setPreviewLoading] = useState(false);
+  const [_previewLoading, _setPreviewLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -56,13 +56,13 @@ export const ScenarioSelector: React.FC<ScenarioSelectorProps> = ({
 
   const loadPreview = async (archetypeId: string, industryId: string) => {
     try {
-      setPreviewLoading(true);
+      _setPreviewLoading(true);
       const response = await scenarioAPI.getPreview(archetypeId, industryId);
       setPreview(response.data.scenario);
     } catch (err: any) {
       console.error('Error loading preview:', err);
     } finally {
-      setPreviewLoading(false);
+      _setPreviewLoading(false);
     }
   };
 

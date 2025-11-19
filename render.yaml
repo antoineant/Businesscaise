@@ -1,0 +1,91 @@
+# Note: Create PostgreSQL database manually in Render dashboard first
+# Then add database connection details to backend environment variables
+
+services:
+  # Backend API Service
+  - type: web
+    name: businesscase-api
+    runtime: node
+    plan: standard
+    region: oregon
+    buildCommand: cd backend && npm ci --include=dev && npm run build
+    startCommand: cd backend && npm run migrate:up && npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      # Database connection - ADD MANUALLY after creating database
+      # DATABASE_URL, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: UPLOAD_DIR
+        value: /opt/render/project/src/backend/uploads
+      - key: MAX_FILE_SIZE
+        value: 10485760
+      - key: PERPLEXITY_RATE_LIMIT
+        value: 5
+    healthCheckPath: /health
+    autoDeploy: true
+    disk:
+      name: uploads
+      mountPath: /opt/render/project/src/backend/uploads
+      sizeGB: 1
+
+  # Main Frontend - Student Player Interface
+  - type: web
+    name: businesscase-frontend
+    runtime: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_ENV
+        value: production
+      # Add these manually after backend deployment:
+      # VITE_API_URL: https://businesscase-api.onrender.com/api
+      # VITE_SOCKET_URL: https://businesscase-api.onrender.com
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-XSS-Protection
+        value: 1; mode=block
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    autoDeploy: true
+
+  # GM Dashboard - Instructor Interface
+  - type: web
+    name: businesscase-gm-dashboard
+    runtime: static
+    buildCommand: cd gm-dashboard && npm ci && npm run build
+    staticPublishPath: ./gm-dashboard/dist
+    envVars:
+      - key: VITE_ENV
+        value: production
+      # Add these manually after backend deployment:
+      # VITE_API_URL: https://businesscase-api.onrender.com/api
+      # VITE_SOCKET_URL: https://businesscase-api.onrender.com
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-XSS-Protection
+        value: 1; mode=block
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    autoDeploy: true
